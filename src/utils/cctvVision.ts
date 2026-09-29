@@ -40,7 +40,7 @@ export interface TripwireZone {
 }
 
 export class CctvVisionEngine {
-  private video: HTMLVideoElement;
+  private mediaSource: HTMLVideoElement | HTMLImageElement;
   private overlayCanvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private offscreenCanvas: HTMLCanvasElement;
@@ -75,11 +75,11 @@ export class CctvVisionEngine {
   private onTelemetryUpdate?: (telemetry: VisionTelemetry) => void;
 
   constructor(
-    video: HTMLVideoElement,
+    mediaSource: HTMLVideoElement | HTMLImageElement,
     overlayCanvas: HTMLCanvasElement,
     onTelemetryUpdate?: (telemetry: VisionTelemetry) => void
   ) {
-    this.video = video;
+    this.mediaSource = mediaSource;
     this.overlayCanvas = overlayCanvas;
     this.ctx = overlayCanvas.getContext('2d')!;
     this.onTelemetryUpdate = onTelemetryUpdate;
@@ -135,13 +135,26 @@ export class CctvVisionEngine {
 
     const startProcessing = performance.now();
 
-    // Check if video is valid and playing
-    if (
-      this.video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
-      !this.video.paused &&
-      !this.video.ended &&
-      this.video.videoWidth > 0
-    ) {
+    // Check if media source is valid and ready
+    let isReady = false;
+    let width = 1920;
+    let height = 1080;
+
+    if (this.mediaSource instanceof HTMLVideoElement) {
+      isReady =
+        this.mediaSource.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+        !this.mediaSource.paused &&
+        !this.mediaSource.ended &&
+        this.mediaSource.videoWidth > 0;
+      width = this.mediaSource.videoWidth || 1920;
+      height = this.mediaSource.videoHeight || 1080;
+    } else if (this.mediaSource instanceof HTMLImageElement) {
+      isReady = this.mediaSource.complete && this.mediaSource.naturalWidth > 0;
+      width = this.mediaSource.naturalWidth || 1920;
+      height = this.mediaSource.naturalHeight || 1080;
+    }
+
+    if (isReady) {
       this.processFrame();
     }
 
@@ -150,7 +163,7 @@ export class CctvVisionEngine {
     // Notify telemetry callback
     if (this.onTelemetryUpdate) {
       const bitrateKbps = Math.round(
-        (this.video.videoWidth || 1920) * (this.video.videoHeight || 1080) * (this.fps / 30) * 0.0012
+        width * height * (this.fps / 30) * 0.0012
       );
 
       this.onTelemetryUpdate({
@@ -172,9 +185,20 @@ export class CctvVisionEngine {
     const sw = this.offscreenCanvas.width;
     const sh = this.offscreenCanvas.height;
 
-    // Draw downsampled frame
-    this.offscreenCtx.drawImage(this.video, 0, 0, sw, sh);
-    const imgData = this.offscreenCtx.getImageData(0, 0, sw, sh);
+    // Draw downsampled frame safely
+    try {
+      this.offscreenCtx.drawImage(this.mediaSource, 0, 0, sw, sh);
+    } catch {
+      return;
+    }
+
+    let imgData: ImageData;
+    try {
+      imgData = this.offscreenCtx.getImageData(0, 0, sw, sh);
+    } catch {
+      // In case of tainted cross-origin canvas, return gracefully
+      return;
+    }
     const data = imgData.data;
 
     // 1. Check for Lens Tamper / Occlusion (Dark / Blind / Saturated)

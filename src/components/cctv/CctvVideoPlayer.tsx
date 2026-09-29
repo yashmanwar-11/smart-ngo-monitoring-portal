@@ -29,7 +29,7 @@ import {
   AlertOctagon,
   Radio,
 } from 'lucide-react';
-import { Camera, CctvStreamSession, PtzPreset } from '../../types';
+import { Camera, CameraSource, CctvStreamSession, PtzPreset } from '../../types';
 import { cameraApi } from '../../services/apiClient';
 import { CctvVisionEngine, VisionTelemetry } from '../../utils/cctvVision';
 
@@ -62,17 +62,24 @@ export const CctvVideoPlayer: React.FC<CctvVideoPlayerProps> = ({
   isInModal = false,
 }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const imageRef = useRef<HTMLImageElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const overlayCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const hlsRef = useRef<Hls | null>(null);
   const visionEngineRef = useRef<CctvVisionEngine | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
 
-  // Determine initial source (Hardware Webcam vs RTSP Stream)
-  const isHardwareNode = camera.camera_source === 'HARDWARE_DEVICE' || camera.camera_type === 'DEVICE_CAM';
-  const [activeSource, setActiveSource] = useState<'HARDWARE_DEVICE' | 'RTSP_STREAM'>(
-    isHardwareNode ? 'HARDWARE_DEVICE' : 'RTSP_STREAM'
-  );
+  // Determine initial source (Hardware Webcam vs RTSP Stream vs HTTP MJPEG vs HLS)
+  const initialSource: CameraSource =
+    camera.camera_source || (camera.camera_type === 'DEVICE_CAM' ? 'HARDWARE_DEVICE' : 'RTSP_STREAM');
+  const [activeSource, setActiveSource] = useState<CameraSource>(initialSource);
+  const [mjpegUrl, setMjpegUrl] = useState<string>('');
+
+  useEffect(() => {
+    const src: CameraSource =
+      camera.camera_source || (camera.camera_type === 'DEVICE_CAM' ? 'HARDWARE_DEVICE' : 'RTSP_STREAM');
+    setActiveSource(src);
+  }, [camera.id, camera.camera_source, camera.camera_type]);
 
   const [session, setSession] = useState<CctvStreamSession | null>(null);
   const [streamState, setStreamState] = useState<'CONNECTING' | 'LIVE' | 'OFFLINE' | 'ERROR'>('CONNECTING');
@@ -136,6 +143,7 @@ export const CctvVideoPlayer: React.FC<CctvVideoPlayerProps> = ({
         visionEngineRef.current.stop();
         visionEngineRef.current = null;
       }
+      setMjpegUrl('');
     };
 
     const initStream = async () => {
@@ -200,13 +208,47 @@ export const CctvVideoPlayer: React.FC<CctvVideoPlayerProps> = ({
       }
 
       // -------------------------------------------------------------
-      // PATH B: NETWORK RTSP / ONVIF IP STREAM RELAY
+      // PATH B: HTTP MJPEG (PHONE "IP WEBCAM" / ESP32 / PROXY FEED)
+      // -------------------------------------------------------------
+      if (activeSource === 'HTTP_MJPEG') {
+        try {
+          const sess = await cameraApi.createSession(camera.id);
+          if (isCancelled) return;
+          setSession(sess);
+
+          // Backend proxy URL (or direct URL if configured)
+          const streamEndpoint = sess.streamUrl || `/api/cameras/${camera.id}/stream.mjpeg`;
+          setMjpegUrl(streamEndpoint);
+        } catch (err: any) {
+          if (!isCancelled) {
+            if (camera.stream_url) {
+              setMjpegUrl(camera.stream_url);
+            } else {
+              setStreamState('OFFLINE');
+              setErrorMessage(err.message || 'HTTP MJPEG camera unreachable on network.');
+              startAutoReconnect();
+            }
+          }
+        }
+        return;
+      }
+
+      // -------------------------------------------------------------
+      // PATH C: NETWORK RTSP / ONVIF / HLS STREAM RELAY
       // -------------------------------------------------------------
       try {
         const sess = await cameraApi.createSession(camera.id);
         if (isCancelled) return;
 
         setSession(sess);
+
+        // If backend resolved streamType as MJPEG, dynamically render via MJPEG
+        if (sess.streamType === 'MJPEG') {
+          setActiveSource('HTTP_MJPEG');
+          setMjpegUrl(sess.streamUrl || `/api/cameras/${camera.id}/stream.mjpeg`);
+          return;
+        }
+
         const video = videoRef.current;
         if (!video) return;
 
@@ -318,14 +360,16 @@ export const CctvVideoPlayer: React.FC<CctvVideoPlayerProps> = ({
 
   // Start / restart the Edge AI Computer Vision Engine
   const startVisionEngine = useCallback(() => {
-    if (!aiVisionEnabled || !videoRef.current || !overlayCanvasRef.current) return;
+    if (!aiVisionEnabled || !overlayCanvasRef.current) return;
+    const mediaEl = activeSource === 'HTTP_MJPEG' ? imageRef.current : videoRef.current;
+    if (!mediaEl) return;
 
     if (visionEngineRef.current) {
       visionEngineRef.current.stop();
     }
 
     const engine = new CctvVisionEngine(
-      videoRef.current,
+      mediaEl,
       overlayCanvasRef.current,
       (telem) => {
         setTelemetry(telem);
@@ -335,7 +379,7 @@ export const CctvVideoPlayer: React.FC<CctvVideoPlayerProps> = ({
     engine.setTripwire({ enabled: tripwireEnabled });
     engine.start();
     visionEngineRef.current = engine;
-  }, [aiVisionEnabled, tripwireEnabled]);
+  }, [aiVisionEnabled, tripwireEnabled, activeSource]);
 
   // Handle AI Vision toggle
   useEffect(() => {
@@ -397,63 +441,73 @@ export const CctvVideoPlayer: React.FC<CctvVideoPlayerProps> = ({
     try {
       setIsCapturing(true);
 
-      // If playing from hardware webcam, capture directly from high-resolution canvas
-      if (activeSource === 'HARDWARE_DEVICE' && videoRef.current) {
-        const v = videoRef.current;
-        const offCanvas = document.createElement('canvas');
-        offCanvas.width = v.videoWidth || 1920;
-        offCanvas.height = v.videoHeight || 1080;
-        const ctx = offCanvas.getContext('2d')!;
+      const mediaEl = activeSource === 'HTTP_MJPEG' ? imageRef.current : (activeSource === 'HARDWARE_DEVICE' ? videoRef.current : null);
 
-        // Draw original video frame
-        ctx.drawImage(v, 0, 0, offCanvas.width, offCanvas.height);
+      // If playing from hardware webcam or client-rendered MJPEG, attempt certified canvas capture
+      if (mediaEl) {
+        try {
+          const offCanvas = document.createElement('canvas');
+          const isVideo = mediaEl instanceof HTMLVideoElement;
+          const w = (isVideo ? mediaEl.videoWidth : (mediaEl as HTMLImageElement).naturalWidth) || 1920;
+          const h = (isVideo ? mediaEl.videoHeight : (mediaEl as HTMLImageElement).naturalHeight) || 1080;
+          offCanvas.width = w;
+          offCanvas.height = h;
+          const ctx = offCanvas.getContext('2d')!;
 
-        // Stamp statutory government watermark
-        const nowIso = new Date().toISOString();
-        const watermarkBanner = `GOVT OF MAHARASHTRA | DOSJE VIGILANCE | ${camera.name} | ${nowIso} | BADGE: IAS-VIGIL-001`;
+          // Draw active media frame
+          ctx.drawImage(mediaEl, 0, 0, w, h);
 
-        ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
-        ctx.fillRect(0, offCanvas.height - 40, offCanvas.width, 40);
-        ctx.fillStyle = '#10b981';
-        ctx.font = 'bold 16px monospace';
-        ctx.fillText(watermarkBanner, 20, offCanvas.height - 15);
+          // Stamp statutory government watermark
+          const nowIso = new Date().toISOString();
+          const watermarkBanner = `GOVT OF MAHARASHTRA | DOSJE VIGILANCE | ${camera.name} | ${nowIso} | BADGE: IAS-VIGIL-001`;
 
-        const dataUrl = offCanvas.toDataURL('image/jpeg', 0.92);
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
+          ctx.fillRect(0, h - 40, w, 40);
+          ctx.fillStyle = '#10b981';
+          ctx.font = 'bold 16px monospace';
+          ctx.fillText(watermarkBanner, 20, h - 15);
 
-        // Compute real SHA-256 hash using Web Crypto API
-        const encoder = new TextEncoder();
-        const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(dataUrl));
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const fileHash = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+          const dataUrl = offCanvas.toDataURL('image/jpeg', 0.92);
 
-        const evidence = {
-          id: 'evid_hw_' + Math.random().toString(36).substring(2, 9),
-          cameraId: camera.id,
-          cameraName: camera.name,
-          ngoId: camera.ngo_id,
-          ngoName: camera.ngo_name || 'Assigned Facility',
-          location: camera.location,
-          fileHash,
-          timestamp: nowIso,
-          imageUrl: dataUrl,
-          inspectionId: inspectionId || null,
-        };
+          // Compute real SHA-256 hash using Web Crypto API
+          const encoder = new TextEncoder();
+          const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(dataUrl));
+          const hashArray = Array.from(new Uint8Array(hashBuffer));
+          const fileHash = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 
-        setCaptureToast(`✓ Certified Evidence Frame Captured! SHA-256: ${fileHash.slice(0, 12)}...`);
-        setTimeout(() => setCaptureToast(null), 4000);
-        onSnapshotCapture?.(evidence);
-      } else {
-        // Capture via backend gateway
-        const res = await cameraApi.captureEvidence(camera.id, {
-          inspectionId,
-          categoryCode: 'CCTV_FACILITY_MONITOR',
-          caption: `Certified CCTV Frame: ${camera.name} at ${camera.location}`,
-        });
+          const evidence = {
+            id: 'evid_hw_' + Math.random().toString(36).substring(2, 9),
+            cameraId: camera.id,
+            cameraName: camera.name,
+            ngoId: camera.ngo_id,
+            ngoName: camera.ngo_name || 'Assigned Facility',
+            location: camera.location,
+            fileHash,
+            timestamp: nowIso,
+            imageUrl: dataUrl,
+            inspectionId: inspectionId || null,
+          };
 
-        setCaptureToast(`✓ Evidence frame captured! SHA-256: ${res.evidence.fileHash.slice(0, 12)}...`);
-        setTimeout(() => setCaptureToast(null), 4000);
-        onSnapshotCapture?.(res.evidence);
+          setCaptureToast(`✓ Certified Evidence Frame Captured! SHA-256: ${fileHash.slice(0, 12)}...`);
+          setTimeout(() => setCaptureToast(null), 4000);
+          onSnapshotCapture?.(evidence);
+          setIsCapturing(false);
+          return;
+        } catch (canvasErr) {
+          console.warn('Direct canvas capture cross-origin fallback:', canvasErr);
+        }
       }
+
+      // Backend gateway capture fallback
+      const res = await cameraApi.captureEvidence(camera.id, {
+        inspectionId,
+        categoryCode: 'CCTV_FACILITY_MONITOR',
+        caption: `Certified CCTV Frame: ${camera.name} at ${camera.location}`,
+      });
+
+      setCaptureToast(`✓ Evidence frame captured! SHA-256: ${res.evidence.fileHash.slice(0, 12)}...`);
+      setTimeout(() => setCaptureToast(null), 4000);
+      onSnapshotCapture?.(res.evidence);
     } catch (err: any) {
       setCaptureToast(`⚠ Capture failed: ${err.message}`);
       setTimeout(() => setCaptureToast(null), 4000);
@@ -503,20 +557,53 @@ export const CctvVideoPlayer: React.FC<CctvVideoPlayerProps> = ({
 
         {/* Tactical Telemetry & Stream Source Badges */}
         <div className="flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
-          {/* Stream Source Toggle (Physical Webcam vs RTSP) */}
-          <button
-            onClick={() => {
-              setActiveSource((prev) => (prev === 'HARDWARE_DEVICE' ? 'RTSP_STREAM' : 'HARDWARE_DEVICE'));
-            }}
-            className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold transition-all border ${
-              activeSource === 'HARDWARE_DEVICE'
-                ? 'bg-indigo-600/30 text-indigo-200 border-indigo-500/50 hover:bg-indigo-600/50'
-                : 'bg-slate-900/80 text-slate-400 border-slate-700 hover:text-white'
-            }`}
-            title="Toggle between physical hardware camera and RTSP stream relay"
-          >
-            {activeSource === 'HARDWARE_DEVICE' ? '📹 PHYSICAL WEBCAM' : '📡 RTSP RELAY'}
-          </button>
+          {/* Protocol Badge & Fast Source Switcher */}
+          <div className="flex items-center gap-1">
+            <span
+              className={`px-2 py-0.5 rounded text-[10px] font-mono font-semibold transition-all border ${
+                activeSource === 'HARDWARE_DEVICE'
+                  ? 'bg-indigo-600/30 text-indigo-200 border-indigo-500/50'
+                  : activeSource === 'HTTP_MJPEG'
+                  ? 'bg-amber-600/30 text-amber-200 border-amber-500/50'
+                  : activeSource === 'HLS_STREAM'
+                  ? 'bg-emerald-600/30 text-emerald-200 border-emerald-500/50'
+                  : 'bg-cyan-950/80 text-cyan-300 border-cyan-500/40'
+              }`}
+            >
+              {activeSource === 'HARDWARE_DEVICE'
+                ? '📹 WEBCAM'
+                : activeSource === 'HTTP_MJPEG'
+                ? '📱 PHONE / MJPEG'
+                : activeSource === 'HLS_STREAM'
+                ? '🌐 HLS STREAM'
+                : '📡 RTSP RELAY'}
+            </span>
+
+            {/* Quick Toggle to Local Device Webcam */}
+            {activeSource !== 'HARDWARE_DEVICE' && (
+              <button
+                onClick={() => setActiveSource('HARDWARE_DEVICE')}
+                className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-900/90 text-slate-300 hover:text-white border border-slate-700 transition-colors hover:border-slate-500"
+                title="Switch to local physical device webcam"
+              >
+                📹 Webcam
+              </button>
+            )}
+
+            {/* Quick Toggle to IP Network Stream */}
+            {activeSource === 'HARDWARE_DEVICE' && (
+              <button
+                onClick={() => {
+                  const orig = camera.camera_source || (camera.camera_type === 'DEVICE_CAM' ? 'HARDWARE_DEVICE' : 'RTSP_STREAM');
+                  setActiveSource(orig === 'HARDWARE_DEVICE' ? 'RTSP_STREAM' : orig);
+                }}
+                className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-900/90 text-slate-300 hover:text-white border border-slate-700 transition-colors hover:border-slate-500"
+                title="Switch back to IP camera network stream"
+              >
+                📡 IP Stream
+              </button>
+            )}
+          </div>
 
           {/* Real-time FPS & Quality Tag */}
           <span className="hidden sm:inline-flex px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-900/90 text-emerald-400 border border-emerald-500/30">
@@ -573,12 +660,34 @@ export const CctvVideoPlayer: React.FC<CctvVideoPlayerProps> = ({
             transformOrigin: 'center center',
           }}
         >
-          <video
-            ref={videoRef}
-            className={`w-full h-full object-contain ${streamState === 'LIVE' ? 'opacity-100' : 'opacity-0'}`}
-            playsInline
-            muted={isMuted}
-          />
+          {activeSource === 'HTTP_MJPEG' ? (
+            <img
+              ref={imageRef}
+              src={mjpegUrl}
+              alt={camera.name}
+              className={`w-full h-full object-contain ${streamState === 'LIVE' ? 'opacity-100' : 'opacity-0'}`}
+              crossOrigin="anonymous"
+              onLoad={() => {
+                if (streamState !== 'LIVE') {
+                  setStreamState('LIVE');
+                  startVisionEngine();
+                }
+              }}
+              onError={() => {
+                if (streamState === 'CONNECTING') {
+                  setStreamState('OFFLINE');
+                  setErrorMessage('IP Camera stream did not respond. Check IP and network connection.');
+                }
+              }}
+            />
+          ) : (
+            <video
+              ref={videoRef}
+              className={`w-full h-full object-contain ${streamState === 'LIVE' ? 'opacity-100' : 'opacity-0'}`}
+              playsInline
+              muted={isMuted}
+            />
+          )}
         </div>
 
         {/* Edge AI Computer Vision Overlay Canvas */}
@@ -611,6 +720,8 @@ export const CctvVideoPlayer: React.FC<CctvVideoPlayerProps> = ({
             <p className="text-xs text-slate-400 max-w-sm">
               {activeSource === 'HARDWARE_DEVICE'
                 ? 'Initializing physical hardware camera sensor. Requesting media stream...'
+                : activeSource === 'HTTP_MJPEG'
+                ? `Connecting to HTTP MJPEG stream at ${camera.stream_url || `${camera.ip_address}:${camera.port}`}...`
                 : `Handshaking RTSP gateway for ${camera.name} (${camera.ip_address}:${camera.port}). Authenticating stream session...`}
             </p>
           </div>
@@ -626,11 +737,19 @@ export const CctvVideoPlayer: React.FC<CctvVideoPlayerProps> = ({
               <span className="w-2 h-2 rounded-full bg-slate-500" />
               CAMERA OFFLINE
             </h4>
+
+            {/* Diagnostic Target Details */}
+            <div className="mb-2 px-3 py-1 rounded bg-slate-900 border border-slate-800 text-[11px] font-mono text-slate-400 flex items-center gap-2">
+              <span>Target: <span className="text-slate-200">{camera.stream_url || `${camera.ip_address}:${camera.port}`}</span></span>
+              <span>•</span>
+              <span>Protocol: <span className="text-indigo-300">{activeSource}</span></span>
+            </div>
+
             <p className="text-xs text-slate-400 max-w-md mb-3">
-              {errorMessage || 'Camera connection lost or stream unavailable over network.'}
+              {errorMessage || 'Camera connection lost or stream unreachable over network.'}
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-2.5 pointer-events-auto mt-2">
+            <div className="flex flex-wrap items-center justify-center gap-2.5 pointer-events-auto mt-1">
               <button
                 onClick={() => setRetryCount((c) => c + 1)}
                 className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors border border-slate-700"
@@ -640,13 +759,24 @@ export const CctvVideoPlayer: React.FC<CctvVideoPlayerProps> = ({
               </button>
 
               {/* Fast switch to hardware camera */}
-              {activeSource === 'RTSP_STREAM' && (
+              {activeSource !== 'HARDWARE_DEVICE' ? (
                 <button
                   onClick={() => setActiveSource('HARDWARE_DEVICE')}
                   className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-md"
                 >
                   <Video className="w-3.5 h-3.5" />
                   Use Device Webcam
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    const orig = camera.camera_source || (camera.camera_type === 'DEVICE_CAM' ? 'HARDWARE_DEVICE' : 'RTSP_STREAM');
+                    setActiveSource(orig === 'HARDWARE_DEVICE' ? 'RTSP_STREAM' : orig);
+                  }}
+                  className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors shadow-md"
+                >
+                  <Radio className="w-3.5 h-3.5" />
+                  Switch to IP Stream
                 </button>
               )}
             </div>

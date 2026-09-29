@@ -378,7 +378,7 @@ export interface NgoWorkerAttendance {
 
 export type CameraStatus = 'LIVE' | 'OFFLINE' | 'CONNECTING' | 'ERROR' | 'DISABLED';
 export type CameraType = 'FIXED' | 'PTZ' | 'DOME' | 'BULLET' | 'THERMAL' | 'DEVICE_CAM' | 'ANALYTICS';
-export type CameraSource = 'HARDWARE_DEVICE' | 'RTSP_STREAM';
+export type CameraSource = 'HARDWARE_DEVICE' | 'RTSP_STREAM' | 'HTTP_MJPEG' | 'HLS_STREAM';
 
 export interface Camera {
   id: string;
@@ -396,6 +396,7 @@ export interface Camera {
   ip_address: string;
   port: number;
   rtsp_path: string;
+  stream_url?: string;
   masked_url?: string;
   onvif_url?: string;
   username?: string;
@@ -439,6 +440,8 @@ export interface CctvAuditLog {
 export interface CctvStreamSession {
   sessionToken: string;
   streamUrl: string;
+  streamType?: 'HLS' | 'MJPEG' | 'WEBCAM';
+  directUrl?: string;
   status: 'LIVE' | 'STARTING' | 'OFFLINE' | 'ERROR';
   expiresAt: string;
 }

@@ -56,7 +56,7 @@ export const CctvManagementSection: React.FC<CctvManagementSectionProps> = ({
   const [discoveredList, setDiscoveredList] = useState<DiscoveredCamera[]>([]);
 
   // Form Fields
-  const [formSource, setFormSource] = useState<'RTSP_STREAM' | 'HARDWARE_DEVICE'>('RTSP_STREAM');
+  const [formSource, setFormSource] = useState<'RTSP_STREAM' | 'HTTP_MJPEG' | 'HLS_STREAM' | 'HARDWARE_DEVICE'>('RTSP_STREAM');
   const [formName, setFormName] = useState('');
   const [formNgoId, setFormNgoId] = useState('');
   const [formLocation, setFormLocation] = useState('');
@@ -66,10 +66,13 @@ export const CctvManagementSection: React.FC<CctvManagementSectionProps> = ({
   const [formIpAddress, setFormIpAddress] = useState('');
   const [formPort, setFormPort] = useState('554');
   const [formRtspPath, setFormRtspPath] = useState('/Streaming/Channels/101');
+  const [formStreamUrl, setFormStreamUrl] = useState('');
   const [formOnvifUrl, setFormOnvifUrl] = useState('');
   const [formUsername, setFormUsername] = useState('admin');
   const [formPassword, setFormPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [autoDetectedInfo, setAutoDetectedInfo] = useState<string | null>(null);
+  const [showPhoneHelp, setShowPhoneHelp] = useState(false);
 
   // Load cameras
   const loadCameras = async () => {
@@ -100,6 +103,81 @@ export const CctvManagementSection: React.FC<CctvManagementSectionProps> = ({
     loadAuditLogs();
   }, []);
 
+  // Intelligent Real-Time IP Address and Stream URL Auto-Detector
+  const handleIpOrUrlChange = (value: string) => {
+    setFormIpAddress(value);
+    const trimmed = value.trim();
+
+    if (!trimmed) {
+      setAutoDetectedInfo(null);
+      return;
+    }
+
+    // 1. Full HTTP / HTTPS stream URL
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      try {
+        const u = new URL(trimmed);
+        const isHttps = u.protocol === 'https:';
+        const port = u.port || (isHttps ? '443' : '80');
+        const isHls = u.pathname.endsWith('.m3u8') || u.search.includes('.m3u8');
+        
+        if (isHls) {
+          setFormSource('HLS_STREAM');
+          setFormStreamUrl(trimmed);
+          setFormPort(port);
+          setFormRtspPath(u.pathname);
+          setAutoDetectedInfo(`✓ Detected Direct HLS Video Stream (${u.hostname})`);
+        } else {
+          setFormSource('HTTP_MJPEG');
+          setFormPort(port);
+          setFormRtspPath(u.pathname || '/video');
+          setFormManufacturer(port === '8080' ? 'Android IP Webcam' : 'Generic Web Camera');
+          setAutoDetectedInfo(`✓ Detected Real HTTP MJPEG Stream on port ${port}`);
+        }
+
+        if (u.username) setFormUsername(u.username);
+        if (u.password) setFormPassword(u.password);
+        return;
+      } catch {}
+    }
+
+    // 2. Full RTSP stream URL
+    if (trimmed.startsWith('rtsp://')) {
+      try {
+        const u = new URL(trimmed);
+        setFormSource('RTSP_STREAM');
+        setFormPort(u.port || '554');
+        setFormRtspPath(u.pathname || '/live');
+        if (u.username) setFormUsername(u.username);
+        if (u.password) setFormPassword(u.password);
+        setAutoDetectedInfo(`✓ Detected RTSP Surveillance Stream on port ${u.port || 554}`);
+        return;
+      } catch {}
+    }
+
+    // 3. IP with port 8080 (Android IP Webcam / DroidCam)
+    if (trimmed.includes(':8080')) {
+      const parts = trimmed.split(':');
+      setFormSource('HTTP_MJPEG');
+      setFormPort('8080');
+      setFormRtspPath('/video');
+      setFormManufacturer('Android IP Webcam');
+      setAutoDetectedInfo('✓ Detected Android Phone IP Webcam (Default Port 8080, Path /video)');
+      return;
+    }
+
+    // 4. IP with port 554
+    if (trimmed.includes(':554')) {
+      setFormSource('RTSP_STREAM');
+      setFormPort('554');
+      setFormRtspPath('/live');
+      setAutoDetectedInfo('✓ Detected RTSP Port 554');
+      return;
+    }
+
+    setAutoDetectedInfo(null);
+  };
+
   // Quick preset helper for common IP Camera manufacturers
   const handleManufacturerPreset = (mfg: string) => {
     setFormManufacturer(mfg);
@@ -118,9 +196,10 @@ export const CctvManagementSection: React.FC<CctvManagementSectionProps> = ({
     }
   };
 
-  // Switch form source (Hardware Webcam vs RTSP IP)
-  const handleSourceChange = (src: 'RTSP_STREAM' | 'HARDWARE_DEVICE') => {
+  // Switch form source
+  const handleSourceChange = (src: 'RTSP_STREAM' | 'HTTP_MJPEG' | 'HLS_STREAM' | 'HARDWARE_DEVICE') => {
     setFormSource(src);
+    setAutoDetectedInfo(null);
     if (src === 'HARDWARE_DEVICE') {
       setFormName(formName || 'Integrated HD Vigilance Node');
       setFormLocation(formLocation || 'Main Gate / Reception Desk');
@@ -130,10 +209,28 @@ export const CctvManagementSection: React.FC<CctvManagementSectionProps> = ({
       setFormIpAddress('127.0.0.1');
       setFormPort('0');
       setFormRtspPath('/device/live');
+      setFormStreamUrl('');
+    } else if (src === 'HTTP_MJPEG') {
+      setFormName(formName || 'Mobile Wi-Fi IP Camera Node');
+      setFormLocation(formLocation || 'Muster Station & Yard');
+      setFormType('FIXED');
+      setFormManufacturer('Android IP Webcam');
+      setFormModel('Wi-Fi Stream Sensor');
+      setFormPort('8080');
+      setFormRtspPath('/video');
+      setFormIpAddress(formIpAddress || '192.168.1.100');
+    } else if (src === 'HLS_STREAM') {
+      setFormName(formName || 'Cloud Perimeter Live Surveillance');
+      setFormLocation(formLocation || 'Outer Facility Boundary');
+      setFormType('BULLET');
+      setFormManufacturer('Axis Communications');
+      setFormPort('443');
+      setFormStreamUrl('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8');
+      setFormIpAddress('stream.cctv-gov.in');
     } else {
       setFormManufacturer('Hikvision');
       handleManufacturerPreset('Hikvision');
-      setFormIpAddress('');
+      setFormIpAddress(formIpAddress === '127.0.0.1' || formIpAddress === 'stream.cctv-gov.in' ? '' : formIpAddress);
       setFormType('FIXED');
     }
   };
@@ -205,8 +302,8 @@ export const CctvManagementSection: React.FC<CctvManagementSectionProps> = ({
       return;
     }
 
-    if (!formIpAddress.trim()) {
-      onShowToast?.('Please enter an IP address or hostname to probe', 'error');
+    if (!formIpAddress.trim() && !formStreamUrl.trim()) {
+      onShowToast?.('Please enter an IP address, hostname, or stream URL to probe', 'error');
       return;
     }
 
@@ -214,11 +311,13 @@ export const CctvManagementSection: React.FC<CctvManagementSectionProps> = ({
       setIsTesting(true);
       setTestResult(null);
       const res = await cameraApi.testConnection({
-        ipAddress: formIpAddress.trim(),
-        port: formPort ? parseInt(formPort, 10) : 554,
-        rtspPath: formRtspPath.trim() || '/live',
+        ipAddress: formIpAddress.trim() || (formSource === 'HLS_STREAM' ? 'stream.cctv-gov.in' : ''),
+        port: formPort ? parseInt(formPort, 10) : (formSource === 'HTTP_MJPEG' ? 8080 : 554),
+        rtspPath: formRtspPath.trim() || (formSource === 'HTTP_MJPEG' ? '/video' : '/live'),
         username: formUsername.trim() || undefined,
         password: formPassword || undefined,
+        cameraSource: formSource,
+        streamUrl: formStreamUrl.trim() || undefined,
       });
       setTestResult(res.result);
       if (res.result.status === 'SUCCESS') {
@@ -254,9 +353,10 @@ export const CctvManagementSection: React.FC<CctvManagementSectionProps> = ({
         cameraSource: formSource,
         manufacturer: formManufacturer,
         model: formModel.trim(),
-        ipAddress: formIpAddress.trim() || '127.0.0.1',
-        port: formPort ? parseInt(formPort, 10) : 554,
-        rtspPath: formRtspPath.trim() || '/live',
+        ipAddress: formIpAddress.trim() || (formSource === 'HARDWARE_DEVICE' ? '127.0.0.1' : (formSource === 'HLS_STREAM' ? 'stream.cctv-gov.in' : '192.168.1.100')),
+        port: formPort ? parseInt(formPort, 10) : (formSource === 'HTTP_MJPEG' ? 8080 : 554),
+        rtspPath: formRtspPath.trim() || (formSource === 'HTTP_MJPEG' ? '/video' : '/live'),
+        streamUrl: formStreamUrl.trim() || undefined,
         onvifUrl: formOnvifUrl.trim() || undefined,
         username: formUsername.trim() || undefined,
         password: formPassword || undefined,
@@ -285,9 +385,11 @@ export const CctvManagementSection: React.FC<CctvManagementSectionProps> = ({
     setFormIpAddress('');
     setFormPort('554');
     setFormRtspPath('/Streaming/Channels/101');
+    setFormStreamUrl('');
     setFormOnvifUrl('');
     setFormUsername('admin');
     setFormPassword('');
+    setAutoDetectedInfo(null);
     setTestResult(null);
   };
 
@@ -733,9 +835,9 @@ export const CctvManagementSection: React.FC<CctvManagementSectionProps> = ({
               {/* Source Mode Selector */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
-                  Camera Source Architecture
+                  Camera Source Architecture & Protocol
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   <button
                     type="button"
                     onClick={() => handleSourceChange('RTSP_STREAM')}
@@ -745,12 +847,48 @@ export const CctvManagementSection: React.FC<CctvManagementSectionProps> = ({
                         : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700'
                     }`}
                   >
-                    <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-2">
+                    <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-1.5">
                       <Wifi className="w-4 h-4 text-indigo-500" />
-                      Network RTSP / ONVIF IP Camera
+                      RTSP Camera
                     </div>
-                    <div className="text-[11px] text-slate-500 mt-0.5">
-                      Physical Hikvision, Dahua, CP Plus, or Axis cameras on LAN
+                    <div className="text-[10px] text-slate-500 mt-1">
+                      Hikvision, Dahua, CP Plus (Port 554)
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleSourceChange('HTTP_MJPEG')}
+                    className={`p-3 rounded-2xl border text-left transition-all ${
+                      formSource === 'HTTP_MJPEG'
+                        ? 'bg-indigo-50 dark:bg-indigo-950/50 border-indigo-500 ring-2 ring-indigo-500/20'
+                        : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700'
+                    }`}
+                  >
+                    <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <Radio className="w-4 h-4 text-amber-500" />
+                      Phone / MJPEG
+                    </div>
+                    <div className="text-[10px] text-slate-500 mt-1">
+                      Android IP Webcam, DroidCam (Port 8080)
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleSourceChange('HLS_STREAM')}
+                    className={`p-3 rounded-2xl border text-left transition-all ${
+                      formSource === 'HLS_STREAM'
+                        ? 'bg-indigo-50 dark:bg-indigo-950/50 border-indigo-500 ring-2 ring-indigo-500/20'
+                        : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700'
+                    }`}
+                  >
+                    <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-1.5">
+                      <Video className="w-4 h-4 text-sky-500" />
+                      HLS Live Feed
+                    </div>
+                    <div className="text-[10px] text-slate-500 mt-1">
+                      Direct HTTP(S) .m3u8 Playlist
                     </div>
                   </button>
 
@@ -763,18 +901,108 @@ export const CctvManagementSection: React.FC<CctvManagementSectionProps> = ({
                         : 'bg-slate-50 dark:bg-slate-800/50 border-slate-200 dark:border-slate-700'
                     }`}
                   >
-                    <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-2">
+                    <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-1.5">
                       <Laptop className="w-4 h-4 text-emerald-500" />
-                      Physical Hardware Webcam / USB Sensor
+                      Device Webcam
                     </div>
-                    <div className="text-[11px] text-slate-500 mt-0.5">
-                      Use local computer webcam as live inspection node with zero setup
+                    <div className="text-[10px] text-slate-500 mt-1">
+                      Integrated Physical Sensor
                     </div>
                   </button>
                 </div>
               </div>
 
-              {/* Manufacturer Quick Presets (Only for RTSP) */}
+              {/* 1-Click Quick Testing Presets */}
+              <div className="bg-slate-100/70 dark:bg-slate-800/50 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700/60">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                    1-Click Verified Testing Presets
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setShowPhoneHelp(!showPhoneHelp)}
+                    className="text-[11px] text-indigo-600 dark:text-indigo-400 font-semibold hover:underline"
+                  >
+                    {showPhoneHelp ? 'Hide Phone Guide' : 'How to use Android phone as camera?'}
+                  </button>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleSourceChange('HTTP_MJPEG');
+                      setFormName('Android Phone Live Surveillance');
+                      setFormLocation('Field Verification Station');
+                      setFormIpAddress('192.168.1.100');
+                      setFormPort('8080');
+                      setFormRtspPath('/video');
+                      setAutoDetectedInfo('✓ Configured Android IP Webcam Preset (Change IP to match your phone)');
+                    }}
+                    className="px-2.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-[11px] font-semibold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-amber-500 transition-colors flex items-center gap-1.5 shadow-sm"
+                  >
+                    📱 Android IP Webcam (`:8080/video`)
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleSourceChange('RTSP_STREAM');
+                      handleManufacturerPreset('Hikvision');
+                      setFormName('Hikvision DS-2CD Main Gate');
+                      setFormLocation('Main Gate Entrance');
+                      setFormIpAddress('192.168.1.64');
+                      setAutoDetectedInfo('✓ Configured Hikvision RTSP Preset');
+                    }}
+                    className="px-2.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-[11px] font-semibold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-indigo-500 transition-colors flex items-center gap-1.5 shadow-sm"
+                  >
+                    📡 Hikvision RTSP (`:554`)
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleSourceChange('HLS_STREAM');
+                      setFormName('Perimeter High-Def Surveillance Feed');
+                      setFormLocation('Outer Perimeter Yard');
+                      setFormStreamUrl('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8');
+                      setFormIpAddress('stream.cctv-gov.in');
+                      setAutoDetectedInfo('✓ Loaded Verified High-Def HLS Live Video Stream');
+                    }}
+                    className="px-2.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-[11px] font-semibold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-sky-500 transition-colors flex items-center gap-1.5 shadow-sm"
+                  >
+                    🌐 Public High-Def Live Feed
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleSourceChange('HARDWARE_DEVICE');
+                    }}
+                    className="px-2.5 py-1.5 rounded-xl bg-white dark:bg-slate-800 text-[11px] font-semibold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-emerald-500 transition-colors flex items-center gap-1.5 shadow-sm"
+                  >
+                    💻 Laptop / Device Webcam
+                  </button>
+                </div>
+
+                {/* Collapsible Phone IP Camera Setup Instructions */}
+                {showPhoneHelp && (
+                  <div className="mt-3 p-3 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 text-xs text-slate-700 dark:text-slate-300 space-y-2">
+                    <div className="font-bold text-indigo-700 dark:text-indigo-300 flex items-center gap-1.5">
+                      <Radio className="w-4 h-4 text-indigo-500" />
+                      3-Step Guide: Turn Any Android Phone into a Real IP Camera
+                    </div>
+                    <ol className="list-decimal list-inside space-y-1 text-[11px] text-slate-600 dark:text-slate-400">
+                      <li>Download the free <strong className="text-slate-900 dark:text-white">IP Webcam</strong> app from Google Play Store on your Android phone.</li>
+                      <li>Open the app, scroll to the bottom, and tap <strong className="text-slate-900 dark:text-white">&ldquo;Start server&rdquo;</strong>.</li>
+                      <li>Your phone will show a live camera with an IP (e.g., <code className="px-1 py-0.5 rounded bg-slate-200 dark:bg-slate-700 font-mono text-indigo-600 dark:text-indigo-400">http://192.168.1.15:8080</code>). Enter that IP in the field below and click <strong>&ldquo;Test Connection&rdquo;</strong>!</li>
+                    </ol>
+                  </div>
+                )}
+              </div>
+
+              {/* Manufacturer Brand Presets (for RTSP) */}
               {formSource === 'RTSP_STREAM' && (
                 <div>
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2">
@@ -870,61 +1098,85 @@ export const CctvManagementSection: React.FC<CctvManagementSectionProps> = ({
                 </div>
               </div>
 
-              {/* Network Parameters (Only for RTSP) */}
-              {formSource === 'RTSP_STREAM' && (
+              {/* Protocol-Specific Network Parameters */}
+              {formSource !== 'HARDWARE_DEVICE' && (
                 <div className="bg-slate-50 dark:bg-slate-800/40 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-4">
-                  <div className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
-                    <Wifi className="w-3.5 h-3.5" />
-                    RTSP Network Configuration
+                  <div className="flex items-center justify-between">
+                    <div className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <Wifi className="w-3.5 h-3.5" />
+                      {formSource === 'HTTP_MJPEG' ? 'HTTP / MJPEG Network Parameters' : (formSource === 'HLS_STREAM' ? 'HLS Video Stream Parameters' : 'RTSP Network Configuration')}
+                    </div>
+                    {autoDetectedInfo && (
+                      <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 animate-pulse">
+                        {autoDetectedInfo}
+                      </span>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div className="sm:col-span-2">
                       <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-                        Camera IP Address / Hostname *
+                        Camera IP Address or Full Stream URL *
                       </label>
                       <input
                         type="text"
                         required
                         value={formIpAddress}
-                        onChange={(e) => setFormIpAddress(e.target.value)}
-                        placeholder="e.g. 192.168.1.150 or cam1.ddns.net"
-                        className="w-full px-3 py-1.5 text-xs font-mono rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white focus:outline-none"
+                        onChange={(e) => handleIpOrUrlChange(e.target.value)}
+                        placeholder={formSource === 'HTTP_MJPEG' ? 'e.g. 192.168.1.150:8080 or http://192.168.1.150:8080/video' : (formSource === 'HLS_STREAM' ? 'e.g. https://.../stream.m3u8' : 'e.g. 192.168.1.150 or rtsp://192.168.1.150:554/live')}
+                        className="w-full px-3 py-1.5 text-xs font-mono rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                       />
                     </div>
 
                     <div>
                       <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-                        RTSP Port
+                        Port
                       </label>
                       <input
                         type="number"
                         value={formPort}
                         onChange={(e) => setFormPort(e.target.value)}
-                        placeholder="554"
+                        placeholder={formSource === 'HTTP_MJPEG' ? '8080' : '554'}
                         className="w-full px-3 py-1.5 text-xs font-mono rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white focus:outline-none"
                       />
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-                      RTSP Stream Path
-                    </label>
-                    <input
-                      type="text"
-                      value={formRtspPath}
-                      onChange={(e) => setFormRtspPath(e.target.value)}
-                      placeholder="/live or /Streaming/Channels/101"
-                      className="w-full px-3 py-1.5 text-xs font-mono rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white focus:outline-none"
-                    />
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="sm:col-span-2">
+                      <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
+                        {formSource === 'HTTP_MJPEG' ? 'MJPEG Stream Path' : (formSource === 'HLS_STREAM' ? 'HLS Playlist Path' : 'RTSP Stream Path')}
+                      </label>
+                      <input
+                        type="text"
+                        value={formRtspPath}
+                        onChange={(e) => setFormRtspPath(e.target.value)}
+                        placeholder={formSource === 'HTTP_MJPEG' ? '/video or /shot.jpg' : (formSource === 'HLS_STREAM' ? '/live/stream.m3u8' : '/live or /Streaming/Channels/101')}
+                        className="w-full px-3 py-1.5 text-xs font-mono rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white focus:outline-none"
+                      />
+                    </div>
+
+                    {formSource === 'HLS_STREAM' && (
+                      <div className="sm:col-span-3">
+                        <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
+                          Direct Stream URL (Optional override)
+                        </label>
+                        <input
+                          type="text"
+                          value={formStreamUrl}
+                          onChange={(e) => setFormStreamUrl(e.target.value)}
+                          placeholder="https://.../stream.m3u8"
+                          className="w-full px-3 py-1.5 text-xs font-mono rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white focus:outline-none"
+                        />
+                      </div>
+                    )}
                   </div>
 
                   {/* Authentication Credentials */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                     <div>
                       <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1">
-                        RTSP Username
+                        Username (Optional)
                       </label>
                       <input
                         type="text"
@@ -937,7 +1189,7 @@ export const CctvManagementSection: React.FC<CctvManagementSectionProps> = ({
 
                     <div>
                       <label className="block text-[11px] font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center justify-between">
-                        <span>RTSP Password</span>
+                        <span>Password (Optional)</span>
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}

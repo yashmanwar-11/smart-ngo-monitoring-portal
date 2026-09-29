@@ -1,6 +1,8 @@
 import express, { Response } from 'express';
 import path from 'node:path';
 import fs from 'node:fs';
+import http from 'node:http';
+import https from 'node:https';
 import { db, query, queryOne, execute } from '../db';
 import { authenticateToken, requireRole, AuthRequest } from '../middleware/auth';
 import {
@@ -11,6 +13,7 @@ import {
 } from '../utils/crypto';
 import {
   probeCameraConnection,
+  parseCameraEndpoint,
   ensureCameraStreamActive,
   recordViewerHeartbeat,
   captureCameraSnapshot,
@@ -72,7 +75,7 @@ camerasRouter.get('/', authenticateToken, (req: AuthRequest, res: Response): voi
     let sql = `
       SELECT c.id, c.name, c.ngo_id, n.name as ngo_name, n.district as ngo_district, n.state as ngo_state,
              c.location, c.camera_type, c.camera_source, c.ptz_capabilities, c.manufacturer, c.model, c.ip_address, c.port, c.rtsp_path,
-             c.onvif_url, c.username, c.status, c.last_seen, c.last_heartbeat, c.last_error,
+             c.stream_url, c.onvif_url, c.username, c.status, c.last_seen, c.last_heartbeat, c.last_error,
              c.consecutive_failures, c.resolution, c.codec, c.fps, c.is_enabled, c.created_at, c.updated_at
       FROM cameras c
       JOIN ngos n ON c.ngo_id = n.id
@@ -99,13 +102,26 @@ camerasRouter.get('/', authenticateToken, (req: AuthRequest, res: Response): voi
     const rawCameras = query<any>(sql, params);
 
     // Sanitize camera data: NEVER expose credentials or full private RTSP strings
-    const cameras = rawCameras.map((cam) => ({
-      ...cam,
-      ip_address: cam.ip_address,
-      camera_source: cam.camera_source || (cam.camera_type === 'DEVICE_CAM' ? 'HARDWARE_DEVICE' : 'RTSP_STREAM'),
-      ptz_capabilities: cam.ptz_capabilities !== undefined ? cam.ptz_capabilities : 1,
-      masked_url: cam.camera_source === 'HARDWARE_DEVICE' ? 'device://integrated-hd-cam' : `rtsp://${cam.username ? '***:***@' : ''}${cam.ip_address}:${cam.port}${cam.rtsp_path}`,
-    }));
+    const cameras = rawCameras.map((cam) => {
+      const source = cam.camera_source || (cam.camera_type === 'DEVICE_CAM' ? 'HARDWARE_DEVICE' : 'RTSP_STREAM');
+      let maskedUrl = `rtsp://${cam.username ? '***:***@' : ''}${cam.ip_address}:${cam.port}${cam.rtsp_path}`;
+      if (source === 'HARDWARE_DEVICE') {
+        maskedUrl = 'device://integrated-hd-cam';
+      } else if (source === 'HTTP_MJPEG') {
+        maskedUrl = `http://${cam.username ? '***:***@' : ''}${cam.ip_address}:${cam.port}${cam.rtsp_path || '/video'}`;
+      } else if (source === 'HLS_STREAM') {
+        maskedUrl = cam.stream_url ? cam.stream_url.replace(/:(\w+)@/, ':***@') : `https://${cam.ip_address}:${cam.port}${cam.rtsp_path}`;
+      }
+
+      return {
+        ...cam,
+        ip_address: cam.ip_address,
+        camera_source: source,
+        stream_url: cam.stream_url,
+        ptz_capabilities: cam.ptz_capabilities !== undefined ? cam.ptz_capabilities : 1,
+        masked_url: maskedUrl,
+      };
+    });
 
     res.json({
       success: true,
@@ -181,25 +197,27 @@ camerasRouter.get('/audit/logs', authenticateToken, requireRole(['ADMIN', 'OFFIC
  */
 camerasRouter.post('/test-connection', authenticateToken, requireRole(['ADMIN']), async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { ipAddress, port, rtspPath, username, password } = req.body;
+    const { ipAddress, port, rtspPath, username, password, cameraSource, streamUrl } = req.body;
 
-    if (!ipAddress) {
+    if (!ipAddress && !streamUrl) {
       res.status(400).json({
         success: false,
         result: {
           status: 'INVALID_CONFIGURATION',
-          message: 'IP address or hostname is mandatory for connection probe.',
+          message: 'IP address, hostname, or stream URL is mandatory for connection probe.',
         },
       });
       return;
     }
 
     const result = await probeCameraConnection({
-      ipAddress,
-      port: port ? parseInt(port, 10) : 554,
+      ipAddress: ipAddress || '',
+      port: port ? parseInt(port, 10) : undefined,
       rtspPath,
       username,
       password,
+      cameraSource,
+      streamUrl,
     });
 
     logCctvAudit({
@@ -207,7 +225,7 @@ camerasRouter.post('/test-connection', authenticateToken, requireRole(['ADMIN'])
       userRole: req.user!.role,
       userId: req.user!.id,
       action: 'CAMERA_CONNECTION_TEST',
-      details: `Tested connection to ${ipAddress}:${port || 554}. Status: ${result.status} (${result.message})`,
+      details: `Tested connection to ${ipAddress || streamUrl}:${port || 'default'}. Status: ${result.status} (${result.message})`,
       ipAddress: req.ip,
     });
 
@@ -252,6 +270,8 @@ camerasRouter.post('/:id/test', authenticateToken, requireRole(['ADMIN', 'OFFICE
       rtspPath: camera.rtsp_path,
       username: camera.username,
       password,
+      cameraSource: camera.camera_source,
+      streamUrl: camera.stream_url,
     });
 
     // Update camera status in DB based on real result
@@ -323,6 +343,7 @@ camerasRouter.post('/', authenticateToken, requireRole(['ADMIN']), async (req: A
       ipAddress,
       port,
       rtspPath,
+      streamUrl,
       onvifUrl,
       username,
       password,
@@ -336,13 +357,23 @@ camerasRouter.post('/', authenticateToken, requireRole(['ADMIN']), async (req: A
       return;
     }
 
-    const source = cameraSource || (cameraType === 'DEVICE_CAM' ? 'HARDWARE_DEVICE' : 'RTSP_STREAM');
-    const finalIp = ipAddress ? ipAddress.trim() : (source === 'HARDWARE_DEVICE' ? '127.0.0.1' : '');
+    const parsed = parseCameraEndpoint({
+      ipAddress: ipAddress || '',
+      port: port ? parseInt(port, 10) : undefined,
+      rtspPath,
+      username,
+      password,
+      cameraSource,
+      streamUrl,
+    });
 
-    if (source === 'RTSP_STREAM' && !finalIp) {
+    const source = parsed.sourceType || (cameraType === 'DEVICE_CAM' ? 'HARDWARE_DEVICE' : 'RTSP_STREAM');
+    const finalIp = parsed.host || (source === 'HARDWARE_DEVICE' ? '127.0.0.1' : '');
+
+    if (source !== 'HARDWARE_DEVICE' && !finalIp && !parsed.fullUrl) {
       res.status(400).json({
         error: 'VALIDATION_ERROR',
-        message: 'IP Address is required for RTSP/ONVIF cameras.',
+        message: 'IP Address or stream URL is required for surveillance cameras.',
       });
       return;
     }
@@ -355,15 +386,16 @@ camerasRouter.post('/', authenticateToken, requireRole(['ADMIN']), async (req: A
     }
 
     const id = 'cam_' + Math.random().toString(36).substring(2, 10);
-    const encryptedCreds = password ? encryptCameraCredential(password) : { encrypted: '', iv: '', tag: '' };
-    const defaultStatus = source === 'HARDWARE_DEVICE' ? 'LIVE' : 'OFFLINE';
+    const finalPassword = parsed.password || password;
+    const encryptedCreds = finalPassword ? encryptCameraCredential(finalPassword) : { encrypted: '', iv: '', tag: '' };
+    const defaultStatus = source === 'HARDWARE_DEVICE' || source === 'HLS_STREAM' ? 'LIVE' : 'OFFLINE';
 
     execute(
       `INSERT INTO cameras (
         id, name, ngo_id, location, camera_type, camera_source, ptz_capabilities, manufacturer, model,
-        ip_address, port, rtsp_path, onvif_url, username, encrypted_password,
+        ip_address, port, rtsp_path, stream_url, onvif_url, username, encrypted_password,
         iv, auth_tag, status, is_enabled
-      ) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
       [
         id,
         name.trim(),
@@ -371,13 +403,14 @@ camerasRouter.post('/', authenticateToken, requireRole(['ADMIN']), async (req: A
         location.trim(),
         cameraType || (source === 'HARDWARE_DEVICE' ? 'DEVICE_CAM' : 'FIXED'),
         source,
-        manufacturer || (source === 'HARDWARE_DEVICE' ? 'Integrated HD Node' : 'Generic ONVIF'),
-        model || (source === 'HARDWARE_DEVICE' ? 'USB/Physical Sensor' : 'IP-CAM-1080P'),
+        manufacturer || (source === 'HARDWARE_DEVICE' ? 'Integrated HD Node' : (source === 'HTTP_MJPEG' ? 'Android IP Webcam' : 'Generic ONVIF')),
+        model || (source === 'HARDWARE_DEVICE' ? 'USB/Physical Sensor' : (source === 'HTTP_MJPEG' ? 'Wi-Fi IP Camera' : 'IP-CAM-1080P')),
         finalIp,
-        port ? parseInt(port, 10) : (source === 'HARDWARE_DEVICE' ? 0 : 554),
-        rtspPath?.trim() || (source === 'HARDWARE_DEVICE' ? '/device/live' : '/live'),
+        parsed.port || (source === 'HARDWARE_DEVICE' ? 0 : 554),
+        parsed.path || (source === 'HARDWARE_DEVICE' ? '/device/live' : '/live'),
+        streamUrl || (source === 'HLS_STREAM' ? parsed.fullUrl : null),
         onvifUrl?.trim() || null,
-        username?.trim() || null,
+        parsed.username || username?.trim() || null,
         encryptedCreds.encrypted || null,
         encryptedCreds.iv || null,
         encryptedCreds.tag || null,
@@ -393,7 +426,7 @@ camerasRouter.post('/', authenticateToken, requireRole(['ADMIN']), async (req: A
       userRole: req.user!.role,
       userId: req.user!.id,
       action: 'CAMERA_REGISTERED',
-      details: `Registered ${source === 'HARDWARE_DEVICE' ? 'physical hardware camera' : 'IP camera'} "${name}" at ${location} for NGO "${ngo.name}".`,
+      details: `Registered ${source} camera "${name}" at ${location} (${finalIp}:${parsed.port}) for NGO "${ngo.name}".`,
       ipAddress: req.ip,
     });
 
@@ -771,8 +804,7 @@ camerasRouter.post('/:id/session', authenticateToken, requireRole(['ADMIN', 'OFF
       [token, id, req.user!.id, req.user!.full_name, req.user!.role, req.ip || '127.0.0.1', expiresAt]
     );
 
-    // Trigger on-demand stream relay via Media Gateway
-    const streamInfo = await ensureCameraStreamActive(id);
+    const source = camera.camera_source || (camera.camera_type === 'DEVICE_CAM' ? 'HARDWARE_DEVICE' : 'RTSP_STREAM');
 
     logCctvAudit({
       cameraId: id,
@@ -782,13 +814,54 @@ camerasRouter.post('/:id/session', authenticateToken, requireRole(['ADMIN', 'OFF
       userRole: req.user!.role,
       userId: req.user!.id,
       action: 'CAMERA_VIEW_STARTED',
-      details: `Officer initiated authorized live surveillance session. Stream status: ${streamInfo.status}`,
+      details: `Officer initiated authorized live surveillance session for ${source} camera.`,
       ipAddress: req.ip,
     });
+
+    if (source === 'HARDWARE_DEVICE') {
+      res.json({
+        success: true,
+        sessionToken: token,
+        streamType: 'WEBCAM',
+        streamUrl: 'device://integrated-hd-cam',
+        status: 'LIVE',
+        expiresAt,
+      });
+      return;
+    }
+
+    if (source === 'HTTP_MJPEG') {
+      res.json({
+        success: true,
+        sessionToken: token,
+        streamType: 'MJPEG',
+        streamUrl: `/api/cameras/${id}/stream.mjpeg?token=${token}`,
+        directUrl: `http://${camera.ip_address}:${camera.port}${camera.rtsp_path || '/video'}`,
+        status: 'LIVE',
+        expiresAt,
+      });
+      return;
+    }
+
+    if (source === 'HLS_STREAM') {
+      res.json({
+        success: true,
+        sessionToken: token,
+        streamType: 'HLS',
+        streamUrl: camera.stream_url || `/api/cameras/${id}/stream.m3u8?token=${token}`,
+        status: 'LIVE',
+        expiresAt,
+      });
+      return;
+    }
+
+    // RTSP Stream: Trigger on-demand stream relay via Media Gateway
+    const streamInfo = await ensureCameraStreamActive(id);
 
     res.json({
       success: true,
       sessionToken: token,
+      streamType: 'HLS',
       streamUrl: `/api/cameras/${id}/stream.m3u8?token=${token}`,
       status: streamInfo.status,
       expiresAt,
@@ -797,6 +870,95 @@ camerasRouter.post('/:id/session', authenticateToken, requireRole(['ADMIN', 'OFF
     console.error('Error establishing stream session:', err);
     res.status(500).json({ error: 'STREAM_SESSION_ERROR', message: err.message });
   }
+});
+
+/**
+ * GET /api/cameras/:id/stream.mjpeg
+ * Proxies live continuous multipart MJPEG stream from real IP camera
+ */
+camerasRouter.get('/:id/stream.mjpeg', async (req: express.Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const token = (req.query.token as string) || req.headers['authorization']?.replace('Bearer ', '');
+
+  if (!validateSessionToken(token, id)) {
+    res.status(401).json({ error: 'UNAUTHORIZED_STREAM', message: 'Valid stream session token required.' });
+    return;
+  }
+
+  const camera = queryOne<any>('SELECT * FROM cameras WHERE id = ?', [id]);
+  if (!camera) {
+    res.status(404).json({ error: 'CAMERA_NOT_FOUND', message: 'Camera record not found.' });
+    return;
+  }
+
+  let password = '';
+  if (camera.encrypted_password && camera.iv && camera.auth_tag) {
+    try {
+      password = decryptCameraCredential(camera.encrypted_password, camera.iv, camera.auth_tag);
+    } catch {}
+  }
+
+  recordViewerHeartbeat(id);
+
+  const targetHost = camera.ip_address;
+  const targetPort = camera.port || 8080;
+  const targetPath = camera.rtsp_path || '/video';
+  const isHttps = camera.stream_url?.startsWith('https://');
+
+  const headers: Record<string, string> = {
+    'User-Agent': 'VigilanceCCTV/2.0 (MoSJE-National-Portal)',
+  };
+  if (camera.username && password) {
+    headers['Authorization'] = `Basic ${Buffer.from(`${camera.username}:${password}`).toString('base64')}`;
+  }
+
+  const transport = isHttps ? https : http;
+
+  const clientReq = transport.get(
+    {
+      hostname: targetHost,
+      port: targetPort,
+      path: targetPath,
+      headers,
+      timeout: 10000,
+    },
+    (cameraRes) => {
+      const contentType = cameraRes.headers['content-type'] || 'multipart/x-mixed-replace; boundary=--myboundary';
+      res.writeHead(cameraRes.statusCode || 200, {
+        'Content-Type': contentType,
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
+        'Connection': 'close',
+        'Access-Control-Allow-Origin': '*',
+      });
+
+      cameraRes.pipe(res);
+
+      cameraRes.on('error', (err) => {
+        console.warn(`MJPEG Stream relay error for camera [${id}]:`, err.message);
+        if (!res.headersSent) res.status(502).end();
+      });
+    }
+  );
+
+  clientReq.on('timeout', () => {
+    clientReq.destroy(new Error('CAMERA_CONNECTION_TIMEOUT'));
+  });
+
+  clientReq.on('error', (err) => {
+    console.warn(`MJPEG Gateway connection error to ${targetHost}:${targetPort}:`, err.message);
+    if (!res.headersSent) {
+      res.status(502).json({
+        error: 'CAMERA_UNREACHABLE',
+        message: `Failed to connect to IP camera at ${targetHost}:${targetPort}: ${err.message}`,
+      });
+    }
+  });
+
+  req.on('close', () => {
+    clientReq.destroy();
+  });
 });
 
 /**

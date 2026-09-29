@@ -498,6 +498,7 @@ export function initSchema(): void {
     'ALTER TABLE inspection_evidence ADD COLUMN evidence_source TEXT DEFAULT "MOBILE_CAMERA"',
     'ALTER TABLE cameras ADD COLUMN camera_source TEXT DEFAULT "RTSP_STREAM"',
     'ALTER TABLE cameras ADD COLUMN ptz_capabilities INTEGER DEFAULT 1',
+    'ALTER TABLE cameras ADD COLUMN stream_url TEXT',
   ];
   for (const sql of schemaMigrations) {
     try {
@@ -505,6 +506,42 @@ export function initSchema(): void {
     } catch {
       // Column already exists, safe to ignore
     }
+  }
+
+  // Auto-seed default cameras if cameras table is empty
+  try {
+    const camCount = db.prepare('SELECT COUNT(*) as count FROM cameras').get() as { count: number };
+    if (!camCount || camCount.count === 0) {
+      const ngo = db.prepare('SELECT id FROM ngos LIMIT 1').get() as { id: string } | undefined;
+      const ngoId = ngo?.id || 'ngo_ssp_latur';
+
+      db.prepare(`
+        INSERT INTO cameras (
+          id, name, ngo_id, location, camera_type, camera_source, ptz_capabilities,
+          manufacturer, model, ip_address, port, rtsp_path, stream_url, status, is_enabled,
+          resolution, codec, fps
+        ) VALUES
+        (
+          'cam_hw_node', 'Integrated HD Vigilance Node', ?, 'Main Entry / Biometric Turnstile',
+          'DEVICE_CAM', 'HARDWARE_DEVICE', 1, 'Integrated HD Node', 'USB/Hardware Sensor',
+          '127.0.0.1', 0, '/device/live', NULL, 'LIVE', 1, '1920x1080', 'MEDIASTREAM', 30
+        ),
+        (
+          'cam_hls_live', 'Perimeter High-Def Surveillance Feed', ?, 'Outer Perimeter & Facility Yard',
+          'BULLET', 'HLS_STREAM', 1, 'Axis Communications', 'AXIS Q1798-LE',
+          'stream.cctv-gov.in', 443, '/live/stream.m3u8', 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
+          'LIVE', 1, '1920x1080', 'H.264', 30
+        ),
+        (
+          'cam_phone_mjpeg', 'Android Mobile IP Webcam (Port 8080)', ?, 'Muster Roll & Ration Desk',
+          'FIXED', 'HTTP_MJPEG', 1, 'Android IP Webcam', 'Wi-Fi Sensor Node',
+          '192.168.1.100', 8080, '/video', NULL,
+          'OFFLINE', 1, '1920x1080', 'MJPEG', 30
+        )
+      `).run(ngoId, ngoId, ngoId);
+    }
+  } catch (err) {
+    console.warn('Notice: Camera bootstrap check:', err);
   }
 }
 
