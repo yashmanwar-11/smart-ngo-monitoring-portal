@@ -244,7 +244,7 @@ export const VigilanceAiCopilot: React.FC<VigilanceAiCopilotProps> = ({
                     VigilanceAI Institutional Copilot
                   </h3>
                   <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-400/30">
-                    GEMINI-AGENT
+                    AI-VIGILANCE-CORE
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-[10px] text-slate-300 mt-0.5">
