@@ -46,6 +46,7 @@ interface GlobalCommandPaletteProps {
   onToggleAndroidSimulator: () => void;
   onShowToast: (msg: string, type?: 'success' | 'info') => void;
   onOpenTeamDetails?: () => void;
+  onOpenVersionModal?: () => void;
 }
 
 export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
@@ -60,6 +61,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onToggleAndroidSimulator,
   onShowToast,
   onOpenTeamDetails,
+  onOpenVersionModal,
 }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -145,6 +147,30 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
       icon: <Building2 className="w-4 h-4 text-cyan-500" />,
       action: () => {
         onNavigateView('DASHBOARD', 'NGO');
+        onClose();
+      },
+    },
+    {
+      id: 'action-v2-release',
+      title: "What's New in v2.0.0 (Enterprise National Edition)",
+      subtitle: 'Multi-Protocol CCTV Gateway, Edge AI Vision, SHA-256 Evidence & Diagnostics Benchmark',
+      category: 'ACTIONS',
+      badge: 'v2.0.0 PRO',
+      icon: <Sparkles className="w-4 h-4 text-emerald-400" />,
+      action: () => {
+        onOpenVersionModal?.();
+        onClose();
+      },
+    },
+    {
+      id: 'action-cctv-wall',
+      title: 'Launch Live CCTV Surveillance Matrix (Wall Mode)',
+      subtitle: 'Quad 2x2 & 3x3 multi-camera video wall with auto-patrol & edge CV tripwire alerts',
+      category: 'ACTIONS',
+      badge: 'CCTV 24x7',
+      icon: <Video className="w-4 h-4 text-cyan-400" />,
+      action: () => {
+        onNavigateView('DASHBOARD', 'OFFICER', 'cctv-surveillance');
         onClose();
       },
     },

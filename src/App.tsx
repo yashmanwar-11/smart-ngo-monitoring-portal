@@ -28,6 +28,7 @@ import { AndroidAppExperience } from './components/AndroidAppExperience';
 import { RandomVideoConferenceModal } from './components/RandomVideoConferenceModal';
 import { RandomAssignmentModal } from './components/RandomAssignmentModal';
 import { SihTeamModal } from './components/SihTeamModal';
+import { VersionReleaseModal } from './components/VersionReleaseModal';
 import {
   CheckCircle,
   AlertCircle,
@@ -100,6 +101,7 @@ export default function App() {
   const [randomVcPreselectedNgoId, setRandomVcPreselectedNgoId] = useState<string | undefined>(undefined);
   const [isRandomDutyModalOpen, setIsRandomDutyModalOpen] = useState(false);
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
+  const [isVersionModalOpen, setIsVersionModalOpen] = useState(false);
 
   // Actionable Notification Toast
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'info'; title?: string } | null>(null);
@@ -839,6 +841,7 @@ export default function App() {
         onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'hi' : 'en'))}
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onOpenTeamDetails={() => setIsTeamModalOpen(true)}
+        onOpenVersionModal={() => setIsVersionModalOpen(true)}
       />
 
       {/* Main View Render */}
@@ -1236,6 +1239,7 @@ export default function App() {
         }}
         onShowToast={showToast}
         onOpenTeamDetails={() => setIsTeamModalOpen(true)}
+        onOpenVersionModal={() => setIsVersionModalOpen(true)}
       />
 
       {/* Institutional VigilanceAI Copilot & Autonomous Agent Drawer */}
@@ -1262,6 +1266,17 @@ export default function App() {
       <SihTeamModal
         isOpen={isTeamModalOpen}
         onClose={() => setIsTeamModalOpen(false)}
+      />
+
+      {/* Statutory Architecture & Version 2.0 Release Modal */}
+      <VersionReleaseModal
+        isOpen={isVersionModalOpen}
+        onClose={() => setIsVersionModalOpen(false)}
+        onNavigateTab={(tab) => {
+          setIsVersionModalOpen(false);
+          setDashboardTargetTab(tab);
+          setCurrentView('DASHBOARD');
+        }}
       />
     </div>
   );

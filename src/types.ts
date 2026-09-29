@@ -470,6 +470,9 @@ export interface DiscoveredCamera {
   type: string;
   manufacturer: string;
   status: 'OPEN' | 'AUTH_REQUIRED';
+  streamUrl?: string;
+  cameraSource?: 'HARDWARE_DEVICE' | 'RTSP_STREAM' | 'HTTP_MJPEG' | 'HLS_STREAM';
+  latencyMs?: number;
 }
 
 // --------------------------------------------------------------------------

@@ -314,9 +314,15 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
             
             {/* Left Column: Official Mandate & Title */}
             <div className="lg:col-span-8 space-y-5">
-              <div className="inline-flex items-center gap-2.5 px-3.5 py-1 bg-amber-50 border border-amber-300/80 rounded-full text-amber-900 text-xs font-bold shadow-2xs">
-                <EmblemOfIndia className="w-4 h-5 rounded overflow-hidden" variant="raw" showText={false} />
-                <span>भारत सरकार • सामाजिक न्याय और अधिकारिता मंत्रालय | Government of India</span>
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="inline-flex items-center gap-2.5 px-3.5 py-1 bg-amber-50 border border-amber-300/80 rounded-full text-amber-900 text-xs font-bold shadow-2xs">
+                  <EmblemOfIndia className="w-4 h-5 rounded overflow-hidden" variant="raw" showText={false} />
+                  <span>भारत सरकार • सामाजिक न्याय और अधिकारिता मंत्रालय | Government of India</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-800 text-xs font-bold font-mono shadow-2xs">
+                  <Sparkles className="w-3.5 h-3.5 text-emerald-600 animate-spin" />
+                  <span>v2.0.0 Enterprise Edition</span>
+                </div>
               </div>
 
               <div className="space-y-1.5">
@@ -2318,7 +2324,7 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
                 <span>ISO 27001 Security Management</span>
               </p>
               <div className="font-mono text-[10.5px] text-slate-400 pt-1 border-t border-slate-800">
-                Release: v4.5.0-GOV (NIC Secure GovNet)
+                Release: v2.0.0-PRO (Enterprise Multi-Protocol Edition • Build 2026.09.30)
               </div>
             </div>
           </div>

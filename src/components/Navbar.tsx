@@ -63,6 +63,7 @@ interface NavbarProps {
   onToggleLanguage?: () => void;
   onOpenCommandPalette?: () => void;
   onOpenTeamDetails?: () => void;
+  onOpenVersionModal?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -89,6 +90,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleLanguage,
   onOpenCommandPalette,
   onOpenTeamDetails,
+  onOpenVersionModal,
 }) => {
   const isInsideAndroid = isMobileFrame || (typeof window !== 'undefined' && window.location.search.includes('android_mode=1'));
   const [istTime, setIstTime] = useState('');
@@ -475,6 +477,20 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <span className="hidden lg:inline-block px-1.5 py-0.2 rounded text-[9px] font-semibold bg-blue-50 text-blue-800 border border-blue-200">
                   DARPAN v3.0
                 </span>
+                {onOpenVersionModal && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onOpenVersionModal();
+                    }}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-black bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white shadow-xs transition-all hover:scale-105 cursor-pointer border border-emerald-400/40"
+                    title="Click to view v2.0.0 Enterprise Release Specifications & Architecture Benchmark"
+                  >
+                    <Sparkles className="w-2.5 h-2.5 text-amber-300 animate-spin" />
+                    <span>v2.0.0 PRO</span>
+                  </button>
+                )}
               </div>
               <p className="text-[9.5px] text-slate-500 font-medium hidden sm:block leading-tight">
                 {language === 'hi'

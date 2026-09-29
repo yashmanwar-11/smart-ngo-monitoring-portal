@@ -255,14 +255,37 @@ export const CctvManagementSection: React.FC<CctvManagementSectionProps> = ({
   const handleImportDiscovered = (device: DiscoveredCamera) => {
     setIsDiscoverModalOpen(false);
     resetForm();
-    if (device.type === 'DEVICE_CAM') {
+    if (device.type === 'DEVICE_CAM' || device.cameraSource === 'HARDWARE_DEVICE') {
       handleSourceChange('HARDWARE_DEVICE');
+      setFormName(device.manufacturer || 'Integrated HD Sensor Node');
+      setFormLocation('Entrance / Muster Station');
+    } else if (device.type === 'HTTP_MJPEG' || device.cameraSource === 'HTTP_MJPEG' || device.port === 8080) {
+      handleSourceChange('HTTP_MJPEG');
+      setFormIpAddress(device.ip);
+      setFormPort(device.port ? device.port.toString() : '8080');
+      setFormRtspPath('/video');
+      setFormStreamUrl(device.streamUrl || `http://${device.ip}:${device.port || 8080}/video`);
+      setFormManufacturer('Android IP Webcam / Smartphone');
+      setFormModel('Live Mobile Node');
+      setFormName(`${device.manufacturer} Node`);
+      setFormLocation('Mobile Patrol Inspection Feed');
+    } else if (device.type === 'HLS_STREAM' || device.cameraSource === 'HLS_STREAM') {
+      handleSourceChange('HLS_STREAM');
+      setFormIpAddress(device.ip);
+      setFormPort('443');
+      setFormStreamUrl(device.streamUrl || 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8');
+      setFormManufacturer('Public Surveillance CDN');
+      setFormModel('High-Def HLS');
+      setFormName('Public HD Facility Stream');
+      setFormLocation('Campus Main Square');
     } else {
       handleSourceChange('RTSP_STREAM');
       setFormIpAddress(device.ip);
       setFormPort(device.port.toString());
+      setFormRtspPath(device.streamUrl ? device.streamUrl.replace(/^rtsp:\/\/[^/]+/, '') : '/live');
       setFormManufacturer(device.manufacturer.split(' ')[0] || 'Generic ONVIF');
       setFormName(`${device.manufacturer} Node`);
+      setFormLocation('Perimeter / Main Gate');
     }
     setIsRegisterModalOpen(true);
   };
@@ -764,23 +787,28 @@ export const CctvManagementSection: React.FC<CctvManagementSectionProps> = ({
                   {discoveredList.map((dev, idx) => (
                     <div
                       key={idx}
-                      className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center justify-between"
+                      className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3 hover:border-indigo-500/50 transition-colors"
                     >
-                      <div>
-                        <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-2">
-                          {dev.manufacturer}
+                      <div className="min-w-0">
+                        <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-2 flex-wrap">
+                          <span>{dev.manufacturer}</span>
                           <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
                             {dev.type}
                           </span>
+                          {dev.latencyMs && (
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-700 text-slate-300">
+                              {dev.latencyMs}ms
+                            </span>
+                          )}
                         </div>
-                        <div className="text-[11px] font-mono text-slate-500">
-                          Endpoint: {dev.ip}:{dev.port}
+                        <div className="text-[11px] font-mono text-slate-500 truncate mt-0.5">
+                          {dev.streamUrl || `Endpoint: ${dev.ip}:${dev.port}`}
                         </div>
                       </div>
 
                       <button
                         onClick={() => handleImportDiscovered(dev)}
-                        className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-sm transition-colors"
+                        className="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-sm transition-colors shrink-0"
                       >
                         Import & Connect
                       </button>

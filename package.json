@@ -1,8 +1,8 @@
 {
   "name": "smart-ngo-monitoring-portal",
   "private": true,
-  "version": "1.0.0",
-  "description": "National Real-Time NGO Monitoring & Inspection Portal with Geofencing, AI Vigilance Copilot & Live CCTV Surveillance",
+  "version": "2.0.0",
+  "description": "National Real-Time NGO Monitoring & Inspection Portal v2.0 with Geofencing, Multi-Protocol CCTV Gateway, Edge AI Vision & SHA-256 Cryptographic Evidence",
   "author": "Team InnoCoders (Team ID: 180211) - Monika Warkad, Shruti Chavan, Namrata Singare, Divya Gond, Yash Manwar, Aarti Borakhade",
   "contributors": [
     { "name": "Monika Warkad", "email": "monikawarked@gmail.com" },
