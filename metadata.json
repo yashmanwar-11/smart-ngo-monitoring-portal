@@ -1,0 +1,6 @@
+{
+  "name": "Smart Real-Time Monitoring and Inspection App",
+  "description": "Government monitoring and inspection platform for NGOs with real-time GPS tracking, multi-role dashboards, inspection audits, and complete Android & backend architecture.",
+  "requestFramePermissions": ["geolocation", "camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
