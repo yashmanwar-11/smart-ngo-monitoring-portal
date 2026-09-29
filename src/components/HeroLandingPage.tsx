@@ -486,6 +486,132 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
         </div>
       </section>
 
+      {/* 2.5 INTERACTIVE EVALUATION SUITE • 1-CLICK ROLE EXPLORATION STATION */}
+      <section className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white py-6 px-4 sm:px-6 lg:px-8 border-b border-indigo-900/50 shadow-inner">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
+            <div className="flex items-center gap-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider font-mono text-emerald-300">
+                Evaluation Demo Terminal • 1-Click Role Exploration
+              </h3>
+            </div>
+            <div className="flex items-center gap-2 text-xs text-slate-300 font-mono">
+              <span className="hidden sm:inline">Smart India Hackathon 2026</span>
+              <span className="hidden sm:inline">•</span>
+              <span className="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">
+                INSTANT UNLOCKED ACCESS
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+            {/* Level 5 Admin */}
+            <button
+              type="button"
+              onClick={() => onEnterDashboard('ADMIN')}
+              className="p-3.5 bg-white/10 hover:bg-white/20 border border-white/15 hover:border-amber-400/50 rounded-xl text-left transition-all group cursor-pointer hover:scale-[1.02] shadow-xs"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase font-mono px-2 py-0.5 rounded bg-amber-400 text-slate-950">
+                  Level 5
+                </span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all" />
+              </div>
+              <div className="font-bold text-xs sm:text-sm text-white mt-2 group-hover:text-amber-300 transition-colors">
+                Directorate General (IAS)
+              </div>
+              <div className="text-[10.5px] text-slate-300 mt-1 leading-snug">
+                National oversight, sanctions, CCTV grid &amp; random duty allocation
+              </div>
+            </button>
+
+            {/* Level 3 Inspector */}
+            <button
+              type="button"
+              onClick={() => onEnterDashboard('OFFICER')}
+              className="p-3.5 bg-white/10 hover:bg-white/20 border border-white/15 hover:border-blue-400/50 rounded-xl text-left transition-all group cursor-pointer hover:scale-[1.02] shadow-xs"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase font-mono px-2 py-0.5 rounded bg-blue-400 text-slate-950">
+                  Level 3
+                </span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-300 group-hover:translate-x-0.5 transition-all" />
+              </div>
+              <div className="font-bold text-xs sm:text-sm text-white mt-2 group-hover:text-blue-300 transition-colors">
+                Field Vigilance Inspector
+              </div>
+              <div className="text-[10.5px] text-slate-300 mt-1 leading-snug">
+                150m GPS geofenced audit, live camera evidence &amp; radar
+              </div>
+            </button>
+
+            {/* Level 2 NGO */}
+            <button
+              type="button"
+              onClick={() => onEnterDashboard('NGO')}
+              className="p-3.5 bg-white/10 hover:bg-white/20 border border-white/15 hover:border-purple-400/50 rounded-xl text-left transition-all group cursor-pointer hover:scale-[1.02] shadow-xs"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase font-mono px-2 py-0.5 rounded bg-purple-400 text-slate-950">
+                  Level 2
+                </span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-purple-300 group-hover:translate-x-0.5 transition-all" />
+              </div>
+              <div className="font-bold text-xs sm:text-sm text-white mt-2 group-hover:text-purple-300 transition-colors">
+                Registered NGO Signatory
+              </div>
+              <div className="text-[10.5px] text-slate-300 mt-1 leading-snug">
+                100-pt compliance score, DARPAN filings &amp; show-cause responses
+              </div>
+            </button>
+
+            {/* Staff Biometric Attendance */}
+            <button
+              type="button"
+              onClick={() => {
+                if (onOpenWorkerAttendance) onOpenWorkerAttendance();
+                else onEnterDashboard('NGO');
+              }}
+              className="p-3.5 bg-white/10 hover:bg-white/20 border border-white/15 hover:border-teal-400/50 rounded-xl text-left transition-all group cursor-pointer hover:scale-[1.02] shadow-xs"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase font-mono px-2 py-0.5 rounded bg-teal-400 text-slate-950">
+                  Biometrics
+                </span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-teal-300 group-hover:translate-x-0.5 transition-all" />
+              </div>
+              <div className="font-bold text-xs sm:text-sm text-white mt-2 group-hover:text-teal-300 transition-colors">
+                Staff Facial Punch-In
+              </div>
+              <div className="text-[10.5px] text-slate-300 mt-1 leading-snug">
+                Dual-camera anti-spoof liveness check &amp; GPS timesheets
+              </div>
+            </button>
+
+            {/* Public Citizen */}
+            <button
+              type="button"
+              onClick={() => onEnterDashboard('USER')}
+              className="p-3.5 bg-white/10 hover:bg-white/20 border border-white/15 hover:border-emerald-400/50 rounded-xl text-left transition-all group cursor-pointer hover:scale-[1.02] shadow-xs"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase font-mono px-2 py-0.5 rounded bg-emerald-400 text-slate-950">
+                  Public
+                </span>
+                <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-300 group-hover:translate-x-0.5 transition-all" />
+              </div>
+              <div className="font-bold text-xs sm:text-sm text-white mt-2 group-hover:text-emerald-300 transition-colors">
+                Citizen Grievance Desk
+              </div>
+              <div className="text-[10.5px] text-slate-300 mt-1 leading-snug">
+                Anonymous whistleblower reports &amp; token tracking
+              </div>
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* 3. NATIONAL AUDIT STATISTICS STRIP - MODERN GRADIENT ACCENTS */}
       <section className="bg-slate-50/80 border-b border-slate-200/80 py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -1777,10 +1903,28 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
                         {c.department}
                       </td>
                       <td className="py-3 px-4 text-center">
-                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 cursor-pointer">
-                          <FileText className="w-3.5 h-3.5" />
-                          <span>{c.size}</span>
-                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const blob = new Blob(
+                              [
+                                `GOVERNMENT OF INDIA\nMinistry of Social Justice and Empowerment\nDirectorate General of NGO Vigilance\n\nOFFICIAL GAZETTE CIRCULAR\nRef No: ${c.refNo}\nDate: ${c.date}\nDepartment: ${c.department}\n\nSUBJECT: ${c.title}\n\n1. STATUTORY AUTHORITY: In accordance with Rule 14 of General Financial Rules (GFR), 2017, all non-profit entities receiving Grants-in-Aid under central schemes must undergo mandatory on-site physical inspection.\n2. GEOFENCE ENFORCEMENT: Submission of inspection verification checklists is locked until the officer's device is verified inside the registered 150-metre GPS geofenced perimeter.\n3. EVIDENCE STANDARDS: Five dedicated photographic evidence categories (Premises, Infrastructure, Beneficiaries, Ledgers, Violations) must be timestamped with SHA-256 EXIF cryptographic hashes.\n4. PENAL PROVISIONS: Failure to verify genuine operational facilities results in immediate grant forfeiture, Section 14 show-cause issuance, and DARPAN de-registration.\n\nBy Order,\nJoint Secretary & Directorate General of NGO Vigilance\nGovernment of India`
+                              ],
+                              { type: 'text/plain;charset=utf-8' }
+                            );
+                            const url = URL.createObjectURL(blob);
+                            const link = document.createElement('a');
+                            link.href = url;
+                            link.download = `${c.refNo.replace(/[\/\\?%*:|"<>]/g, '_')}_Official_Circular.txt`;
+                            link.click();
+                            URL.revokeObjectURL(url);
+                          }}
+                          className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 hover:text-blue-900 border border-blue-200 rounded-lg text-xs font-semibold cursor-pointer transition-colors"
+                          title={`Download Gazette Order: ${c.refNo}`}
+                        >
+                          <Download className="w-3.5 h-3.5 text-blue-600" />
+                          <span>Download</span>
+                        </button>
                       </td>
                     </tr>
                   ))}

@@ -32,7 +32,8 @@ import {
   Download,
   Flame,
   Shuffle,
-  Sparkles
+  Sparkles,
+  Printer
 } from 'lucide-react';
 import { NGO, User, InspectionRecord, Complaint, NgoApplication, GovernmentInspectionTask, AuthSession, StatutoryNotice, AuditLogEntry } from '../types';
 import { noticeApi, dashboardApi, cameraApi } from '../services/apiClient';
@@ -1428,9 +1429,30 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-200">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-200 gap-2">
                     <div>Issued by: <strong>{n.issuedByName || 'Directorate General'}</strong> on {n.issuedAt}</div>
-                    <div className="font-mono text-slate-400">14-Day Mandatory Window Active</div>
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const blob = new Blob([
+                            `GOVERNMENT OF INDIA\nMinistry of Social Justice and Empowerment\nDirectorate General of NGO Vigilance\n\nOFFICIAL STATUTORY NOTICE (SECTION 14)\nNotice Ref: ${n.noticeNumber}\nDate of Issue: ${n.issuedAt}\nMandatory Response Deadline: ${n.deadline}\n\nTARGET NGO: ${n.ngoName || 'Registered NGO'} (${n.ngoDarpanId || 'DARPAN/MH/2026'})\n\nSUBJECT: ${n.subject}\nREASON: ${n.reason}\n\nDIRECTIVE DETAILS:\n${n.details}\n\nUnder Section 14 of GFR 2017 and DARPAN statutory vigilance regulations, you are hereby required to submit a comprehensive written explanation along with audited records within 14 calendar days from receipt of this notice.\n\nFailure to comply shall result in immediate freezing of welfare grant accounts and debarment from Central Grant-in-Aid schemes.\n\nSigned,\nDirectorate General (IAS)\nMinistry of Social Justice and Empowerment\nGovernment of India`
+                          ], { type: 'text/plain;charset=utf-8' });
+                          const url = URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = `Statutory_Notice_${n.noticeNumber.replace(/[\/\\?%*:|"<>]/g, '_')}.txt`;
+                          a.click();
+                          URL.revokeObjectURL(url);
+                        }}
+                        className="flex items-center gap-1 text-indigo-700 hover:text-indigo-900 font-semibold cursor-pointer"
+                        title="Export printable official Gazette notice"
+                      >
+                        <Printer className="w-3.5 h-3.5" />
+                        <span>Print Notice</span>
+                      </button>
+                      <span className="font-mono text-slate-400">14-Day Window Active</span>
+                    </div>
                   </div>
                 </div>
               ))}
