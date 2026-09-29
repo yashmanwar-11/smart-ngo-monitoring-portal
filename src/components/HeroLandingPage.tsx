@@ -40,12 +40,17 @@ import {
   X,
   QrCode,
   CheckCircle,
-  FileCheck
+  FileCheck,
+  GraduationCap,
+  Mail,
+  Phone,
+  CreditCard
 } from 'lucide-react';
 import { NGO, User } from '../types';
 import { InteractiveMap } from './InteractiveMap';
 import { EmblemOfIndia } from './EmblemOfIndia';
 import { DigitalIndiaLogo, EPramaanLogo, NgoDarpanLogo, NicLogo } from './GovLogos';
+import { SIH_TEAM_DATA } from './SihTeamModal';
 
 interface HeroLandingPageProps {
   ngos: NGO[];
@@ -58,6 +63,7 @@ interface HeroLandingPageProps {
   onOpenAndroidView?: () => void;
   onSelectNgoDetails?: (ngo: NGO) => void;
   onNavigateCitizenTab?: (tab: 'FILE_COMPLAINT' | 'TRACK_COMPLAINT' | 'REGISTER_NGO' | 'DIRECTORY') => void;
+  onOpenTeamDetails?: () => void;
 }
 
 export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
@@ -71,6 +77,7 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
   onOpenAndroidView,
   onSelectNgoDetails,
   onNavigateCitizenTab,
+  onOpenTeamDetails,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSector, setSelectedSector] = useState<string>('ALL');
@@ -1845,6 +1852,180 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
         </div>
       </section>
 
+      {/* 7.5 OFFICIAL SMART INDIA HACKATHON (SIH) INNOVATION TEAM DETAIL */}
+      <section id="sih-team-details" className="py-14 bg-gradient-to-b from-slate-50 via-white to-slate-100 border-t border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-slate-200 pb-4">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-100 text-purple-900 border border-purple-200 rounded-full text-xs font-bold font-mono tracking-wider mb-2">
+                <Sparkles className="w-3.5 h-3.5 text-purple-700 animate-pulse" />
+                <span>SMART INDIA HACKATHON INNOVATION</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <span>Team Detail</span>
+                <span className="text-xs px-2.5 py-0.5 bg-emerald-100 text-emerald-800 rounded font-semibold border border-emerald-300">
+                  Verified Candidate
+                </span>
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                Official development roster &amp; institutional credentials for INSPIRA National NGO Vigilance Portal
+              </p>
+            </div>
+
+            {onOpenTeamDetails && (
+              <button
+                type="button"
+                onClick={onOpenTeamDetails}
+                className="px-4 py-2 bg-gradient-to-r from-purple-700 via-indigo-600 to-blue-600 hover:from-purple-800 hover:to-blue-700 text-white text-xs font-bold rounded-lg shadow-sm hover:shadow transition-all cursor-pointer flex items-center gap-1.5 self-start md:self-auto"
+              >
+                <Users className="w-3.5 h-3.5 text-amber-300" />
+                <span>Open Team Dossier</span>
+              </button>
+            )}
+          </div>
+
+          {/* 4 Characteristic Gradient Info Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Card 1: Team Name */}
+            <div className="relative overflow-hidden rounded-xl p-4 text-white shadow-md bg-gradient-to-r from-[#0284c7] to-[#0ea5e9]">
+              <div className="relative z-10">
+                <div className="text-xs font-bold text-sky-100 uppercase tracking-wider">
+                  Team Name
+                </div>
+                <div className="text-xl font-black mt-1 tracking-tight">
+                  {SIH_TEAM_DATA.teamName}
+                </div>
+              </div>
+              <CreditCard className="absolute -right-2 -bottom-2 w-16 h-16 text-white/20" />
+            </div>
+
+            {/* Card 2: Team Leader Name */}
+            <div className="relative overflow-hidden rounded-xl p-4 text-white shadow-md bg-gradient-to-r from-[#65a30d] to-[#84cc16]">
+              <div className="relative z-10">
+                <div className="text-xs font-bold text-lime-100 uppercase tracking-wider">
+                  Team Leader Name
+                </div>
+                <div className="text-xl font-black mt-1 tracking-tight">
+                  {SIH_TEAM_DATA.teamLeader}
+                </div>
+              </div>
+              <Users className="absolute -right-2 -bottom-2 w-16 h-16 text-white/20" />
+            </div>
+
+            {/* Card 3: Team ID */}
+            <div className="relative overflow-hidden rounded-xl p-4 text-white shadow-md bg-gradient-to-r from-[#7c3aed] to-[#a855f7]">
+              <div className="relative z-10">
+                <div className="text-xs font-bold text-purple-100 uppercase tracking-wider">
+                  Team ID
+                </div>
+                <div className="text-xl font-black mt-1 tracking-tight font-mono">
+                  {SIH_TEAM_DATA.teamId}
+                </div>
+              </div>
+              <Building2 className="absolute -right-2 -bottom-2 w-16 h-16 text-white/20" />
+            </div>
+
+            {/* Card 4: College Name */}
+            <div className="relative overflow-hidden rounded-xl p-4 text-white shadow-md bg-gradient-to-r from-[#0284c7] to-[#2563eb]">
+              <div className="relative z-10">
+                <div className="text-xs font-bold text-cyan-100 uppercase tracking-wider">
+                  College Name
+                </div>
+                <div className="text-xs font-bold mt-1 leading-snug line-clamp-3">
+                  {SIH_TEAM_DATA.collegeName}
+                </div>
+              </div>
+              <GraduationCap className="absolute -right-2 -bottom-2 w-16 h-16 text-white/20" />
+            </div>
+          </div>
+
+          {/* Team Members Section */}
+          <div className="space-y-3 pt-2">
+            <h3 className="text-lg font-bold text-[#6d28d9] tracking-tight flex items-center gap-2">
+              <span>Team Members</span>
+              <span className="text-xs font-mono px-2 py-0.5 bg-purple-50 text-purple-700 rounded-full border border-purple-200">
+                6 Members
+              </span>
+            </h3>
+
+            {/* Responsive Table */}
+            <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-xs bg-white">
+              <table className="min-w-full divide-y divide-slate-200 text-xs text-left">
+                <thead className="bg-[#262626] text-white uppercase font-bold tracking-wider text-[11px]">
+                  <tr>
+                    <th scope="col" className="px-4 py-3">Member Role</th>
+                    <th scope="col" className="px-4 py-3">Member Name</th>
+                    <th scope="col" className="px-4 py-3">Member Email</th>
+                    <th scope="col" className="px-4 py-3">Member Phone</th>
+                    <th scope="col" className="px-4 py-3">Member Gender</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 text-slate-800">
+                  {SIH_TEAM_DATA.members.map((member) => {
+                    const isLeader = member.role === 'LEADER';
+                    return (
+                      <tr
+                        key={member.email}
+                        className={`hover:bg-slate-50/80 transition-colors ${
+                          isLeader ? 'bg-amber-50/30 font-semibold' : ''
+                        }`}
+                      >
+                        <td className="px-4 py-3 whitespace-nowrap">
+                          {isLeader ? (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10.5px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                              <Award className="w-3 h-3 text-amber-700" />
+                              LEADER
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10.5px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
+                              TEAM_MEMBER
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 font-medium text-slate-900 whitespace-nowrap">
+                          {member.name}
+                        </td>
+                        <td className="px-4 py-3 text-slate-600 font-mono whitespace-nowrap">
+                          <a
+                            href={`mailto:${member.email}`}
+                            className="hover:text-blue-600 hover:underline flex items-center gap-1"
+                          >
+                            <Mail className="w-3 h-3 text-slate-400" />
+                            {member.email}
+                          </a>
+                        </td>
+                        <td className="px-4 py-3 text-slate-700 font-mono whitespace-nowrap">
+                          <a
+                            href={`tel:${member.phone}`}
+                            className="hover:text-emerald-600 flex items-center gap-1"
+                          >
+                            <Phone className="w-3 h-3 text-slate-400" />
+                            {member.phone}
+                          </a>
+                        </td>
+                        <td className="px-4 py-3 text-slate-600 whitespace-nowrap">
+                          <span
+                            className={`px-2 py-0.5 rounded text-[11px] ${
+                              member.gender === 'Female'
+                                ? 'bg-pink-50 text-pink-700 border border-pink-200'
+                                : 'bg-blue-50 text-blue-700 border border-blue-200'
+                            }`}
+                          >
+                            {member.gender}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
       {/* 8. OFFICIAL GOVERNMENT INSTITUTIONAL FOOTER (INDIA.GOV.IN SPECIFICATION) */}
       <footer className="bg-slate-900 text-slate-300 text-xs border-t-4 border-[#0B3B60]">
         
@@ -2003,8 +2184,8 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
         {/* Bottom Attribution & Copyright Bar */}
         <div className="max-w-7xl mx-auto py-5 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-slate-400">
           <div className="text-center md:text-left leading-relaxed">
-            Website designed, developed and hosted by <strong className="text-white">National Informatics Centre (NIC)</strong>, Ministry of Electronics &amp; Information Technology, Government of India.<br />
-            Content owned, maintained and updated by Ministry of Social Justice and Empowerment.
+            Designed &amp; Developed for <strong className="text-white">Smart India Hackathon</strong> by <strong className="text-amber-300 font-bold">Team InnoCoders (Team ID: 180211)</strong> • {SIH_TEAM_DATA.collegeName}.<br />
+            Institutional Prototype for Ministry of Social Justice and Empowerment, Government of India.
           </div>
           <div className="flex items-center space-x-3 shrink-0 flex-wrap justify-center text-[11px]">
             <span className="hover:text-white cursor-pointer">Website Policies</span>

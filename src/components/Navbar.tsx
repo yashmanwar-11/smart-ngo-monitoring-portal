@@ -62,6 +62,7 @@ interface NavbarProps {
   language?: 'en' | 'hi';
   onToggleLanguage?: () => void;
   onOpenCommandPalette?: () => void;
+  onOpenTeamDetails?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -87,6 +88,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   language = 'en',
   onToggleLanguage,
   onOpenCommandPalette,
+  onOpenTeamDetails,
 }) => {
   const isInsideAndroid = isMobileFrame || (typeof window !== 'undefined' && window.location.search.includes('android_mode=1'));
   const [istTime, setIstTime] = useState('');
@@ -386,6 +388,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                 >
                   <Globe className="w-3 h-3 text-[#0B3B60]" />
                   <span>{language === 'hi' ? 'English' : 'हिन्दी'}</span>
+                </button>
+              )}
+
+              {/* SIH Team InnoCoders Detail Button */}
+              {onOpenTeamDetails && (
+                <button
+                  type="button"
+                  onClick={onOpenTeamDetails}
+                  className="flex items-center space-x-1.5 px-2.5 py-0.5 bg-gradient-to-r from-purple-700 via-indigo-600 to-blue-600 hover:from-purple-800 hover:to-blue-700 text-white rounded font-bold text-[10px] cursor-pointer shadow-xs transition-all hover:scale-105"
+                  title="Smart India Hackathon Team Detail • InnoCoders (Team ID: 180211)"
+                >
+                  <Sparkles className="w-3 h-3 text-amber-300 animate-pulse" />
+                  <span>SIH: InnoCoders (180211)</span>
                 </button>
               )}
 
@@ -1153,6 +1168,19 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Navigation Controls */}
           <div className="flex items-center space-x-2 shrink-0">
+            {onOpenTeamDetails && (
+              <button
+                type="button"
+                onClick={onOpenTeamDetails}
+                className="flex items-center space-x-1.5 px-3 py-1 rounded bg-purple-700/80 hover:bg-purple-600 text-amber-300 hover:text-white text-xs font-bold border border-purple-400/40 shadow-xs transition-all cursor-pointer whitespace-nowrap"
+                title="Smart India Hackathon Team Detail • InnoCoders (Team ID: 180211)"
+              >
+                <Users className="w-3.5 h-3.5 text-amber-300" />
+                <span className="hidden sm:inline">Team InnoCoders</span>
+                <span className="sm:hidden">Team</span>
+              </button>
+            )}
+
             {onToggleMobileFrame && (
               <button
                 type="button"

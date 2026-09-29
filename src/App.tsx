@@ -27,6 +27,7 @@ import { VigilanceAiCopilot } from './components/VigilanceAiCopilot';
 import { AndroidAppExperience } from './components/AndroidAppExperience';
 import { RandomVideoConferenceModal } from './components/RandomVideoConferenceModal';
 import { RandomAssignmentModal } from './components/RandomAssignmentModal';
+import { SihTeamModal } from './components/SihTeamModal';
 import {
   CheckCircle,
   AlertCircle,
@@ -98,6 +99,7 @@ export default function App() {
   const [isRandomVcOpen, setIsRandomVcOpen] = useState(false);
   const [randomVcPreselectedNgoId, setRandomVcPreselectedNgoId] = useState<string | undefined>(undefined);
   const [isRandomDutyModalOpen, setIsRandomDutyModalOpen] = useState(false);
+  const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
 
   // Actionable Notification Toast
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'info'; title?: string } | null>(null);
@@ -836,6 +838,7 @@ export default function App() {
         language={language}
         onToggleLanguage={() => setLanguage((prev) => (prev === 'en' ? 'hi' : 'en'))}
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+        onOpenTeamDetails={() => setIsTeamModalOpen(true)}
       />
 
       {/* Main View Render */}
@@ -854,6 +857,7 @@ export default function App() {
             setDashboardTargetTab(tab);
             handleEnterDashboard('USER');
           }}
+          onOpenTeamDetails={() => setIsTeamModalOpen(true)}
         />
       ) : currentView === 'WORKER_ATTENDANCE' ? (
         /* Dedicated NGO Worker Regular Attendance Workspace */
@@ -1231,6 +1235,7 @@ export default function App() {
           setIsRandomDutyModalOpen(true);
         }}
         onShowToast={showToast}
+        onOpenTeamDetails={() => setIsTeamModalOpen(true)}
       />
 
       {/* Institutional VigilanceAI Copilot & Autonomous Agent Drawer */}
@@ -1252,6 +1257,12 @@ export default function App() {
           }}
         />
       )}
+
+      {/* Official Smart India Hackathon Team Detail Modal */}
+      <SihTeamModal
+        isOpen={isTeamModalOpen}
+        onClose={() => setIsTeamModalOpen(false)}
+      />
     </div>
   );
 }

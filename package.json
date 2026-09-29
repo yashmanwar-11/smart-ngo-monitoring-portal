@@ -3,6 +3,15 @@
   "private": true,
   "version": "1.0.0",
   "description": "National Real-Time NGO Monitoring & Inspection Portal with Geofencing, AI Vigilance Copilot & Live CCTV Surveillance",
+  "author": "Team InnoCoders (Team ID: 180211) - Monika Warkad, Shruti Chavan, Namrata Singare, Divya Gond, Yash Manwar, Aarti Borakhade",
+  "contributors": [
+    { "name": "Monika Warkad", "email": "monikawarked@gmail.com" },
+    { "name": "Shruti Chavan", "email": "shrutichawan2006@gmail.com" },
+    { "name": "Namrata Singare", "email": "namratasingare7@gmail.com" },
+    { "name": "Divya Gond", "email": "gonddivya17@gmail.com" },
+    { "name": "Yash Manwar", "email": "yashmanwar0711@gmail.com" },
+    { "name": "Aarti Borakhade", "email": "aartiborakhad@gmail.com" }
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",

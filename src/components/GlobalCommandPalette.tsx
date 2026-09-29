@@ -7,6 +7,7 @@ import {
   Shield,
   ShieldAlert,
   UserCheck,
+  Users,
   AlertTriangle,
   FileCheck2,
   Home,
@@ -44,6 +45,7 @@ interface GlobalCommandPaletteProps {
   onToggleHighContrast: () => void;
   onToggleAndroidSimulator: () => void;
   onShowToast: (msg: string, type?: 'success' | 'info') => void;
+  onOpenTeamDetails?: () => void;
 }
 
 export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
@@ -57,6 +59,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onToggleHighContrast,
   onToggleAndroidSimulator,
   onShowToast,
+  onOpenTeamDetails,
 }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -142,6 +145,18 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
       icon: <Building2 className="w-4 h-4 text-cyan-500" />,
       action: () => {
         onNavigateView('DASHBOARD', 'NGO');
+        onClose();
+      },
+    },
+    {
+      id: 'action-sih-team',
+      title: 'Smart India Hackathon: Team InnoCoders Detail',
+      subtitle: "Team ID: 180211 • Leader: Monika Warkad • Mauli Group of Institution's COET, Shegaon",
+      category: 'ACTIONS',
+      badge: 'SIH 2026',
+      icon: <Users className="w-4 h-4 text-purple-400" />,
+      action: () => {
+        onOpenTeamDetails?.();
         onClose();
       },
     },

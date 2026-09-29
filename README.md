@@ -21,6 +21,29 @@
 
 ---
 
+## 👥 Smart India Hackathon (SIH) Innovation Team
+
+<div align="center">
+
+| 🏷️ Team Name | 👑 Team Leader | 🆔 Team ID | 🎓 College / Institution |
+| :---: | :---: | :---: | :---: |
+| **InnoCoders** | **Monika Warkad** | `180211` | **Mauli Group of Institution's College of Engineering & Technology, Shegaon** |
+
+</div>
+
+### 📋 Team Members & Development Roster
+
+| Member Role | Member Name | Member Email | Member Phone | Member Gender |
+| :--- | :--- | :--- | :--- | :--- |
+| 👑 **LEADER** | **Monika Warkad** | `monikawarked@gmail.com` | `+91 7558273598` | Female |
+| 💻 **TEAM_MEMBER** | **Shruti Chavan** | `shrutichawan2006@gmail.com` | `+91 8668483628` | Female |
+| 💻 **TEAM_MEMBER** | **Namrata Singare** | `namratasingare7@gmail.com` | `+91 8668793207` | Female |
+| 💻 **TEAM_MEMBER** | **Divya Gond** | `gonddivya17@gmail.com` | `+91 9518922745` | Female |
+| 💻 **TEAM_MEMBER** | **Yash Manwar** | `yashmanwar0711@gmail.com` | `+91 9209673221` | Male |
+| 💻 **TEAM_MEMBER** | **Aarti Borakhade** | `aartiborakhad@gmail.com` | `+91 7030600999` | Female |
+
+---
+
 ## 📌 Executive Overview
 **INSPIRA** is a comprehensive, institutional-grade digital monitoring and physical vigilance platform designed to prevent fund misappropriation, ensure statutory compliance, and streamline ground-level inspections of Non-Governmental Organizations (NGOs) and funded shelter homes across India.
 
@@ -163,5 +186,6 @@ npm run build
 ---
 
 <div align="center">
-  <sub>Developed for Smart Real-Time NGO Monitoring & Inspection • Government of India</sub>
+  <sub>Designed &amp; Developed for Smart India Hackathon (SIH 2026) by <strong>Team InnoCoders (Team ID: 180211)</strong> • Mauli Group of Institution's College of Engineering &amp; Technology, Shegaon</sub><br />
+  <sub>Institutional Prototype for Ministry of Social Justice and Empowerment • Government of India</sub>
 </div>
