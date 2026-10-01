@@ -489,6 +489,7 @@ export function initSchema(): void {
 
   // Safe non-destructive column migrations for existing SQLite databases
   const schemaMigrations = [
+    'ALTER TABLE users ADD COLUMN avatar_url TEXT',
     'ALTER TABLE ngos ADD COLUMN scheme TEXT',
     'ALTER TABLE ngos ADD COLUMN ngo_type TEXT',
     'ALTER TABLE ngos ADD COLUMN website TEXT',

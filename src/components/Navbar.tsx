@@ -647,43 +647,79 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                  className="flex items-center space-x-2.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-300 rounded-md text-xs text-left cursor-pointer transition-colors shadow-2xs"
+                  className="flex items-center space-x-2.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-300 rounded-md text-xs text-left cursor-pointer transition-all shadow-2xs hover:shadow-xs group"
                 >
-                  <div className="w-7 h-7 rounded bg-[#0B3B60] flex items-center justify-center font-bold text-amber-300 text-xs shadow-xs border border-[#0B3B60]">
-                    {currentUser.name.charAt(0)}
+                  <div className="relative">
+                    {currentUser.avatarUrl ? (
+                      <img
+                        src={currentUser.avatarUrl}
+                        alt={currentUser.name}
+                        className="w-7 h-7 rounded-full object-cover border border-[#0B3B60]/30 shadow-2xs ring-1 ring-[#0B3B60]/20"
+                      />
+                    ) : (
+                      <div className="w-7 h-7 rounded-full bg-[#0B3B60] flex items-center justify-center font-bold text-amber-300 text-xs shadow-xs border border-[#0B3B60]">
+                        {currentUser.name.charAt(0)}
+                      </div>
+                    )}
+                    <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"></span>
                   </div>
                   <div className="hidden sm:block">
-                    <div className="text-xs font-bold text-slate-900 leading-tight max-w-[150px] truncate">
+                    <div className="text-xs font-bold text-slate-900 leading-tight max-w-[150px] truncate group-hover:text-[#0B3B60] transition-colors">
                       {currentUser.name}
                     </div>
-                    <div className="text-[10px] text-slate-600 font-medium truncate">
-                      {currentUser.designation?.split('•')[0] || currentUser.role}
+                    <div className="text-[10px] text-slate-600 font-medium truncate flex items-center gap-1">
+                      <span>{currentUser.designation?.split('•')[0] || currentUser.role}</span>
                     </div>
                   </div>
-                  <ChevronDown className="w-3.5 h-3.5 text-slate-600" />
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-600 transition-transform group-hover:translate-y-0.5" />
                 </button>
 
                 {/* Authenticated User Menu Dropdown */}
                 {isUserMenuOpen && (
-                  <div className="absolute right-0 mt-1.5 w-80 bg-white border border-slate-300 rounded-xl shadow-2xl p-2.5 z-50 text-slate-900 animate-fade-in">
-                    <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg mb-2">
-                      <div className="flex items-center justify-between">
-                        <p className="text-xs font-bold text-slate-900 truncate">{currentUser.name}</p>
-                        <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <div className="absolute right-0 mt-1.5 w-84 bg-white/95 backdrop-blur-md border border-slate-300 rounded-xl shadow-2xl p-3 z-50 text-slate-900 animate-fade-in divide-y divide-slate-100">
+                    <div className="p-3 bg-gradient-to-br from-slate-50 to-blue-50/40 border border-slate-200/80 rounded-xl mb-2.5 shadow-2xs">
+                      <div className="flex items-center gap-3">
+                        <div className="relative shrink-0">
+                          {currentUser.avatarUrl ? (
+                            <img
+                              src={currentUser.avatarUrl}
+                              alt={currentUser.name}
+                              className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md ring-2 ring-[#0B3B60]/20"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 rounded-full bg-[#0B3B60] flex items-center justify-center font-bold text-amber-300 text-lg shadow-md border-2 border-white">
+                              {currentUser.name.charAt(0)}
+                            </div>
+                          )}
+                          <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white shadow-xs" title="e-Pramaan Live Verified"></span>
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs font-bold text-slate-900 truncate">{currentUser.name}</p>
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300">
+                              ACTIVE
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-slate-600 truncate mt-0.5 font-mono">{currentUser.email}</p>
+                          <p className="text-[10px] text-[#0B3B60] font-bold truncate mt-0.5">{currentUser.designation}</p>
+                        </div>
                       </div>
-                      <p className="text-[11px] text-slate-600 truncate mt-0.5">{currentUser.email}</p>
-                      <p className="text-[10px] text-blue-700 font-bold truncate mt-0.5">{currentUser.designation}</p>
-                      <div className="mt-2 flex items-center gap-1.5 flex-wrap">
+                      <div className="mt-2.5 pt-2 border-t border-slate-200/60 flex items-center gap-1.5 flex-wrap">
                         {getRoleBadge(currentUser.role)}
                         {currentUser.badgeNumber && (
-                          <span className="text-[10px] text-slate-700 font-mono bg-white border border-slate-300 px-2 py-0.5 rounded">
+                          <span className="text-[10px] text-slate-700 font-mono bg-white border border-slate-300 px-2 py-0.5 rounded shadow-2xs">
                             ID: {currentUser.badgeNumber}
+                          </span>
+                        )}
+                        {currentUser.clearance && (
+                          <span className="text-[9px] text-amber-900 font-semibold bg-amber-50 border border-amber-300/80 px-1.5 py-0.5 rounded">
+                            {currentUser.clearance.replace(/_/g, ' ')}
                           </span>
                         )}
                       </div>
                     </div>
 
-                    <div className="space-y-1 text-xs">
+                    <div className="pt-2 space-y-1 text-xs">
                       <button
                         type="button"
                         onClick={() => {
@@ -723,7 +759,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                         </button>
 
                         {isDelegationSubmenuOpen && (
-                          <div className="mt-1 p-1 bg-slate-50 border border-slate-200 rounded-md max-h-48 overflow-y-auto space-y-1">
+                          <div className="mt-1 p-1 bg-slate-50 border border-slate-200 rounded-md max-h-52 overflow-y-auto space-y-1">
                             {allUsers.map((u) => (
                               <button
                                 key={u.id}
@@ -739,11 +775,15 @@ export const Navbar: React.FC<NavbarProps> = ({
                                     : 'hover:bg-slate-200 text-slate-700'
                                 }`}
                               >
-                                <span className="truncate max-w-[190px]">
-                                  {u.role === 'ADMIN' ? '🏛️' : u.role === 'OFFICER' ? '👮' : u.role === 'NGO' ? '🏢' : u.role === 'NGO_WORKER' ? '👩‍⚕️' : '👤'}{' '}
-                                  {u.name}
+                                <span className="flex items-center gap-2 truncate max-w-[210px]">
+                                  {u.avatarUrl ? (
+                                    <img src={u.avatarUrl} alt={u.name} className="w-5 h-5 rounded-full object-cover shrink-0 border border-slate-300" />
+                                  ) : (
+                                    <span>{u.role === 'ADMIN' ? '🏛️' : u.role === 'OFFICER' ? '👮' : u.role === 'NGO' ? '🏢' : u.role === 'NGO_WORKER' ? '👩‍⚕️' : '👤'}</span>
+                                  )}
+                                  <span className="truncate">{u.name}</span>
                                 </span>
-                                <span className="text-[9px] font-mono uppercase opacity-75">{u.role}</span>
+                                <span className="text-[9px] font-mono uppercase opacity-75 shrink-0">{u.role}</span>
                               </button>
                             ))}
                           </div>

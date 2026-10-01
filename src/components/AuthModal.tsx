@@ -434,23 +434,30 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </span>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
                   {/* 1. IAS Admin */}
                   <button
                     type="button"
                     disabled={isSubmitting}
                     onClick={() => handleSelectDemoCredentials('admin.monitoring@gov.in', 'Password@123')}
-                    className="p-2.5 rounded-xl bg-slate-50 hover:bg-amber-50/80 border border-slate-200 hover:border-amber-300 text-left transition-all group cursor-pointer disabled:opacity-50 flex flex-col justify-between"
+                    className="p-3 rounded-xl bg-slate-50 hover:bg-amber-50/80 border border-slate-200 hover:border-amber-400 text-left transition-all group cursor-pointer disabled:opacity-50 flex flex-col justify-between card-hover-lift relative overflow-hidden"
                   >
-                    <div>
-                      <div className="flex items-center gap-1 text-[11px] font-bold text-slate-900 group-hover:text-amber-800">
-                        <span>🏛️</span>
-                        <span>IAS Directorate</span>
+                    <div className="flex items-center gap-2 mb-2">
+                      <img
+                        src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400"
+                        alt="Dr. Rajesh Verma"
+                        className="w-8 h-8 rounded-full object-cover border border-amber-400/50 shadow-2xs shrink-0"
+                      />
+                      <div className="min-w-0">
+                        <div className="text-[11px] font-bold text-slate-900 group-hover:text-amber-900 truncate">
+                          Dr. Rajesh Verma
+                        </div>
+                        <div className="text-[9px] text-slate-500 font-medium truncate">IAS Joint Secy</div>
                       </div>
-                      <div className="text-[10px] text-slate-600 font-medium truncate mt-0.5">Dr. Rajesh Verma</div>
                     </div>
-                    <div className="text-[8px] font-bold text-amber-800 mt-2 uppercase font-mono bg-amber-100/70 px-1 py-0.5 rounded w-fit">
-                      Level 5 Admin
+                    <div className="flex items-center justify-between mt-1 pt-1.5 border-t border-slate-200/60 text-[9px] font-mono">
+                      <span className="font-bold text-amber-800 bg-amber-100/80 px-1.5 py-0.5 rounded">LEVEL 5</span>
+                      <span className="text-slate-400 group-hover:text-amber-700">Enter →</span>
                     </div>
                   </button>
 
@@ -459,17 +466,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     type="button"
                     disabled={isSubmitting}
                     onClick={() => handleSelectDemoCredentials('vikram.singh@inspection.gov.in', 'Password@123')}
-                    className="p-2.5 rounded-xl bg-slate-50 hover:bg-blue-50/80 border border-slate-200 hover:border-blue-300 text-left transition-all group cursor-pointer disabled:opacity-50 flex flex-col justify-between"
+                    className="p-3 rounded-xl bg-slate-50 hover:bg-blue-50/80 border border-slate-200 hover:border-blue-400 text-left transition-all group cursor-pointer disabled:opacity-50 flex flex-col justify-between card-hover-lift relative overflow-hidden"
                   >
-                    <div>
-                      <div className="flex items-center gap-1 text-[11px] font-bold text-slate-900 group-hover:text-blue-800">
-                        <span>👮</span>
-                        <span>Field Vigilance</span>
+                    <div className="flex items-center gap-2 mb-2">
+                      <img
+                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400"
+                        alt="Inspector Vikram Singh"
+                        className="w-8 h-8 rounded-full object-cover border border-blue-400/50 shadow-2xs shrink-0"
+                      />
+                      <div className="min-w-0">
+                        <div className="text-[11px] font-bold text-slate-900 group-hover:text-blue-900 truncate">
+                          Vikram Singh
+                        </div>
+                        <div className="text-[9px] text-slate-500 font-medium truncate">Field Inspector</div>
                       </div>
-                      <div className="text-[10px] text-slate-600 font-medium truncate mt-0.5">Vikram Singh</div>
                     </div>
-                    <div className="text-[8px] font-bold text-blue-800 mt-2 uppercase font-mono bg-blue-100/70 px-1 py-0.5 rounded w-fit">
-                      Level 3 Inspector
+                    <div className="flex items-center justify-between mt-1 pt-1.5 border-t border-slate-200/60 text-[9px] font-mono">
+                      <span className="font-bold text-blue-800 bg-blue-100/80 px-1.5 py-0.5 rounded">LEVEL 3</span>
+                      <span className="text-slate-400 group-hover:text-blue-700">Enter →</span>
                     </div>
                   </button>
 
@@ -477,18 +491,25 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   <button
                     type="button"
                     disabled={isSubmitting}
-                    onClick={() => handleSelectDemoCredentials('worker.sunita@swasthya.org', 'Password@123')}
-                    className="p-2.5 rounded-xl bg-slate-50 hover:bg-emerald-50/80 border border-slate-200 hover:border-emerald-300 text-left transition-all group cursor-pointer disabled:opacity-50 flex flex-col justify-between"
+                    onClick={() => handleSelectDemoCredentials('worker.patil@swasthya.org', 'Worker@123')}
+                    className="p-3 rounded-xl bg-slate-50 hover:bg-emerald-50/80 border border-slate-200 hover:border-emerald-400 text-left transition-all group cursor-pointer disabled:opacity-50 flex flex-col justify-between card-hover-lift relative overflow-hidden"
                   >
-                    <div>
-                      <div className="flex items-center gap-1 text-[11px] font-bold text-slate-900 group-hover:text-emerald-800">
-                        <span>🩺</span>
-                        <span>Field Staff</span>
+                    <div className="flex items-center gap-2 mb-2">
+                      <img
+                        src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400"
+                        alt="Sunita Patil"
+                        className="w-8 h-8 rounded-full object-cover border border-emerald-400/50 shadow-2xs shrink-0"
+                      />
+                      <div className="min-w-0">
+                        <div className="text-[11px] font-bold text-slate-900 group-hover:text-emerald-900 truncate">
+                          Sunita Patil
+                        </div>
+                        <div className="text-[9px] text-slate-500 font-medium truncate">Field Staff</div>
                       </div>
-                      <div className="text-[10px] text-slate-600 font-medium truncate mt-0.5">Sunita Patil</div>
                     </div>
-                    <div className="text-[8px] font-bold text-teal-800 mt-2 uppercase font-mono bg-teal-100/70 px-1 py-0.5 rounded w-fit">
-                      Level 2 Staff
+                    <div className="flex items-center justify-between mt-1 pt-1.5 border-t border-slate-200/60 text-[9px] font-mono">
+                      <span className="font-bold text-emerald-800 bg-emerald-100/80 px-1.5 py-0.5 rounded">LEVEL 2</span>
+                      <span className="text-slate-400 group-hover:text-emerald-700">Enter →</span>
                     </div>
                   </button>
 
@@ -497,17 +518,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     type="button"
                     disabled={isSubmitting}
                     onClick={() => handleSelectDemoCredentials('pratham.delhi@domain.org', 'Password@123')}
-                    className="p-2.5 rounded-xl bg-slate-50 hover:bg-purple-50/80 border border-slate-200 hover:border-purple-300 text-left transition-all group cursor-pointer disabled:opacity-50 flex flex-col justify-between"
+                    className="p-3 rounded-xl bg-slate-50 hover:bg-purple-50/80 border border-slate-200 hover:border-purple-400 text-left transition-all group cursor-pointer disabled:opacity-50 flex flex-col justify-between card-hover-lift relative overflow-hidden"
                   >
-                    <div>
-                      <div className="flex items-center gap-1 text-[11px] font-bold text-slate-900 group-hover:text-purple-800">
-                        <span>🏢</span>
-                        <span>NGO Signatory</span>
+                    <div className="flex items-center gap-2 mb-2">
+                      <img
+                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400"
+                        alt="Madhav Chavan"
+                        className="w-8 h-8 rounded-full object-cover border border-purple-400/50 shadow-2xs shrink-0"
+                      />
+                      <div className="min-w-0">
+                        <div className="text-[11px] font-bold text-slate-900 group-hover:text-purple-900 truncate">
+                          Madhav Chavan
+                        </div>
+                        <div className="text-[9px] text-slate-500 font-medium truncate">Pratham Rep</div>
                       </div>
-                      <div className="text-[10px] text-slate-600 font-medium truncate mt-0.5">Pratham Delhi</div>
                     </div>
-                    <div className="text-[8px] font-bold text-purple-800 mt-2 uppercase font-mono bg-purple-100/70 px-1 py-0.5 rounded w-fit">
-                      Level 2 NGO Rep
+                    <div className="flex items-center justify-between mt-1 pt-1.5 border-t border-slate-200/60 text-[9px] font-mono">
+                      <span className="font-bold text-purple-800 bg-purple-100/80 px-1.5 py-0.5 rounded">LEVEL 2</span>
+                      <span className="text-slate-400 group-hover:text-purple-700">Enter →</span>
                     </div>
                   </button>
 
@@ -516,17 +544,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     type="button"
                     disabled={isSubmitting}
                     onClick={() => handleSelectDemoCredentials('citizen.kavita@domain.in', 'Password@123')}
-                    className="p-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 text-left transition-all group cursor-pointer disabled:opacity-50 flex flex-col justify-between"
+                    className="p-3 rounded-xl bg-slate-50 hover:bg-sky-50/80 border border-slate-200 hover:border-sky-400 text-left transition-all group cursor-pointer disabled:opacity-50 flex flex-col justify-between card-hover-lift relative overflow-hidden"
                   >
-                    <div>
-                      <div className="flex items-center gap-1 text-[11px] font-bold text-slate-900 group-hover:text-slate-800">
-                        <span>👤</span>
-                        <span>Citizen Portal</span>
+                    <div className="flex items-center gap-2 mb-2">
+                      <img
+                        src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400"
+                        alt="Kavita Sharma"
+                        className="w-8 h-8 rounded-full object-cover border border-sky-400/50 shadow-2xs shrink-0"
+                      />
+                      <div className="min-w-0">
+                        <div className="text-[11px] font-bold text-slate-900 group-hover:text-sky-900 truncate">
+                          Kavita Sharma
+                        </div>
+                        <div className="text-[9px] text-slate-500 font-medium truncate">Whistleblower</div>
                       </div>
-                      <div className="text-[10px] text-slate-600 font-medium truncate mt-0.5">Kavita Sharma</div>
                     </div>
-                    <div className="text-[8px] font-bold text-slate-700 mt-2 uppercase font-mono bg-slate-200/80 px-1 py-0.5 rounded w-fit">
-                      Level 1 Public
+                    <div className="flex items-center justify-between mt-1 pt-1.5 border-t border-slate-200/60 text-[9px] font-mono">
+                      <span className="font-bold text-sky-800 bg-sky-100/80 px-1.5 py-0.5 rounded">LEVEL 1</span>
+                      <span className="text-slate-400 group-hover:text-sky-700">Enter →</span>
                     </div>
                   </button>
                 </div>

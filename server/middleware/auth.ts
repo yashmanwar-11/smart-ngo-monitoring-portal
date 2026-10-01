@@ -8,7 +8,7 @@ export interface AuthenticatedUser {
   id: string;
   username: string;
   email: string;
-  role: 'ADMIN' | 'OFFICER' | 'NGO' | 'USER';
+  role: 'ADMIN' | 'OFFICER' | 'NGO' | 'USER' | 'NGO_WORKER';
   clearance_level: string;
   full_name: string;
   designation?: string;
@@ -17,6 +17,9 @@ export interface AuthenticatedUser {
   assigned_district?: string;
   ngo_id?: string;
   status: string;
+  phone?: string;
+  avatar_url?: string;
+  created_at?: string;
 }
 
 export interface AuthRequest extends Request {
@@ -57,7 +60,7 @@ export function authenticateToken(req: AuthRequest, res: Response, next: NextFun
     const user = queryOne<AuthenticatedUser>(
       `SELECT u.id, u.username, u.email, r.name as role, r.clearance_level,
               u.full_name, u.designation, u.badge_number, u.department,
-              u.assigned_district, u.ngo_id, u.status
+              u.assigned_district, u.ngo_id, u.status, u.phone, u.avatar_url
        FROM users u
        JOIN roles r ON u.role_id = r.id
        WHERE u.id = ? AND u.status != 'SUSPENDED'`,
@@ -111,7 +114,7 @@ export function optionalAuth(req: AuthRequest, res: Response, next: NextFunction
   next();
 }
 
-export function requireRole(allowedRoles: Array<'ADMIN' | 'OFFICER' | 'NGO' | 'USER'>) {
+export function requireRole(allowedRoles: Array<'ADMIN' | 'OFFICER' | 'NGO' | 'USER' | 'NGO_WORKER'>) {
   return (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (!req.user) {
       res.status(401).json({ error: 'UNAUTHENTICATED', message: 'Authentication required.' });
