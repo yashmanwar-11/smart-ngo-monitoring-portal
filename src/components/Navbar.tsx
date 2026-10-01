@@ -32,7 +32,8 @@ import {
   X,
   Sparkles,
   ArrowRight,
-  Video
+  Video,
+  Zap
 } from 'lucide-react';
 import { User, AuthSession } from '../types';
 import { EmblemOfIndia } from './EmblemOfIndia';
@@ -64,6 +65,7 @@ interface NavbarProps {
   onOpenCommandPalette?: () => void;
   onOpenTeamDetails?: () => void;
   onOpenVersionModal?: () => void;
+  onOpenApiConfigModal?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -91,6 +93,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenCommandPalette,
   onOpenTeamDetails,
   onOpenVersionModal,
+  onOpenApiConfigModal,
 }) => {
   const isInsideAndroid = isMobileFrame || (typeof window !== 'undefined' && window.location.search.includes('android_mode=1'));
   const [istTime, setIstTime] = useState('');
@@ -489,6 +492,20 @@ export const Navbar: React.FC<NavbarProps> = ({
                   >
                     <Sparkles className="w-2.5 h-2.5 text-amber-300 animate-spin" />
                     <span>v2.0.0 PRO</span>
+                  </button>
+                )}
+                {onOpenApiConfigModal && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onOpenApiConfigModal();
+                    }}
+                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/15 hover:bg-amber-500/25 text-amber-900 border border-amber-400/50 shadow-xs transition-all hover:scale-105 cursor-pointer"
+                    title="Live External APIs & Neural Gateway (Gemini 2.5 Flash, Open-Meteo, Nominatim, Web Crypto)"
+                  >
+                    <Zap className="w-2.5 h-2.5 text-amber-600 animate-pulse" />
+                    <span>Live APIs</span>
                   </button>
                 )}
               </div>

@@ -29,6 +29,7 @@ import { RandomVideoConferenceModal } from './components/RandomVideoConferenceMo
 import { RandomAssignmentModal } from './components/RandomAssignmentModal';
 import { SihTeamModal } from './components/SihTeamModal';
 import { VersionReleaseModal } from './components/VersionReleaseModal';
+import { ApiKeysConfigModal } from './components/ApiKeysConfigModal';
 import {
   CheckCircle,
   AlertCircle,
@@ -102,6 +103,7 @@ export default function App() {
   const [isRandomDutyModalOpen, setIsRandomDutyModalOpen] = useState(false);
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
   const [isVersionModalOpen, setIsVersionModalOpen] = useState(false);
+  const [isApiConfigModalOpen, setIsApiConfigModalOpen] = useState(false);
 
   // Actionable Notification Toast
   const [toastMessage, setToastMessage] = useState<{ text: string; type: 'success' | 'info'; title?: string } | null>(null);
@@ -842,6 +844,7 @@ export default function App() {
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onOpenTeamDetails={() => setIsTeamModalOpen(true)}
         onOpenVersionModal={() => setIsVersionModalOpen(true)}
+        onOpenApiConfigModal={() => setIsApiConfigModalOpen(true)}
       />
 
       {/* Main View Render */}
@@ -1240,6 +1243,7 @@ export default function App() {
         onShowToast={showToast}
         onOpenTeamDetails={() => setIsTeamModalOpen(true)}
         onOpenVersionModal={() => setIsVersionModalOpen(true)}
+        onOpenApiConfigModal={() => setIsApiConfigModalOpen(true)}
       />
 
       {/* Institutional VigilanceAI Copilot & Autonomous Agent Drawer */}
@@ -1277,6 +1281,13 @@ export default function App() {
           setDashboardTargetTab(tab);
           setCurrentView('DASHBOARD');
         }}
+      />
+
+      {/* Live APIs & System Integration Gateway Hub Modal */}
+      <ApiKeysConfigModal
+        isOpen={isApiConfigModalOpen}
+        onClose={() => setIsApiConfigModalOpen(false)}
+        onShowToast={showToast}
       />
     </div>
   );

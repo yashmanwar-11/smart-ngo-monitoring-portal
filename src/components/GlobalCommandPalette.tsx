@@ -20,7 +20,8 @@ import {
   Clock,
   Sparkles,
   Shuffle,
-  Video
+  Video,
+  Zap
 } from 'lucide-react';
 import { NGO } from '../types';
 
@@ -47,6 +48,7 @@ interface GlobalCommandPaletteProps {
   onShowToast: (msg: string, type?: 'success' | 'info') => void;
   onOpenTeamDetails?: () => void;
   onOpenVersionModal?: () => void;
+  onOpenApiConfigModal?: () => void;
 }
 
 export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
@@ -62,6 +64,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onShowToast,
   onOpenTeamDetails,
   onOpenVersionModal,
+  onOpenApiConfigModal,
 }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -147,6 +150,18 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
       icon: <Building2 className="w-4 h-4 text-cyan-500" />,
       action: () => {
         onNavigateView('DASHBOARD', 'NGO');
+        onClose();
+      },
+    },
+    {
+      id: 'action-live-apis',
+      title: 'Live APIs & System Integration Gateway Hub',
+      subtitle: 'Google Gemini 2.5 Flash, Open-Meteo Weather, Nominatim Geocoding, Web Speech & Web Crypto',
+      category: 'ACTIONS',
+      badge: '6 ENGINES',
+      icon: <Zap className="w-4 h-4 text-emerald-400" />,
+      action: () => {
+        onOpenApiConfigModal?.();
         onClose();
       },
     },
