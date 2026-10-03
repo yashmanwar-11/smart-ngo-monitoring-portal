@@ -477,8 +477,8 @@ export async function seedDatabase(forceReseed = false): Promise<void> {
       ) VALUES
       (
         'usr_admin_1', 'admin.monitoring', 'admin.monitoring@gov.in', '${passwordHash}',
-        'role_admin', 'Dr. Rajesh Verma, IAS', 'Director General & Joint Secretary (Oversight)',
-        '+91 98110 44210', 'GOV-DIR-009', 'Ministry of Social Justice & Empowerment • Directorate of NGO Vigilance',
+        'role_admin', 'Demo Director (role: Directorate)', 'Directorate Administrator (Hackathon Demo Account)',
+        '+91 98110 44210', 'DEMO-DIR-001', 'Directorate Oversight (SIH Demo Account)',
         'National Directorate', 'ACTIVE', NULL
       ),
       (
@@ -641,33 +641,33 @@ export async function seedDatabase(forceReseed = false): Promise<void> {
       ) VALUES
       (
         'ev_1', 'INSP-2026-1042', 'PREMISE_SIGNBOARD', 'Official Entrance Signboard with DARPAN Reg Number',
-        'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&q=80&w=800',
+        'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450"><rect width="800" height="450" fill="%230f172a"/><rect x="20" y="20" width="760" height="410" rx="16" fill="%231e293b" stroke="%233b82f6" stroke-width="2"/><text x="50" y="70" fill="%2393c5fd" font-family="monospace" font-size="18" font-weight="bold">INSPIRA PROTOTYPE • EVIDENTIARY AUDIT RECORD</text><text x="50" y="120" fill="%23ffffff" font-family="sans-serif" font-size="22" font-weight="bold">Official Entrance Signboard &amp; DARPAN Reg Number</text><text x="50" y="160" fill="%2394a3b8" font-family="monospace" font-size="15">SITE: B-4, Godrej Bhavan, Home Street, Fort, Mumbai</text><text x="50" y="195" fill="%2334d399" font-family="monospace" font-size="15">GPS: 18.9345°N, 72.8354°E (±3.2m) | TIME: 02/09/2026, 11:12 AM IST</text><text x="50" y="230" fill="%23fbbf24" font-family="monospace" font-size="15">OFFICER BADGE: DEMO-INSP-402 | CLASSIFICATION: PREMISE_SIGNBOARD</text><rect x="50" y="270" width="700" height="120" rx="12" fill="%230f172a" stroke="%23334155"/><text x="70" y="310" fill="%23e2e8f0" font-family="sans-serif" font-size="14" font-weight="bold">PHYSICAL STATUS: VERIFIED ON-SITE</text><text x="70" y="340" fill="%2394a3b8" font-family="monospace" font-size="12">TAMPER-PROOF HASH: SHA256:7f4a9b2c8e1039da58f12a38c94e772b1a8d05e2786311bc44fae89127dcbb01</text><text x="70" y="365" fill="%2338bdf8" font-family="monospace" font-size="11">AUDIT TELEMETRY: DEMO NODE MH-01 // SHA-256 VERIFIED</text></svg>',
         'SHA256:7f4a9b2c8e1039da58f12a38c94e772b1a8d05e2786311bc44fae89127dcbb01',
-        18.9345, 72.8354, 3.2, '02/09/2026, 11:12 AM IST', 'INSP-MH-402', 'B-4, Godrej Bhavan, Home Street, Fort, Mumbai'
+        18.9345, 72.8354, 3.2, '02/09/2026, 11:12 AM IST', 'DEMO-INSP-402', 'B-4, Godrej Bhavan, Home Street, Fort, Mumbai'
       ),
       (
         'ev_2', 'INSP-2026-1042', 'ACCOUNTS_LEDGERS', 'Physical Cash Book & Verified Grant Expense Vouchers',
-        'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=800',
+        'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450"><rect width="800" height="450" fill="%230f172a"/><rect x="20" y="20" width="760" height="410" rx="16" fill="%231e293b" stroke="%2310b981" stroke-width="2"/><text x="50" y="70" fill="%236ee7b7" font-family="monospace" font-size="18" font-weight="bold">INSPIRA PROTOTYPE • STATUTORY ACCOUNTS AUDIT</text><text x="50" y="120" fill="%23ffffff" font-family="sans-serif" font-size="22" font-weight="bold">Physical Cash Book &amp; Verified Grant Expense Vouchers</text><text x="50" y="160" fill="%2394a3b8" font-family="monospace" font-size="15">SITE: B-4, Godrej Bhavan, Home Street, Fort, Mumbai</text><text x="50" y="195" fill="%2334d399" font-family="monospace" font-size="15">GPS: 18.9346°N, 72.8353°E (±2.8m) | TIME: 02/09/2026, 11:34 AM IST</text><text x="50" y="230" fill="%23fbbf24" font-family="monospace" font-size="15">OFFICER BADGE: DEMO-INSP-402 | CLASSIFICATION: ACCOUNTS_LEDGERS</text><rect x="50" y="270" width="700" height="120" rx="12" fill="%230f172a" stroke="%23334155"/><text x="70" y="310" fill="%23e2e8f0" font-family="sans-serif" font-size="14" font-weight="bold">FINANCIAL VOUCHERS: RECONCILED WITH PFMS GRANT DISBURSEMENTS</text><text x="70" y="340" fill="%2394a3b8" font-family="monospace" font-size="12">TAMPER-PROOF HASH: SHA256:8829ab104819ca7720491028472910fa84739102837461947281928471928374</text><text x="70" y="365" fill="%2338bdf8" font-family="monospace" font-size="11">AUDIT TELEMETRY: DEMO NODE MH-01 // SHA-256 VERIFIED</text></svg>',
         'SHA256:8829ab104819ca7720491028472910fa84739102837461947281928471928374',
-        18.9346, 72.8353, 2.8, '02/09/2026, 11:34 AM IST', 'INSP-MH-402', 'B-4, Godrej Bhavan, Home Street, Fort, Mumbai'
+        18.9346, 72.8353, 2.8, '02/09/2026, 11:34 AM IST', 'DEMO-INSP-402', 'B-4, Godrej Bhavan, Home Street, Fort, Mumbai'
       ),
       (
         'ev_3', 'INSP-2026-1042', 'WELFARE_BENEFICIARIES', 'Remedial Education Program Logs with Verified Student Register',
-        'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800',
+        'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450"><rect width="800" height="450" fill="%230f172a"/><rect x="20" y="20" width="760" height="410" rx="16" fill="%231e293b" stroke="%238b5cf6" stroke-width="2"/><text x="50" y="70" fill="%23c4b5fd" font-family="monospace" font-size="18" font-weight="bold">INSPIRA PROTOTYPE • BENEFICIARY ENROLLMENT VERIFICATION</text><text x="50" y="120" fill="%23ffffff" font-family="sans-serif" font-size="22" font-weight="bold">Remedial Education Program Logs &amp; Verified Student Register</text><text x="50" y="160" fill="%2394a3b8" font-family="monospace" font-size="15">SITE: B-4, Godrej Bhavan, Home Street, Fort, Mumbai</text><text x="50" y="195" fill="%2334d399" font-family="monospace" font-size="15">GPS: 18.9345°N, 72.8355°E (±3.5m) | TIME: 02/09/2026, 11:55 AM IST</text><text x="50" y="230" fill="%23fbbf24" font-family="monospace" font-size="15">OFFICER BADGE: DEMO-INSP-402 | CLASSIFICATION: WELFARE_BENEFICIARIES</text><rect x="50" y="270" width="700" height="120" rx="12" fill="%230f172a" stroke="%23334155"/><text x="70" y="310" fill="%23e2e8f0" font-family="sans-serif" font-size="14" font-weight="bold">HEADCOUNT AUDIT: 42 ACTIVE SCHOLARS PRESENT &amp; CROSS-CHECKED</text><text x="70" y="340" fill="%2394a3b8" font-family="monospace" font-size="12">TAMPER-PROOF HASH: SHA256:491028374619482910fa847391028374619472819284719283747f4a9b2c8e10</text><text x="70" y="365" fill="%2338bdf8" font-family="monospace" font-size="11">AUDIT TELEMETRY: DEMO NODE MH-01 // SHA-256 VERIFIED</text></svg>',
         'SHA256:491028374619482910fa847391028374619472819284719283747f4a9b2c8e10',
-        18.9345, 72.8355, 3.5, '02/09/2026, 11:55 AM IST', 'INSP-MH-402', 'B-4, Godrej Bhavan, Home Street, Fort, Mumbai'
+        18.9345, 72.8355, 3.5, '02/09/2026, 11:55 AM IST', 'DEMO-INSP-402', 'B-4, Godrej Bhavan, Home Street, Fort, Mumbai'
       ),
       (
         'ev_4', 'INSP-2026-1042', 'INFRASTRUCTURE', 'Digital Learning & Teacher Resource Center',
-        'https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&q=80&w=800',
+        'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450"><rect width="800" height="450" fill="%230f172a"/><rect x="20" y="20" width="760" height="410" rx="16" fill="%231e293b" stroke="%2306b6d4" stroke-width="2"/><text x="50" y="70" fill="%2367e8f9" font-family="monospace" font-size="18" font-weight="bold">INSPIRA PROTOTYPE • PHYSICAL INFRASTRUCTURE AUDIT</text><text x="50" y="120" fill="%23ffffff" font-family="sans-serif" font-size="22" font-weight="bold">Digital Learning &amp; Teacher Resource Center</text><text x="50" y="160" fill="%2394a3b8" font-family="monospace" font-size="15">SITE: B-4, Godrej Bhavan, Home Street, Fort, Mumbai</text><text x="50" y="195" fill="%2334d399" font-family="monospace" font-size="15">GPS: 18.9347°N, 72.8354°E (±3.1m) | TIME: 02/09/2026, 12:15 PM IST</text><text x="50" y="230" fill="%23fbbf24" font-family="monospace" font-size="15">OFFICER BADGE: DEMO-INSP-402 | CLASSIFICATION: INFRASTRUCTURE</text><rect x="50" y="270" width="700" height="120" rx="12" fill="%230f172a" stroke="%23334155"/><text x="70" y="310" fill="%23e2e8f0" font-family="sans-serif" font-size="14" font-weight="bold">EQUIPMENT INVENTORY: 12 DESKTOPS OPERATIONAL WITH INTERNET CONNECTIVITY</text><text x="70" y="340" fill="%2394a3b8" font-family="monospace" font-size="12">TAMPER-PROOF HASH: SHA256:1029384756102938475610293847561029384756102938475610293847561029</text><text x="70" y="365" fill="%2338bdf8" font-family="monospace" font-size="11">AUDIT TELEMETRY: DEMO NODE MH-01 // SHA-256 VERIFIED</text></svg>',
         'SHA256:1029384756102938475610293847561029384756102938475610293847561029',
-        18.9347, 72.8354, 3.1, '02/09/2026, 12:15 PM IST', 'INSP-MH-402', 'B-4, Godrej Bhavan, Home Street, Fort, Mumbai'
+        18.9347, 72.8354, 3.1, '02/09/2026, 12:15 PM IST', 'DEMO-INSP-402', 'B-4, Godrej Bhavan, Home Street, Fort, Mumbai'
       ),
       (
         'ev_5', 'INSP-2026-1120', 'VIOLATIONS_DEFECTS', 'Commercial Travel Counter operating in Registered Charitable Space',
-        'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800',
+        'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450"><rect width="800" height="450" fill="%230f172a"/><rect x="20" y="20" width="760" height="410" rx="16" fill="%231e293b" stroke="%23ef4444" stroke-width="2"/><text x="50" y="70" fill="%23fca5a5" font-family="monospace" font-size="18" font-weight="bold">INSPIRA PROTOTYPE • DISCREPANCY &amp; VIOLATION RECORD</text><text x="50" y="120" fill="%23ffffff" font-family="sans-serif" font-size="22" font-weight="bold">Commercial Misuse of Registered Charitable Space</text><text x="50" y="160" fill="%2394a3b8" font-family="monospace" font-size="15">SITE: Gala No 14, Dharavi 90-Feet Road, Sion West, Mumbai</text><text x="50" y="195" fill="%23f87171" font-family="monospace" font-size="15">GPS: 19.0412°N, 72.8614°E (±4.1m) | TIME: 05/09/2026, 10:48 AM IST</text><text x="50" y="230" fill="%23fbbf24" font-family="monospace" font-size="15">OFFICER BADGE: DEMO-INSP-402 | CLASSIFICATION: VIOLATIONS_DEFECTS</text><rect x="50" y="270" width="700" height="120" rx="12" fill="%230f172a" stroke="%23334155"/><text x="70" y="310" fill="%23ef4444" font-family="sans-serif" font-size="14" font-weight="bold">VIOLATION: UNAUTHORIZED COMMERCIAL SUBLETTING (SHOW-CAUSE ISSUED)</text><text x="70" y="340" fill="%2394a3b8" font-family="monospace" font-size="12">TAMPER-PROOF HASH: SHA256:3a91b2c48e77fa59012d8819ab012948710294cba82910fa8473910283746194</text><text x="70" y="365" fill="%2338bdf8" font-family="monospace" font-size="11">AUDIT TELEMETRY: DEMO NODE MH-01 // SHA-256 VERIFIED</text></svg>',
         'SHA256:3a91b2c48e77fa59012d8819ab012948710294cba82910fa8473910283746194',
-        19.0412, 72.8614, 4.1, '05/09/2026, 10:48 AM IST', 'INSP-MH-402', 'Gala No 14, Dharavi 90-Feet Road, Sion West, Mumbai'
+        19.0412, 72.8614, 4.1, '05/09/2026, 10:48 AM IST', 'DEMO-INSP-402', 'Gala No 14, Dharavi 90-Feet Road, Sion West, Mumbai'
       );
     `);
 
@@ -679,14 +679,14 @@ export async function seedDatabase(forceReseed = false): Promise<void> {
         scrutiny_remarks, sanction_order_number, is_locked, reviewed_at
       ) VALUES
       (
-        'scrutiny_1', 'INSP-2026-1042', 'ngo_pratham', 'usr_admin_1', 'Dr. Rajesh Verma, IAS', 'GOV-DIR-009',
+        'scrutiny_1', 'INSP-2026-1042', 'ngo_pratham', 'usr_admin_1', 'Demo Director (role: Directorate)', 'DEMO-DIR-001',
         'GOOD_COMPLIANT', 98.0, 'A_EXCELLENT', 'NO_ACTION_CLEARED',
         '["Annual Statutory Compliance Renewal Certificate FY 2026-27 Approved", "Release Scheduled Grant Tranche", "Designate as Verified Institutional Partner"]',
         'Field audit dossier, watermarked photo evidence, and educational reach registers confirmed in compliance. Annual certification renewed.',
         'DIR/ORD/2026/MSJE/0912', 1, '2026-09-03 16:30:00 IST'
       ),
       (
-        'scrutiny_2', 'INSP-2026-1120', 'ngo_swasthya', 'usr_admin_1', 'Dr. Rajesh Verma, IAS', 'GOV-DIR-009',
+        'scrutiny_2', 'INSP-2026-1120', 'ngo_swasthya', 'usr_admin_1', 'Demo Director (role: Directorate)', 'DEMO-DIR-001',
         'BAD_DEFICIENT', 38.0, 'D_CRITICAL_FRAUD', 'ACTION_REQUIRED',
         '["Issue Formal Show-Cause Notice under DARPAN Guidelines Section 14", "Immediate Freezing of Linked Bank Accounts & Grant Disbursements", "Initiate Formal Vigilance Inquiry / Refer to Law Enforcement Agencies", "Place Entity on Central Non-Compliance Blacklist"]',
         'Severe breach substantiated by on-ground inspection. Subletting of non-profit space and ghost beneficiary logs require immediate punitive statutory enforcement.',
@@ -832,7 +832,7 @@ export async function seedDatabase(forceReseed = false): Promise<void> {
             ph.coordinates?.lng || t.coordinates?.lng || 73.8567,
             ph.accuracyMeters || 3.5,
             ph.timestamp || `${t.date}, 11:00 AM IST`,
-            ph.officerBadge || t.assignedInspectorBadge || 'INSP-MH-402',
+            ph.officerBadge || t.assignedInspectorBadge || 'DEMO-INSP-402',
             ph.locationAddress || t.location
           );
         });
@@ -851,8 +851,8 @@ export async function seedDatabase(forceReseed = false): Promise<void> {
           t.id,
           targetNgoId,
           'usr_admin_1',
-          t.scrutinyReview.reviewedByOfficerName || 'Dr. Rajesh Verma, IAS',
-          t.scrutinyReview.reviewedByOfficerBadge || 'GOV-DIR-009',
+          t.scrutinyReview.reviewedByOfficerName || 'Demo Director (role: Directorate)',
+          t.scrutinyReview.reviewedByOfficerBadge || 'DEMO-DIR-001',
           t.scrutinyReview.verdict,
           t.scrutinyReview.score,
           t.scrutinyReview.complianceGrade,
@@ -973,10 +973,10 @@ export async function seedDatabase(forceReseed = false): Promise<void> {
       (
         'att_20260914_01', 'usr_worker_1', 'Sunita Patil', 'Community Health Mobilizer & Field Staff',
         'ngo_swasthya', 'Swasthya Seva Medical & Slum Health Trust', '2026-09-14',
-        '09:04:12 IST', 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=60',
+        '09:04:12 IST', 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect width="400" height="400" fill="%230f172a"/><circle cx="200" cy="160" r="70" fill="%231e293b" stroke="%2310b981" stroke-width="3"/><circle cx="200" cy="140" r="35" fill="%23334155"/><path d="M140 260 C 140 210, 260 210, 260 260 Z" fill="%23334155"/><rect x="40" y="290" width="320" height="80" rx="8" fill="%231e293b" stroke="%23334155"/><text x="200" y="315" fill="%23ffffff" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Sunita Patil (Bio-ID: SP-789)</text><text x="200" y="335" fill="%2334d399" font-family="monospace" font-size="12" text-anchor="middle">✓ BIOMETRIC MATCH 98.4% (UIDAI LIVENESS)</text><text x="200" y="355" fill="%2394a3b8" font-family="monospace" font-size="11" text-anchor="middle">CHECK-IN • 09:04:12 IST • 19.0410N 72.8612E</text></svg>',
         19.0410, 72.8612, 'Dharavi 90-Feet Road, Sion West, Mumbai, Maharashtra', 34.5,
         'SHA256:7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069',
-        '17:35:48 IST', 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=500&auto=format&fit=crop&q=60',
+        '17:35:48 IST', 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect width="400" height="400" fill="%230f172a"/><circle cx="200" cy="160" r="70" fill="%231e293b" stroke="%233b82f6" stroke-width="3"/><circle cx="200" cy="140" r="35" fill="%23334155"/><path d="M140 260 C 140 210, 260 210, 260 260 Z" fill="%23334155"/><rect x="40" y="290" width="320" height="80" rx="8" fill="%231e293b" stroke="%23334155"/><text x="200" y="315" fill="%23ffffff" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Sunita Patil (Bio-ID: SP-789)</text><text x="200" y="335" fill="%2360a5fa" font-family="monospace" font-size="12" text-anchor="middle">✓ DEPARTURE VERIFIED • 8.52 HRS</text><text x="200" y="355" fill="%2394a3b8" font-family="monospace" font-size="11" text-anchor="middle">CHECK-OUT • 17:35:48 IST • 19.0412N 72.8615E</text></svg>',
         19.0412, 72.8615, 'Dharavi 90-Feet Road, Sion West, Mumbai, Maharashtra', 42.1,
         'SHA256:9c8a2b531ef5d4615bc0f92d4f2913e617d121bc27f677a29f8a31e843231e67',
         8.52, 'PRESENT', 'Distributed prenatal nutrition kits to 35 maternal beneficiaries in Kurla-Dharavi cluster.',
@@ -986,10 +986,10 @@ export async function seedDatabase(forceReseed = false): Promise<void> {
       (
         'att_20260913_01', 'usr_worker_1', 'Sunita Patil', 'Community Health Mobilizer & Field Staff',
         'ngo_swasthya', 'Swasthya Seva Medical & Slum Health Trust', '2026-09-13',
-        '08:58:30 IST', 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=500&auto=format&fit=crop&q=60',
+        '08:58:30 IST', 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect width="400" height="400" fill="%230f172a"/><circle cx="200" cy="160" r="70" fill="%231e293b" stroke="%2310b981" stroke-width="3"/><circle cx="200" cy="140" r="35" fill="%23334155"/><path d="M140 260 C 140 210, 260 210, 260 260 Z" fill="%23334155"/><rect x="40" y="290" width="320" height="80" rx="8" fill="%231e293b" stroke="%23334155"/><text x="200" y="315" fill="%23ffffff" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Sunita Patil (Bio-ID: SP-789)</text><text x="200" y="335" fill="%2334d399" font-family="monospace" font-size="12" text-anchor="middle">✓ BIOMETRIC MATCH 97.9% (UIDAI LIVENESS)</text><text x="200" y="355" fill="%2394a3b8" font-family="monospace" font-size="11" text-anchor="middle">CHECK-IN • 08:58:30 IST • 19.0409N 72.8611E</text></svg>',
         19.0409, 72.8611, 'Swasthya Healthcare Clinic, Sion West, Mumbai', 22.2,
         'SHA256:1a84f5c9e2b1093847291a82f349d18274619b847291a0398471928472918374',
-        '17:15:10 IST', 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=500&auto=format&fit=crop&q=60',
+        '17:15:10 IST', 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect width="400" height="400" fill="%230f172a"/><circle cx="200" cy="160" r="70" fill="%231e293b" stroke="%233b82f6" stroke-width="3"/><circle cx="200" cy="140" r="35" fill="%23334155"/><path d="M140 260 C 140 210, 260 210, 260 260 Z" fill="%23334155"/><rect x="40" y="290" width="320" height="80" rx="8" fill="%231e293b" stroke="%23334155"/><text x="200" y="315" fill="%23ffffff" font-family="sans-serif" font-size="14" font-weight="bold" text-anchor="middle">Sunita Patil (Bio-ID: SP-789)</text><text x="200" y="335" fill="%2360a5fa" font-family="monospace" font-size="12" text-anchor="middle">✓ DEPARTURE VERIFIED • 8.28 HRS</text><text x="200" y="355" fill="%2394a3b8" font-family="monospace" font-size="11" text-anchor="middle">CHECK-OUT • 17:15:10 IST • 19.0411N 72.8614E</text></svg>',
         19.0411, 72.8614, 'Swasthya Healthcare Clinic, Sion West, Mumbai', 28.0,
         'SHA256:2b95e6d0f3c2104958302b93e450e29385720c958302b1409582039583029485',
         8.28, 'PRESENT', 'Organized community immunisation awareness camp with 60 local attendees.',
@@ -1001,13 +1001,13 @@ export async function seedDatabase(forceReseed = false): Promise<void> {
     // 14. Audit Logs
     db.exec(`
       INSERT INTO audit_logs (id, user_id, user_name, user_role, action, entity_type, entity_id, ip_address, details, timestamp) VALUES
-      ('log_1', 'usr_admin_1', 'Dr. Rajesh Verma, IAS', 'ADMIN', 'SYSTEM_INITIALIZATION', 'SYSTEM', 'SYSTEM', '10.0.4.1', 'National NGO Vigilance & Monitoring Database initialised under GIGW 3.0 standards', '2026-09-01 09:00:00'),
-      ('log_2', 'usr_admin_1', 'Dr. Rajesh Verma, IAS', 'ADMIN', 'INSPECTION_ASSIGNED', 'INSPECTIONS', 'INSP-2026-1042', '10.0.4.1', 'Assigned Inspector Vikram Singh (INSP-MH-402) to Pratham Shiksha Foundation', '2026-08-28 10:30:00'),
+      ('log_1', 'usr_admin_1', 'Demo Director (role: Directorate)', 'ADMIN', 'SYSTEM_INITIALIZATION', 'SYSTEM', 'SYSTEM', '10.0.4.1', 'National NGO Monitoring Prototype initialised for SIH 2026', '2026-09-01 09:00:00'),
+      ('log_2', 'usr_admin_1', 'Demo Director (role: Directorate)', 'ADMIN', 'INSPECTION_ASSIGNED', 'INSPECTIONS', 'INSP-2026-1042', '10.0.4.1', 'Assigned Inspector Vikram Singh (DEMO-INSP-402) to Pratham Shiksha Foundation', '2026-08-28 10:30:00'),
       ('log_3', 'usr_officer_1', 'Inspector Vikram Singh', 'OFFICER', 'GEOFENCE_CHECK_IN', 'INSPECTIONS', 'INSP-2026-1042', '172.16.8.44', '150m Geofence Verified at lat 18.9347, lng 72.8352 (Distance: 28.4m)', '2026-09-02 11:04:12'),
       ('log_4', 'usr_officer_1', 'Inspector Vikram Singh', 'OFFICER', 'INSPECTION_SUBMISSION', 'INSPECTIONS', 'INSP-2026-1042', '172.16.8.44', 'Submitted statutory audit with 4 watermarked photos and 10 passed checklist items', '2026-09-02 12:45:00'),
-      ('log_5', 'usr_admin_1', 'Dr. Rajesh Verma, IAS', 'ADMIN', 'DIRECTORATE_SCRUTINY_EXECUTED', 'COMPLIANCE_ASSESSMENTS', 'scrutiny_1', '10.0.4.1', 'Executed Sanction Order DIR/ORD/2026/MSJE/0912: Verdict GOOD_COMPLIANT, Score 98/100', '2026-09-03 16:30:00'),
-      ('log_6', 'usr_admin_1', 'Dr. Rajesh Verma, IAS', 'ADMIN', 'STATUTORY_NOTICE_ISSUED', 'NOTICES', 'not_1', '10.0.4.1', 'Issued Show-Cause Notice NOT-MSJE-2026-081 to Swasthya Seva Trust', '2026-09-06 15:00:00'),
-      ('log_7', 'usr_admin_1', 'Dr. Rajesh Verma, IAS', 'ADMIN', 'APPLICATION_APPROVED', 'NGO_APPLICATIONS', 'app_2', '10.0.4.1', 'Approved registration for Marathwada Gramin Mahila Krishi Vikas Sanstha in Latur', '2026-09-08 11:20:00');
+      ('log_5', 'usr_admin_1', 'Demo Director (role: Directorate)', 'ADMIN', 'DIRECTORATE_SCRUTINY_EXECUTED', 'COMPLIANCE_ASSESSMENTS', 'scrutiny_1', '10.0.4.1', 'Executed Sanction Order DIR/ORD/2026/MSJE/0912: Verdict GOOD_COMPLIANT, Score 98/100', '2026-09-03 16:30:00'),
+      ('log_6', 'usr_admin_1', 'Demo Director (role: Directorate)', 'ADMIN', 'STATUTORY_NOTICE_ISSUED', 'NOTICES', 'not_1', '10.0.4.1', 'Issued Show-Cause Notice NOT-MSJE-2026-081 to Swasthya Seva Trust', '2026-09-06 15:00:00'),
+      ('log_7', 'usr_admin_1', 'Demo Director (role: Directorate)', 'ADMIN', 'APPLICATION_APPROVED', 'NGO_APPLICATIONS', 'app_2', '10.0.4.1', 'Approved registration for Marathwada Gramin Mahila Krishi Vikas Sanstha in Latur', '2026-09-08 11:20:00');
     `);
 
     // 15. System Config
@@ -1029,7 +1029,7 @@ export async function seedDatabase(forceReseed = false): Promise<void> {
       (
         'vc_seed_1', 'VC-SURPRISE-2026-881920', 'ngo_swasthya', 'Swasthya Seva Medical & Slum Health Trust',
         'MH/2019/0219483', 'Mumbai Suburban', 'Maharashtra', 'NAPDDR',
-        'usr_admin_1', 'Dr. Rajesh Verma, IAS', 'BENEFICIARY', 'Ramesh K. (NAPDDR Resident)',
+        'usr_admin_1', 'Demo Director (role: Directorate)', 'BENEFICIARY', 'Ramesh K. (NAPDDR Resident)',
         '+91 98220 44910', '10:15:00 AM IST', '10:28:40 AM IST', 'COMPLETED',
         '{"physicalPresenceConfirmed":true,"identityVerifiedAadhaar":true,"headcountMatchesRegister":false,"reportedHeadcount":14,"cleanlinessAndMealsSatisfactory":false,"noCoercionReported":true,"immediateGrievanceNoted":"Shortage of counselor visits and evening medicine supply reported"}',
         19.0432, 72.8631, 3.5,
@@ -1039,7 +1039,7 @@ export async function seedDatabase(forceReseed = false): Promise<void> {
     `);
   });
 
-  console.log('✓ Database successfully populated with 32+ 100% authentic Government of India records!');
+  console.log('✓ Database successfully populated with 32+ authentic sample NGO records!');
 }
 
 // Allow direct execution: npx tsx server/seed.ts

@@ -263,8 +263,8 @@ export const GovernmentInspectionMaster: React.FC<GovernmentInspectionMasterProp
     const reviewedAt = new Date().toLocaleString('en-IN') + ' IST';
 
     const review: DirectorateScrutinyReview = {
-      reviewedByOfficerName: 'Dr. Rajesh Verma, IAS',
-      reviewedByOfficerBadge: 'GOV-DIR-009',
+      reviewedByOfficerName: 'Demo Director (role: Directorate)',
+      reviewedByOfficerBadge: 'DEMO-DIR-001',
       reviewedAt,
       verdict: scrutinyVerdict,
       score: scrutinyScore,
@@ -606,7 +606,7 @@ export const GovernmentInspectionMaster: React.FC<GovernmentInspectionMasterProp
               }}
               className="w-full px-3.5 py-2 text-xs bg-indigo-50 border border-indigo-200 rounded-full focus:outline-none focus:border-indigo-500 text-indigo-700 font-bold cursor-pointer truncate"
             >
-              <option value="ALL">IAS Scrutiny: All</option>
+              <option value="ALL">Directorate Scrutiny: All</option>
               <option value="PENDING_SCRUTINY">Pending Review</option>
               <option value="GOOD_CLEARED">Approved (Good)</option>
               <option value="BAD_ACTION">Action Taken (Bad)</option>
@@ -1073,13 +1073,13 @@ export const GovernmentInspectionMaster: React.FC<GovernmentInspectionMasterProp
                   </div>
                 </div>
 
-                {/* IAS Action Notice Banner if triggered */}
+                {/* Directorate Action Notice Banner if triggered */}
                 {iasActionNotice && (
                   <div className="p-4 rounded-xl bg-slate-900 text-white border border-slate-800 shadow-sm flex items-start gap-3 animate-fade-in">
                     <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
                     <div className="flex-1">
                       <div className="text-xs font-bold uppercase tracking-wider text-amber-300">
-                        Executive Order Executed by Directorate General (IAS)
+                        Executive Order Executed by Directorate
                       </div>
                       <p className="text-xs text-slate-200 mt-0.5">{iasActionNotice}</p>
                     </div>
@@ -1436,7 +1436,7 @@ export const GovernmentInspectionMaster: React.FC<GovernmentInspectionMasterProp
                   </div>
                 </div>
 
-                {/* IAS DIRECTORATE GENERAL STATUTORY SCRUTINY & ASSESSMENT STATION */}
+                {/* DIRECTORATE STATUTORY SCRUTINY & ASSESSMENT STATION */}
                 <div className="rounded-2xl border border-slate-200/90 overflow-hidden bg-white text-slate-900 shadow-sm">
                   {/* Station Header */}
                   <div className="px-5 py-3.5 bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 text-white border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
@@ -1447,14 +1447,14 @@ export const GovernmentInspectionMaster: React.FC<GovernmentInspectionMasterProp
                       <div>
                         <div className="flex items-center space-x-2">
                           <h4 className="text-xs sm:text-sm font-bold tracking-wide uppercase text-white">
-                            Directorate General (IAS) Scrutiny Desk
+                            Directorate Scrutiny Desk
                           </h4>
                           <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-400 text-slate-950">
                             Sec 14/19 GFR Compliance
                           </span>
                         </div>
                         <p className="text-[11px] text-slate-300">
-                          Competent Authority: <strong className="text-white">Dr. Rajesh Verma, IAS</strong> (Joint Secretary &amp; DG)
+                          Competent Authority: <strong className="text-white">Demo Director (role: Directorate)</strong> (Directorate Administrator)
                         </p>
                       </div>
                     </div>

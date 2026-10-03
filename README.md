@@ -1,8 +1,8 @@
 <div align="center">
 
-# 🏛️ INSPIRA: National NGO Real-Time Monitoring & Inspection Portal
-### *Ministry of Social Justice & Empowerment • Government of India*
-**Compliant with GIGW 3.0 Guidelines & NITI Aayog NGO-DARPAN System**
+# 🏛️ INSPIRA: National NGO Real-Time Monitoring & Inspection System
+### *Smart India Hackathon 2026 (PS 26095) • Team InnoCoders*
+**Problem Statement by Ministry of Social Justice & Empowerment (MoSJE)**
 
 [![Live Deployment](https://img.shields.io/badge/Live_Portal-smart--ngo--monitoring--portal.vercel.app-138808?style=for-the-badge&logo=vercel)](https://smart-ngo-monitoring-portal.vercel.app)
 [![React](https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react)](https://react.dev)
@@ -78,27 +78,27 @@ Engineered under the **Guidelines for Indian Government Websites (GIGW 3.0)**, t
 
 ## 🔐 Multi-Tier Role-Based Access Hierarchy
 
-| Role | Security Clearance | Authorized Responsibilities |
+| Role | Clearance / Role Code | Authorized Responsibilities |
 | :--- | :--- | :--- |
-| **Director General & Admin** | `LEVEL_5_DIRECTORATE` | Full oversight, grant sanctions, show-cause notices, random duty allocation, and audit log analysis. |
-| **Field Vigilance Officer** | `LEVEL_3_INSPECTOR` | Geofenced on-site audits, biometric verification, photo/video evidence capture, defect reporting. |
-| **Authorized NGO Representative** | `LEVEL_2_NGO` | Compliance filings, annual audit reports, CCTV feed onboarding, notice rebuttals, staff management. |
-| **Grassroots Field Staff** | `LEVEL_2_WORKER` | Daily biometric geo-attendance, activity logs, field beneficiary mobilization records. |
-| **Citizen & Whistleblower** | `LEVEL_1_PUBLIC` | CPGRAMS grievance registration, public NGO DARPAN search, anonymous whistleblower tracking. |
+| **Demo Director** | `DIRECTORATE` | Full oversight, grant sanctions, show-cause notices, random duty allocation, and audit log analysis. |
+| **Field Inspector** | `INSPECTOR` | Geofenced on-site audits, photo/video evidence capture, and defect reporting. |
+| **NGO Representative** | `NGO` | Compliance filings, annual audit reports, CCTV feed onboarding, notice rebuttals, staff management. |
+| **Field Staff** | `WORKER` | Daily geotagged punch-in, activity logs, field mobilization records. |
+| **Citizen & Observer** | `PUBLIC` | Public grievance registration, public NGO DARPAN search, anonymous inquiry tracking. |
 
 ---
 
 ## 🔑 Demo Access Credentials (1-Click Instant Login)
 
-All demo accounts can be accessed directly from the **"Sign In / SSO Login"** modal on the live website:
+All demo accounts can be accessed directly from the **"Login"** modal on the live website:
 
-| Role Title | Official Email | Clearance Level | Default Password |
+| Role Title | Demo Email | Role Level | Default Password |
 | :--- | :--- | :--- | :--- |
-| **Directorate General (IAS)** | `admin.monitoring@gov.in` | Level 5 Directorate | `GovSecure@2026` |
-| **Senior Field Inspector** | `vikram.singh@inspection.gov.in` | Level 3 Inspector | `Password@123` |
-| **NGO Executive Trustee** | `arvind.joshi@swasthya.org` | Level 2 NGO Rep | `Password@123` |
-| **Community Health Worker** | `worker.sunita@swasthya.org` | Level 2 Worker | `Password@123` |
-| **Citizen Whistleblower** | `citizen.observer@gmail.com` | Level 1 Public | `Password@123` |
+| **Demo Director (role: Directorate)** | `admin.monitoring@gov.in` | Directorate | `GovSecure@2026` |
+| **Field Inspector** | `vikram.singh@inspection.gov.in` | Field Inspector | `Password@123` |
+| **NGO Executive Trustee** | `arvind.joshi@swasthya.org` | NGO Representative | `Password@123` |
+| **Community Health Worker** | `worker.sunita@swasthya.org` | Field Worker | `Password@123` |
+| **Citizen Observer** | `citizen.observer@gmail.com` | Public Citizen | `Password@123` |
 
 ---
 
@@ -106,7 +106,7 @@ All demo accounts can be accessed directly from the **"Sign In / SSO Login"** mo
 
 ### Frontend (User Interface & GIS)
 * **Framework**: React 19 + TypeScript (Strict Type Safety)
-* **Styling**: Tailwind CSS v4 with Indian Tricolor Institutional Theme & GIGW 3.0 High-Contrast Mode
+* **Styling**: Tailwind CSS v4 with Clean Institutional Navy Design System
 * **Build System**: Vite 6 (Ultra-fast HMR and minified asset compilation)
 * **GIS & Maps**: Leaflet 1.9 + OpenStreetMap GPS telemetry & Geofencing visualization
 * **Video Player**: HLS.js for live CCTV surveillance streaming
@@ -187,5 +187,5 @@ npm run build
 
 <div align="center">
   <sub>Designed &amp; Developed for Smart India Hackathon (SIH 2026) by <strong>Team InnoCoders (Team ID: 180211)</strong> • Mauli Group of Institution's College of Engineering &amp; Technology, Shegaon</sub><br />
-  <sub>Institutional Prototype for Ministry of Social Justice and Empowerment • Government of India</sub>
+  <sub>Prototype for Smart India Hackathon 2026 • Problem statement by MoSJE (PS 26095) • Not an official Government of India website</sub>
 </div>

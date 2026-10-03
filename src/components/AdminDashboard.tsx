@@ -41,7 +41,7 @@ import { InteractiveMap } from './InteractiveMap';
 import { GovernmentInspectionMaster } from './GovernmentInspectionMaster';
 import { CctvManagementSection } from './cctv/CctvManagementSection';
 import { AnomalyAnalyticsSection } from './AnomalyAnalyticsSection';
-import { EmblemOfIndia } from './EmblemOfIndia';
+import { InspiraLogo } from './InspiraLogo';
 import { DigitalIndiaLogo, EPramaanLogo, NicLogo } from './GovLogos';
 
 interface AdminDashboardProps {
@@ -288,45 +288,41 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     <div className="space-y-6">
       {/* Level-5 Directorate General Ministerial Command Header */}
       <div className="bg-gradient-to-r from-slate-950 via-[#0B3B60] to-slate-900 text-white p-5 sm:p-6 rounded-2xl border border-slate-800 shadow-md relative overflow-hidden">
-        {/* Subtle top national tri-color accent strip */}
-        <div className="absolute top-0 left-0 right-0 grid grid-cols-3 h-[3.5px]">
-          <div className="bg-[#FF9933]"></div>
-          <div className="bg-[#FFFFFF] flex items-center justify-center"><div className="w-1 h-1 rounded-full bg-[#000080]"></div></div>
-          <div className="bg-[#138808]"></div>
-        </div>
+        {/* Neutral top accent strip */}
+        <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#0B3B60]"></div>
 
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
           <div className="flex items-start space-x-4">
-            <div className="w-14 h-18 rounded-xl bg-white/10 p-1 border border-white/20 flex items-center justify-center shrink-0 mt-0.5 shadow-md">
-              <EmblemOfIndia className="w-12 h-16" variant="white" showText={false} />
+            <div className="w-14 h-14 rounded-xl bg-white/10 p-1 border border-white/20 flex items-center justify-center shrink-0 mt-0.5 shadow-md">
+              <InspiraLogo className="w-11 h-11" />
             </div>
 
             <div className="space-y-1.5">
-              <div className="text-[11px] font-bold text-amber-300 font-serif tracking-wider uppercase">
-                भारत सरकार • Government of India • Ministry of Social Justice &amp; Empowerment
+              <div className="text-[11px] font-bold text-sky-300 font-sans tracking-wider uppercase">
+                INSPIRA Directorate Dashboard • SIH 2026 Prototype (PS 26095)
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-                <span className="px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-amber-400/20 text-amber-300 border border-amber-400/40 font-mono">
-                  Level 5 • Directorate General (IAS)
+                <span className="px-2.5 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-blue-500/20 text-blue-200 border border-blue-400/30 font-mono">
+                  Role: Directorate Administrator
                 </span>
                 <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-200 border border-blue-400/40">
-                  National NGO Vigilance Division
+                  NGO Vigilance Division
                 </span>
                 <span className="inline-flex items-center gap-1.5 text-[10px] font-mono text-emerald-300 bg-emerald-950/70 px-2.5 py-0.5 rounded border border-emerald-500/40">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  NIC GOVNET TLS 1.3
+                  SYSTEM ONLINE
                 </span>
               </div>
 
-              <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight font-serif">
-                {currentAdmin?.name || 'Dr. Rajesh Verma, IAS'}
+              <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                {currentAdmin?.name || 'Demo Director (role: Directorate)'}
               </h1>
               <p className="text-xs sm:text-sm text-slate-200 font-medium">
-                {currentAdmin?.designation || 'Director General & Joint Secretary (NGO Vigilance & Field Oversight)'}
+                {currentAdmin?.designation || 'Directorate Administrator (Hackathon Demo Account)'}
               </p>
               <p className="text-[11px] text-slate-300 font-mono">
-                Directorate ID: <strong className="text-amber-300">{currentAdmin?.badgeNumber || 'GOV-DIR-009'}</strong> • Rule 14 GFR 2017 Regulatory Station
+                Directorate ID: <strong className="text-amber-300">{currentAdmin?.badgeNumber || 'DEMO-DIR-001'}</strong>
               </p>
             </div>
           </div>
@@ -391,16 +387,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           </div>
         </div>
 
-        {/* Cryptographic Session Metadata Strip */}
-        <div className="mt-4 pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400 font-mono">
+        {/* Session Status Strip */}
+        <div className="mt-4 pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-400 font-sans">
           <div className="flex items-center space-x-2">
-            <span>Session ID: <strong className="text-slate-200">{currentSession?.token?.substring(0, 18) || 'SES-DIR-2026-9811'}...</strong></span>
+            <span>Logged in as: <strong className="text-slate-200">{currentAdmin?.name || 'Demo Director'}</strong></span>
             <span className="hidden sm:inline text-slate-600">•</span>
-            <span className="hidden sm:inline">Gateway IP: <strong className="text-slate-200">{currentSession?.ipAddress || '10.244.18.91 (NIC)'}</strong></span>
+            <span className="hidden sm:inline">Active Mode: <strong className="text-slate-200">Directorate Oversight</strong></span>
           </div>
-          <div className="text-emerald-300 font-medium flex items-center gap-1.5">
+          <div className="text-emerald-300 font-medium flex items-center gap-1.5 font-mono text-[11px]">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            2FA Verified • 150m Geofence Enforcement Active
+            150m Geofence GPS Enforcement Active
           </div>
         </div>
       </div>
@@ -552,19 +548,25 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
               </div>
               <div>
                 <h3 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-2">
-                  <span>AI-Assisted Vigilance Risk Engine</span>
+                  <span>Risk Scoring Engine</span>
                   <span className="text-[10px] font-mono font-bold bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full border border-rose-300">
-                    DIRECTORATE PRIORITY TARGETS
+                    PRIORITY TARGETS
+                  </span>
+                  <span className="text-[9px] font-mono font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded border border-amber-300">
+                    Sample Data
                   </span>
                 </h3>
-                <p className="text-[11px] text-slate-500">
-                  Algorithmic risk evaluation based on unresolved citizen grievances, low physical audit scores, and regulatory flags under Rule 14.
-                </p>
+                <div className="flex flex-wrap items-center gap-2 mt-0.5">
+                  <span className="text-[10px] font-semibold text-slate-600">Formula:</span>
+                  <span className="text-[10px] font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200">
+                    Risk = Base(15) + LowScore(up to 45) + Flagged(30) + Complaints(×12, max 30) + FCRA
+                  </span>
+                </div>
               </div>
             </div>
 
             <span className="text-[11px] font-mono font-semibold text-rose-700 bg-rose-50 px-3 py-1 rounded-full border border-rose-200 self-start sm:self-auto">
-              {highRiskNgos.length} High-Risk Entities Detected
+              {highRiskNgos.length} Priority Entities
             </span>
           </div>
 
@@ -639,12 +641,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       {/* Modern Segmented Navigation Tabs */}
       <div className="bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/80 shadow-2xs flex items-center gap-1.5 overflow-x-auto no-scrollbar">
         {[
-          { id: 'INSPECTIONS', label: `Government Inspections (${govTasks.length || 55}+ Tasks)`, icon: FileCheck },
-          { id: 'DOSJE_ANALYTICS', label: 'DoSJE Scheme & Anomaly Analytics', icon: Sparkles },
+          { id: 'INSPECTIONS', label: `Field Inspections (${govTasks.length || 55}+ Tasks)`, icon: FileCheck },
+          { id: 'DOSJE_ANALYTICS', label: 'Scheme & Anomaly Analytics', icon: Sparkles },
           { id: 'CCTV_MANAGEMENT', label: 'CCTV Surveillance & Cameras', icon: Video },
           { id: 'OVERVIEW', label: 'GIS Map & Live Tracking', icon: MapPin },
-          { id: 'NGOS', label: `NGO Master Directory (${ngos.length})`, icon: Building2 },
-          { id: 'NOTICES', label: `Statutory Notices (${notices.length})`, icon: ShieldAlert },
+          { id: 'NGOS', label: `NGO Directory (${ngos.length} Sample Records)`, icon: Building2 },
+          { id: 'NOTICES', label: `Review Notices (${notices.length})`, icon: ShieldAlert },
           { id: 'AUDIT_LOGS', label: `System Audit Logs (${auditLogs.length})`, icon: ShieldCheck },
           { id: 'OFFICERS', label: `Field Officers (${officers.length})`, icon: Users },
           { id: 'COMPLAINTS', label: `Grievances (${complaints.length})`, icon: AlertTriangle },
@@ -1436,7 +1438,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                         type="button"
                         onClick={() => {
                           const blob = new Blob([
-                            `GOVERNMENT OF INDIA\nMinistry of Social Justice and Empowerment\nDirectorate General of NGO Vigilance\n\nOFFICIAL STATUTORY NOTICE (SECTION 14)\nNotice Ref: ${n.noticeNumber}\nDate of Issue: ${n.issuedAt}\nMandatory Response Deadline: ${n.deadline}\n\nTARGET NGO: ${n.ngoName || 'Registered NGO'} (${n.ngoDarpanId || 'DARPAN/MH/2026'})\n\nSUBJECT: ${n.subject}\nREASON: ${n.reason}\n\nDIRECTIVE DETAILS:\n${n.details}\n\nUnder Section 14 of GFR 2017 and DARPAN statutory vigilance regulations, you are hereby required to submit a comprehensive written explanation along with audited records within 14 calendar days from receipt of this notice.\n\nFailure to comply shall result in immediate freezing of welfare grant accounts and debarment from Central Grant-in-Aid schemes.\n\nSigned,\nDirectorate General (IAS)\nMinistry of Social Justice and Empowerment\nGovernment of India`
+                            `INSPIRA NGO MONITORING SYSTEM (PROTOTYPE)\nSmart India Hackathon 2026 - PS 26095\nDirectorate Notice Desk\n\nFORMAL NOTICE RECORD (DEMO)\nNotice Ref: ${n.noticeNumber}\nDate of Issue: ${n.issuedAt}\nResponse Deadline: ${n.deadline}\n\nTARGET NGO: ${n.ngoName || 'Registered NGO'} (${n.ngoDarpanId || 'DARPAN/MH/2026'})\n\nSUBJECT: ${n.subject}\nREASON: ${n.reason}\n\nDIRECTIVE DETAILS:\n${n.details}\n\nNOTE: This is a prototype system record generated for demonstration under SIH 2026 Problem Statement 26095. Not an official Government of India document.\n\nSigned,\nDemo Director (role: Directorate)\nINSPIRA Prototype System`
                           ], { type: 'text/plain;charset=utf-8' });
                           const url = URL.createObjectURL(blob);
                           const a = document.createElement('a');

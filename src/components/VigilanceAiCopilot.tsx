@@ -54,13 +54,13 @@ interface VigilanceAiCopilotProps {
 const INITIAL_GREETING: CopilotMessage = {
   id: 'msg_welcome',
   sender: 'copilot',
-  text: `Jai Hind! I am **VigilanceAI Institutional Copilot**, an autonomous administrative agent for the Ministry of Social Justice & Empowerment.\n\nI can execute real database audits, schedule surprise inspections, verify DARPAN records, monitor CCTV streams, and analyze biometric field staff attendance.\n\nHow may I assist your vigilance oversight today?`,
+  text: `Hello! I am **INSPIRA Assistant**, an AI assistant for the NGO Monitoring and Inspection Prototype (SIH 2026 PS 26095).\n\nI can execute database queries, inspect dispatch records, summarize NGO compliance scores, and check inspection tasks.\n\nHow may I help you today?`,
   timestamp: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }),
   suggestedFollowups: [
     'Dispatch inspector to Delhi NGO',
     'Show high-risk NGOs with violations',
-    'Check field worker biometric attendance',
-    'Verify DARPAN MH/2026/039121',
+    'Check field worker attendance',
+    'Verify NGO record MH/2026/039121',
   ],
 };
 
@@ -196,9 +196,9 @@ export const VigilanceAiCopilot: React.FC<VigilanceAiCopilotProps> = ({
         <div className="fixed bottom-5 right-5 z-40 flex items-center gap-2 group animate-fade-in">
           <div className="hidden sm:flex items-center gap-2 px-3.5 py-1.5 bg-slate-900/90 text-white rounded-full text-xs font-semibold shadow-xl border border-indigo-500/40 backdrop-blur-md transition-all">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>VigilanceAI Copilot</span>
+            <span>INSPIRA Copilot</span>
             <span className="text-[10px] text-cyan-300 font-mono bg-cyan-950/80 px-2 py-0.5 rounded-full border border-cyan-800/60">
-              NIC AI
+              AI PROTOTYPE
             </span>
           </div>
 
@@ -241,19 +241,19 @@ export const VigilanceAiCopilot: React.FC<VigilanceAiCopilotProps> = ({
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-xs sm:text-sm font-bold text-white tracking-wide">
-                    VigilanceAI Institutional Copilot
+                    INSPIRA AI Assistant
                   </h3>
                   <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-400/30">
-                    AI-VIGILANCE-CORE
+                    AI-PROTOTYPE
                   </span>
                 </div>
                 <div className="flex items-center gap-2 text-[10px] text-slate-300 mt-0.5">
                   <span className="flex items-center gap-1 text-emerald-400 font-semibold">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    NIC GovNet TLS 1.3
+                    Prototype Active
                   </span>
                   <span>•</span>
-                  <span>Ministry of Social Justice</span>
+                  <span>SIH 2026 PS 26095</span>
                 </div>
               </div>
             </div>
@@ -506,7 +506,7 @@ export const VigilanceAiCopilot: React.FC<VigilanceAiCopilotProps> = ({
             </form>
 
             <div className="flex items-center justify-between text-[10px] text-slate-400 font-mono mt-2 px-1">
-              <span>Security Clearance: GIGW 3.0 • NIC Central</span>
+              <span>INSPIRA Prototype • Team InnoCoders</span>
               <button
                 type="button"
                 onClick={() => setMessages([INITIAL_GREETING])}

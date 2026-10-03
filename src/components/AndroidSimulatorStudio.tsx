@@ -26,7 +26,7 @@ import {
   RefreshCw,
   Palette
 } from 'lucide-react';
-import { EmblemOfIndia } from './EmblemOfIndia';
+import { InspiraLogo } from './InspiraLogo';
 
 export type AndroidDeviceModel = 'PIXEL_8_PRO' | 'GALAXY_S24' | 'FIELD_PHONE' | 'ANDROID_TABLET';
 
@@ -64,7 +64,7 @@ const DEVICE_SPECS: Record<AndroidDeviceModel, DeviceSpec> = {
   },
   FIELD_PHONE: {
     name: 'Field Officer Rugged Phone',
-    brand: 'GovNet Secured Android 14',
+    brand: 'Field Inspector Android 14',
     width: 360,
     height: 800,
     bezelRadius: 'rounded-[32px]',
@@ -74,7 +74,7 @@ const DEVICE_SPECS: Record<AndroidDeviceModel, DeviceSpec> = {
   },
   ANDROID_TABLET: {
     name: 'Rugged Field Inspection Tablet',
-    brand: 'GovNet Inspection OS 12.4"',
+    brand: 'Field Inspection Tablet 12.4"',
     width: 768,
     height: 1024,
     bezelRadius: 'rounded-[32px]',
@@ -128,13 +128,10 @@ export const AndroidSimulatorStudio: React.FC<AndroidSimulatorStudioProps> = ({
     return () => clearInterval(interval);
   }, []);
 
-  // Compute local network URL for physical Android device testing
-  const localHostName = window.location.hostname;
-  const localPort = window.location.port ? `:${window.location.port}` : '';
   const localNetworkUrl =
-    localHostName === 'localhost' || localHostName === '127.0.0.1'
-      ? `http://10.194.73.98${localPort}`
-      : `${window.location.protocol}//${localHostName}${localPort}`;
+    typeof window !== 'undefined'
+      ? `${window.location.protocol}//${window.location.host}`
+      : 'https://smart-ngo-monitoring-portal.vercel.app';
 
   const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=260x260&margin=10&data=${encodeURIComponent(
     localNetworkUrl
@@ -187,22 +184,22 @@ export const AndroidSimulatorStudio: React.FC<AndroidSimulatorStudioProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col select-none text-slate-100 overflow-hidden font-sans">
       {/* National Tricolor Accent Ribbon */}
-      <div className="h-1 w-full bg-gradient-to-r from-[#FF9933] via-white to-[#138808] shrink-0" />
+      <div className="h-1 w-full bg-[#0B3B60] shrink-0" />
 
       {/* Top Studio Control HUD */}
       <header className="h-16 px-4 sm:px-6 bg-[#0B3B60] border-b border-[#0B3B60] flex items-center justify-between gap-3 shrink-0 shadow-lg z-20 bg-gradient-to-r from-[#07253d] via-[#0B3B60] to-[#0d4672]">
         {/* Left: Branding & Model Tag */}
         <div className="flex items-center space-x-3 shrink-0">
-          <div className="w-10 h-13 shrink-0 flex items-center justify-center overflow-hidden">
-            <EmblemOfIndia variant="badge" size={38} className="shadow-md" />
+          <div className="w-10 h-10 shrink-0 flex items-center justify-center overflow-hidden">
+            <InspiraLogo className="w-8 h-8" />
           </div>
           <div className="shrink-0">
             <div className="flex items-center gap-2">
               <h2 className="text-sm font-bold text-white tracking-tight">
-                INSPIRA Mobile PMU Field Simulator
+                INSPIRA Mobile Field Simulator
               </h2>
               <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                GovNet Secured OS
+                Field Simulator Mode
               </span>
             </div>
             <p className="text-[11px] text-slate-300 font-medium hidden sm:block">

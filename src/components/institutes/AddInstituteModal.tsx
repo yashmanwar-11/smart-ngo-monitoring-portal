@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Building2, MapPin, Phone, Mail, Globe, Users, Calendar, Award, ShieldCheck, Check } from 'lucide-react';
 import { NGO } from '../../types';
+import { ngoApi } from '../../services/apiClient';
 
 interface AddInstituteModalProps {
   isOpen: boolean;
@@ -34,7 +35,7 @@ export const AddInstituteModal: React.FC<AddInstituteModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name.trim() || !formData.address.trim()) return;
 
@@ -65,16 +66,19 @@ export const AddInstituteModal: React.FC<AddInstituteModalProps> = ({
       lastInspectionDate: new Date().toISOString().split('T')[0],
       complianceScore: 92,
       reportedComplaintsCount: 0,
-      description: formData.description.trim() || `${formData.name} is dedicated to welfare and statutory social service under ${formData.scheme}.`,
+      description: formData.description.trim() || `${formData.name} is dedicated to welfare and social service under ${formData.scheme}.`,
       documents: {
         panCardNumber: `AAAT${Math.floor(1000 + Math.random() * 9000)}M`,
         darpanId: `MH/${formData.foundingYear}/${Math.floor(100000 + Math.random() * 900000)}`,
       },
-      photos: [
-        'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80&w=1200',
-        'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200',
-      ],
+      photos: [],
     };
+
+    try {
+      await ngoApi.create(newNgo);
+    } catch (err) {
+      console.warn('Institute saved to local state:', err);
+    }
 
     onAddInstitute(newNgo);
     onClose();
@@ -83,8 +87,8 @@ export const AddInstituteModal: React.FC<AddInstituteModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-5 overflow-y-auto animate-fade-in">
       <div className="bg-white rounded-2xl max-w-2xl w-full border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh] animate-scale-in">
-        {/* Tricolor Ribbon */}
-        <div className="h-1 bg-gradient-to-r from-[#ff9933] via-white to-[#138808]"></div>
+        {/* Neutral Top Accent Line */}
+        <div className="h-1 bg-[#0B3B60]"></div>
 
         {/* Modal Header */}
         <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white p-4 sm:p-5 flex items-center justify-between border-b border-slate-700">
@@ -94,7 +98,7 @@ export const AddInstituteModal: React.FC<AddInstituteModalProps> = ({
             </div>
             <div>
               <h3 className="font-bold text-base sm:text-lg text-white">Add New Institute / NGO</h3>
-              <p className="text-xs text-blue-200">National NGO DARPAN &amp; Ministry Verification Registry</p>
+              <p className="text-xs text-blue-200">INSPIRA Institute Registry • SIH 2026 Prototype</p>
             </div>
           </div>
           <button

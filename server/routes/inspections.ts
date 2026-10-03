@@ -615,7 +615,7 @@ inspectionsRouter.post('/:id/submit', authenticateToken, requireRole(['OFFICER',
   }
 });
 
-// POST /api/inspections/:id/review - Directorate General (IAS) Scrutiny & Sanction Order
+// POST /api/inspections/:id/review - Directorate Scrutiny & Sanction Order
 inspectionsRouter.post('/:id/review', authenticateToken, requireRole(['ADMIN']), (req: AuthRequest, res: Response): void => {
   try {
     const { id } = req.params;
@@ -637,8 +637,8 @@ inspectionsRouter.post('/:id/review', authenticateToken, requireRole(['ADMIN']),
       return;
     }
 
-    const reviewerName = req.user?.full_name || 'Dr. Rajesh Verma, IAS';
-    const reviewerBadge = req.user?.badge_number || 'GOV-DIR-009';
+    const reviewerName = req.user?.full_name || 'Demo Director (role: Directorate)';
+    const reviewerBadge = req.user?.badge_number || 'DEMO-DIR-001';
     const reviewedAt = new Date().toLocaleString('en-IN') + ' IST';
     const sanctionOrderNumber = `DIR/ORD/2026/MSJE/${Math.floor(1000 + Math.random() * 9000)}${verdict === 'BAD_DEFICIENT' ? '-PUN' : ''}`;
     const assessmentId = 'scrutiny_' + crypto.randomUUID().replace(/-/g, '').substring(0, 12);

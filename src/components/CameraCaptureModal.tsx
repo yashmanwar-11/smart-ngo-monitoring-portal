@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Camera, X, Check, RefreshCw, MapPin, ShieldAlert, Sparkles } from 'lucide-react';
+import { Camera, X, Check, RefreshCw, MapPin, ShieldAlert, Sparkles, Upload } from 'lucide-react';
 import { InspectionPhoto } from '../types';
 
 interface CameraCaptureModalProps {
@@ -31,32 +31,48 @@ export const CameraCaptureModal: React.FC<CameraCaptureModalProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  const createAuditPhotoSvg = (label: string, category: string, color: string) => {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+      <rect width="800" height="500" fill="#0f172a"/>
+      <rect x="20" y="20" width="760" height="460" rx="12" fill="#1e293b" stroke="${color}" stroke-width="2"/>
+      <rect x="20" y="20" width="760" height="4" fill="#0B3B60"/>
+      <circle cx="400" cy="180" r="50" fill="#0f172a" stroke="${color}" stroke-width="3"/>
+      <text x="400" y="192" fill="${color}" font-family="monospace" font-size="28" font-weight="bold" text-anchor="middle">${category.slice(0, 4)}</text>
+      <text x="400" y="275" fill="#ffffff" font-family="sans-serif" font-size="22" font-weight="bold" text-anchor="middle">${label}</text>
+      <text x="400" y="310" fill="#94a3b8" font-family="monospace" font-size="14" text-anchor="middle">FIELD AUDIT VERIFICATION CERTIFICATE</text>
+      <rect x="150" y="340" width="500" height="70" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+      <text x="170" y="370" fill="#38bdf8" font-family="monospace" font-size="13">EVIDENCE TYPE: ${category}</text>
+      <text x="170" y="392" fill="#a7f3d0" font-family="monospace" font-size="11">INSPIRA PROTOTYPE • FIELD SURVEILLANCE (SIH 2026)</text>
+    </svg>`;
+    return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  };
+
   // Sample high-fidelity field audit photos for instant testing or when webcam is restricted
   const SAMPLE_PHOTOS = [
     {
       label: 'Office Signboard & Entrance',
       category: 'OFFICE_EXTERIOR' as const,
-      url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=900&q=80',
+      url: createAuditPhotoSvg('Office Signboard &amp; Main Entrance', 'OFFICE_EXTERIOR', '#38bdf8'),
     },
     {
       label: 'Financial Ledgers & Cashbooks',
       category: 'LEDGER_AUDIT' as const,
-      url: 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=900&q=80',
+      url: createAuditPhotoSvg('Financial Ledgers &amp; Cashbooks', 'LEDGER_AUDIT', '#10b981'),
     },
     {
       label: 'Staff Presence & Meeting',
       category: 'STAFF_VERIFICATION' as const,
-      url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=900&q=80',
+      url: createAuditPhotoSvg('Staff Presence &amp; Meeting Record', 'STAFF_VERIFICATION', '#818cf8'),
     },
     {
       label: 'Beneficiaries & Project Work',
       category: 'BENEFICIARY_MEET' as const,
-      url: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=900&q=80',
+      url: createAuditPhotoSvg('Beneficiaries &amp; Project Welfare Work', 'BENEFICIARY_MEET', '#f59e0b'),
     },
     {
       label: 'Irregularity / Padlocked Gate',
       category: 'VIOLATION_EVIDENCE' as const,
-      url: 'https://images.unsplash.com/photo-1590402494682-cd3fb53b1f70?auto=format&fit=crop&w=900&q=80',
+      url: createAuditPhotoSvg('Irregularity &amp; Padlocked Gate Discrepancy', 'VIOLATION_EVIDENCE', '#ef4444'),
     },
   ];
 
@@ -298,7 +314,27 @@ export const CameraCaptureModal: React.FC<CameraCaptureModalProps> = ({
                 <p className="text-xs text-slate-300 max-w-sm mx-auto">
                   {cameraError || 'Camera view ready.'} Click a sample evidence image below or trigger simulated capture.
                 </p>
-                <div className="flex flex-wrap justify-center gap-2 pt-1">
+                <div className="flex flex-wrap justify-center items-center gap-2 pt-1">
+                  <label className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-semibold bg-emerald-950 text-emerald-300 hover:bg-emerald-900 border border-emerald-500/50 rounded-full cursor-pointer transition-colors shadow-xs">
+                    <Upload className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Upload Device Image</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (ev) => {
+                            const res = ev.target?.result as string;
+                            if (res) useSamplePhoto(res, selectedCategory);
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="hidden"
+                    />
+                  </label>
                   {SAMPLE_PHOTOS.map((item, idx) => (
                     <button
                       key={idx}

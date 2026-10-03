@@ -406,9 +406,9 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
         const officerPopup = `
           <div style="font-family: system-ui, -apple-system, sans-serif; padding: 4px; min-width: 230px;">
-            <div style="font-size: 10px; font-weight: 800; color: #1e40af; text-transform: uppercase;">👮 Maharashtra Field Auditor</div>
+            <div style="font-size: 10px; font-weight: 800; color: #1e40af; text-transform: uppercase;">👮 Field Inspector (Demo)</div>
             <div style="font-size: 13px; font-weight: 700; color: #0f172a; margin: 2px 0;">${officer.name}</div>
-            <div style="font-size: 11px; color: #475569;">Badge: <b>${officer.badgeNumber || 'INSP-MH-402'}</b></div>
+            <div style="font-size: 11px; color: #475569;">Badge: <b>${officer.badgeNumber || 'DEMO-INSP-402'}</b></div>
             <div style="font-size: 11px; color: #475569;">Jurisdiction: <b>${officer.assignedDistrict || 'Maharashtra'}</b></div>
             <div style="font-size: 11px; color: #059669; margin: 4px 0;">🔋 Battery: ${officer.currentLocation.batteryLevel}% | ${officer.currentLocation.lastPingTime}</div>
             <div style="font-size: 10px; font-family: monospace; color: #0284c7; margin-bottom: 6px;">

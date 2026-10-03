@@ -36,8 +36,10 @@ import {
   Zap
 } from 'lucide-react';
 import { User, AuthSession } from '../types';
-import { EmblemOfIndia } from './EmblemOfIndia';
+import { InspiraLogo } from './InspiraLogo';
+import { PrototypeDisclaimerBanner } from './PrototypeDisclaimerBanner';
 import { DigitalIndiaLogo, EPramaanLogo, NgoDarpanLogo, NicLogo } from './GovLogos';
+import { UserAvatar } from './UserAvatar';
 
 interface NavbarProps {
   currentUser: User | null;
@@ -192,13 +194,13 @@ export const Navbar: React.FC<NavbarProps> = ({
       case 'ADMIN':
         return (
           <span className="px-2.5 py-0.5 text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 rounded">
-            Level 5: Directorate Admin (IAS)
+            Directorate Admin
           </span>
         );
       case 'OFFICER':
         return (
           <span className="px-2.5 py-0.5 text-[10px] font-bold bg-blue-100 text-blue-900 border border-blue-300 rounded">
-            Level 3: Field Vigilance Inspector
+            Field Inspector
           </span>
         );
       case 'NGO':
@@ -226,7 +228,10 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <header className="sticky top-0 z-50 bg-white text-slate-900 border-b border-slate-200/90 shadow-sm font-sans">
-      {/* Tier 1: National Tricolor Flag Accent Ribbon (Exact India.gov.in Style) */}
+      {/* Permanent, Non-Dismissible SIH Prototype Disclaimer Banner */}
+      <PrototypeDisclaimerBanner />
+
+      {/* Tier 1: National Tricolor Flag Accent Ribbon */}
       <div className="grid grid-cols-3 h-[4px] w-full shadow-2xs">
         <div className="bg-[#FF9933]"></div>
         <div className="bg-[#FFFFFF] relative flex items-center justify-center">
@@ -235,24 +240,22 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="bg-[#138808]"></div>
       </div>
 
-      {/* Tier 2: Standard Government of India GIGW 3.0 Utility & Accessibility Bar */}
+      {/* Tier 2: Utility & Accessibility Bar */}
       {!isInsideAndroid && (
         <div className="bg-[#F8FAFC] border-b border-slate-200/90 px-3 sm:px-6 py-1.5 text-[11px] text-slate-700">
           <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-            {/* Left: Department Attribution & Official National Identity */}
+            {/* Left: SIH Hackathon & Problem Statement Attribution */}
             <div className="flex items-center space-x-2 text-xs">
-              <span className="font-extrabold text-slate-900 font-serif tracking-tight">
-                {language === 'hi' ? 'भारत सरकार' : 'GOVERNMENT OF INDIA'}
+              <span className="font-extrabold text-[#0B3B60] tracking-tight">
+                Smart India Hackathon 2026
               </span>
               <span className="text-slate-300">•</span>
               <span className="text-slate-700 font-medium">
-                {language === 'hi'
-                  ? 'सामाजिक न्याय और अधिकारिता मंत्रालय'
-                  : 'Ministry of Social Justice and Empowerment'}
+                Problem Statement by MoSJE (PS 26095)
               </span>
               <span className="text-slate-300 hidden md:inline">•</span>
-              <span className="text-slate-500 font-mono text-[10px] hidden md:inline">
-                DARPAN Vigilance Division
+              <span className="text-slate-500 text-[10px] hidden md:inline">
+                Team InnoCoders Prototype
               </span>
             </div>
 
@@ -409,24 +412,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </button>
               )}
 
-              {/* National Helpline */}
-              <div className="hidden lg:flex items-center space-x-1 text-slate-700 font-medium">
-                <PhoneCall className="w-3 h-3 text-emerald-700" />
-                <span>
-                  Helpline: <strong className="text-slate-900 font-bold">1800-11-2026</strong>
-                </span>
-              </div>
-
               {/* Live IST Timestamp */}
               <div className="hidden 2xl:flex items-center space-x-1 font-mono text-slate-700 bg-white px-2 py-0.5 border border-slate-300 rounded text-[10px]">
                 <Clock className="w-3 h-3 text-[#0B3B60]" />
-                <span>{istTime || '28 Sep 2026 | IST'}</span>
-              </div>
-
-              {/* NIC GovNet Secure Gateway */}
-              <div className="hidden xl:flex items-center space-x-1 px-1.5 py-0.5 bg-white text-slate-700 border border-slate-300 rounded text-[9.5px] font-mono">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
-                <span>NIC GovNet</span>
+                <span>{istTime || 'IST'}</span>
               </div>
 
               {/* Clearance / Session Badge */}
@@ -438,7 +427,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               ) : (
                 <span className="inline-flex items-center gap-1 font-medium bg-slate-200/70 text-slate-800 px-2 py-0.5 border border-slate-300 rounded text-[10px]">
                   <Lock className="w-3 h-3 text-slate-600" />
-                  <span>Public Portal Mode</span>
+                  <span>Public View</span>
                 </span>
               )}
             </div>
@@ -446,74 +435,36 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
       )}
 
-      {/* Tier 3: Main Identity & Official Search Bar (Signature India.gov.in Structure) */}
+      {/* Tier 3: Main Identity & Search Bar */}
       <div className="bg-white px-3 sm:px-6 py-2.5 border-b border-slate-200/90 relative">
         <div className="max-w-7xl mx-auto flex flex-col xl:flex-row xl:items-center justify-between gap-3 min-w-0">
           
-          {/* Left: Authentic State Emblem of India + Bilingual Ministry Typography */}
+          {/* Left: Neutral INSPIRA Logo + Title + Problem Statement by MoSJE */}
           <button
             onClick={onNavigateHome}
             className="flex items-center space-x-3 text-left group cursor-pointer focus:outline-none shrink-0"
-            title="National Social Welfare Monitoring Portal Homepage"
+            title="INSPIRA Prototype Homepage"
           >
-            {/* Official Ashoka Lion Capital Emblem with strict bounding box */}
-            <div className="w-10 h-14 shrink-0 overflow-hidden flex items-center justify-center">
-              <EmblemOfIndia className="w-10 h-14 drop-shadow-2xs group-hover:scale-102 transition-transform" variant="gold" showText={true} />
+            {/* Neutral Custom INSPIRA Logo */}
+            <div className="w-10 h-10 shrink-0 flex items-center justify-center">
+              <InspiraLogo className="w-10 h-10 drop-shadow-2xs group-hover:scale-105 transition-transform" />
             </div>
 
             <div className="space-y-0.5 border-l border-slate-200 pl-2.5">
-              <div className="text-[10px] font-black text-slate-900 tracking-wider font-serif uppercase leading-none">
-                {language === 'hi' ? 'भारत सरकार' : 'Government of India'}
-              </div>
-              <div className="text-[11.5px] font-bold text-slate-700 leading-tight">
-                {language === 'hi'
-                  ? 'सामाजिक न्याय और अधिकारिता मंत्रालय'
-                  : 'Ministry of Social Justice and Empowerment'}
-              </div>
-              <div className="flex items-center gap-1.5 pt-0.5">
-                <span className="text-base sm:text-lg font-black text-[#0B3B60] tracking-tight font-serif leading-none">
-                  {language === 'hi' ? 'आईएनएसपीआईआरए (INSPIRA)' : 'INSPIRA'}
+              <div className="flex items-center gap-2">
+                <span className="text-lg sm:text-xl font-black text-[#0B3B60] tracking-tight leading-none">
+                  INSPIRA
                 </span>
-                <span className="hidden sm:inline-block px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-50 text-amber-900 border border-amber-300">
-                  Rule 14 GFR 2017
+                <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                  SIH 2026 Prototype
                 </span>
-                <span className="hidden lg:inline-block px-1.5 py-0.2 rounded text-[9px] font-semibold bg-blue-50 text-blue-800 border border-blue-200">
-                  DARPAN v3.0
-                </span>
-                {onOpenVersionModal && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onOpenVersionModal();
-                    }}
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-black bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 hover:from-emerald-500 hover:to-cyan-500 text-white shadow-xs transition-all hover:scale-105 cursor-pointer border border-emerald-400/40"
-                    title="Click to view v2.0.0 Enterprise Release Specifications & Architecture Benchmark"
-                  >
-                    <Sparkles className="w-2.5 h-2.5 text-amber-300 animate-spin" />
-                    <span>v2.0.0 PRO</span>
-                  </button>
-                )}
-                {onOpenApiConfigModal && (
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onOpenApiConfigModal();
-                    }}
-                    className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/15 hover:bg-amber-500/25 text-amber-900 border border-amber-400/50 shadow-xs transition-all hover:scale-105 cursor-pointer"
-                    title="Live External APIs & Neural Gateway (Gemini 2.5 Flash, Open-Meteo, Nominatim, Web Crypto)"
-                  >
-                    <Zap className="w-2.5 h-2.5 text-amber-600 animate-pulse" />
-                    <span>Live APIs</span>
-                  </button>
-                )}
               </div>
-              <p className="text-[9.5px] text-slate-500 font-medium hidden sm:block leading-tight">
-                {language === 'hi'
-                  ? 'राष्ट्रीय सामाजिक कल्याण निगरानी एवं औचक निरीक्षण पोर्टल'
-                  : 'National Social Welfare Facility Monitoring & Surprise Inspection Audit System'}
-              </p>
+              <div className="text-[11px] font-medium text-slate-600 leading-tight">
+                NGO Monitoring &amp; Inspection System
+              </div>
+              <div className="text-[10px] text-slate-500 font-medium">
+                Problem statement by MoSJE (Ministry of Social Justice and Empowerment)
+              </div>
             </div>
           </button>
 
@@ -635,10 +586,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                   type="button"
                   onClick={onOpenLogin}
                   className="flex items-center space-x-1.5 px-3.5 py-2 bg-[#0B3B60] hover:bg-[#07253D] text-white rounded-md text-xs font-bold shadow-xs hover:shadow-sm transition-all cursor-pointer whitespace-nowrap border border-[#0B3B60]"
-                  title="Official Institutional Sign-In via e-Pramaan SSO"
+                  title="Sign in with your role account"
                 >
                   <Lock className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Official Login (e-Pramaan SSO)</span>
+                  <span>Login</span>
                 </button>
               </div>
             ) : (
@@ -650,17 +601,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                   className="flex items-center space-x-2.5 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-300 rounded-md text-xs text-left cursor-pointer transition-all shadow-2xs hover:shadow-xs group"
                 >
                   <div className="relative">
-                    {currentUser.avatarUrl ? (
-                      <img
-                        src={currentUser.avatarUrl}
-                        alt={currentUser.name}
-                        className="w-7 h-7 rounded-full object-cover border border-[#0B3B60]/30 shadow-2xs ring-1 ring-[#0B3B60]/20"
-                      />
-                    ) : (
-                      <div className="w-7 h-7 rounded-full bg-[#0B3B60] flex items-center justify-center font-bold text-amber-300 text-xs shadow-xs border border-[#0B3B60]">
-                        {currentUser.name.charAt(0)}
-                      </div>
-                    )}
+                    <UserAvatar
+                      name={currentUser.name}
+                      role={currentUser.role}
+                      avatarUrl={currentUser.avatarUrl}
+                      size="xs"
+                      showBadge={false}
+                    />
                     <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white"></span>
                   </div>
                   <div className="hidden sm:block">
@@ -680,18 +627,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div className="p-3 bg-gradient-to-br from-slate-50 to-blue-50/40 border border-slate-200/80 rounded-xl mb-2.5 shadow-2xs">
                       <div className="flex items-center gap-3">
                         <div className="relative shrink-0">
-                          {currentUser.avatarUrl ? (
-                            <img
-                              src={currentUser.avatarUrl}
-                              alt={currentUser.name}
-                              className="w-12 h-12 rounded-full object-cover border-2 border-white shadow-md ring-2 ring-[#0B3B60]/20"
-                            />
-                          ) : (
-                            <div className="w-12 h-12 rounded-full bg-[#0B3B60] flex items-center justify-center font-bold text-amber-300 text-lg shadow-md border-2 border-white">
-                              {currentUser.name.charAt(0)}
-                            </div>
-                          )}
-                          <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white shadow-xs" title="e-Pramaan Live Verified"></span>
+                          <UserAvatar
+                            name={currentUser.name}
+                            role={currentUser.role}
+                            avatarUrl={currentUser.avatarUrl}
+                            size="lg"
+                            showBadge={true}
+                          />
+                          <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white shadow-xs" title="Session Active"></span>
                         </div>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center justify-between">
@@ -776,11 +719,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                                 }`}
                               >
                                 <span className="flex items-center gap-2 truncate max-w-[210px]">
-                                  {u.avatarUrl ? (
-                                    <img src={u.avatarUrl} alt={u.name} className="w-5 h-5 rounded-full object-cover shrink-0 border border-slate-300" />
-                                  ) : (
-                                    <span>{u.role === 'ADMIN' ? '🏛️' : u.role === 'OFFICER' ? '👮' : u.role === 'NGO' ? '🏢' : u.role === 'NGO_WORKER' ? '👩‍⚕️' : '👤'}</span>
-                                  )}
+                                  <UserAvatar
+                                    name={u.name}
+                                    role={u.role}
+                                    avatarUrl={u.avatarUrl}
+                                    size="xs"
+                                    showBadge={false}
+                                  />
                                   <span className="truncate">{u.name}</span>
                                 </span>
                                 <span className="text-[9px] font-mono uppercase opacity-75 shrink-0">{u.role}</span>

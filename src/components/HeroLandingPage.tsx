@@ -47,8 +47,9 @@ import {
   CreditCard
 } from 'lucide-react';
 import { NGO, User } from '../types';
+import { dashboardApi } from '../services/apiClient';
 import { InteractiveMap } from './InteractiveMap';
-import { EmblemOfIndia } from './EmblemOfIndia';
+import { InspiraLogo } from './InspiraLogo';
 import { DigitalIndiaLogo, EPramaanLogo, NgoDarpanLogo, NicLogo } from './GovLogos';
 import { SIH_TEAM_DATA } from './SihTeamModal';
 
@@ -86,6 +87,36 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
   const [directoryViewMode, setDirectoryViewMode] = useState<'CARDS' | 'TABLE'>('CARDS');
   const [showAllNgos, setShowAllNgos] = useState(false);
   const [activeExploreTab, setActiveExploreTab] = useState<'SCHEMES' | 'SERVICES' | 'VIGILANCE' | 'CIRCULARS'>('SCHEMES');
+
+  const [portalStats, setPortalStats] = useState<{
+    totalNgos: number;
+    totalBudget: number;
+    activeAudits: number;
+    completedAudits: number;
+    totalAttendancePunches: number;
+    totalGrievances: number;
+    resolvedGrievances: number;
+    districtsCovered: number;
+  }>({
+    totalNgos: ngos.length,
+    totalBudget: ngos.reduce((acc, curr) => acc + (curr.budget || 0), 0),
+    activeAudits: ngos.filter(n => n.status === 'UNDER_INSPECTION').length,
+    completedAudits: ngos.filter(n => n.status === 'REGISTERED').length,
+    totalAttendancePunches: 0,
+    totalGrievances: ngos.reduce((acc, curr) => acc + (curr.reportedComplaintsCount || 0), 0),
+    resolvedGrievances: 0,
+    districtsCovered: new Set(ngos.map(n => n.district).filter(Boolean)).size,
+  });
+
+  useEffect(() => {
+    dashboardApi.getPublicStats().then((data) => {
+      if (data && typeof data.totalNgos === 'number') {
+        setPortalStats(data);
+      }
+    }).catch((err) => {
+      console.warn('Could not load live public stats:', err);
+    });
+  }, []);
 
   useEffect(() => {
     const handlePortalSearch = (e: Event) => {
@@ -209,24 +240,24 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
   // Statutory circulars and downloadable manuals data
   const officialCirculars = [
     {
-      refNo: 'MSJE/NGO-VIG/2026/044',
+      refNo: 'INSPIRA/NGO-SPEC/2026/044',
       date: '02-03-2026',
-      title: 'Mandatory Geofenced Check-In (150m Perimeter) for all Grant-in-Aid Field Audits under Rule 14 GFR 2017',
-      department: 'Directorate General of NGO Vigilance',
+      title: 'Mandatory Geofenced Check-In (150m Perimeter) for all Grant-in-Aid Field Audits',
+      department: 'INSPIRA Field Audit Directorate',
       size: '420 KB (PDF)'
     },
     {
       refNo: 'NITI/DARPAN/TECH/2026/18',
       date: '18-02-2026',
       title: 'Standard Operating Procedure (SOP) for Cryptographic Photographic Stamping & 5-Category Evidence Capture',
-      department: 'NITI Aayog & NIC IT Cell',
+      department: 'NGO-DARPAN Data Specification Cell',
       size: '680 KB (PDF)'
     },
     {
-      refNo: 'MSJE/DIR-IAS/AUDIT/2026/09',
+      refNo: 'INSPIRA/DIR/AUDIT/2026/09',
       date: '28-01-2026',
-      title: 'Guidelines on Directorate General (IAS) Assessment Station, Scoring Matrix & Punitive Show-Cause Directives',
-      department: 'Ministry of Social Justice & Empowerment',
+      title: 'Guidelines on Directorate Assessment Station, Scoring Matrix & Review Directives',
+      department: 'INSPIRA Prototype Administration (SIH 2026)',
       size: '315 KB (PDF)'
     },
     {
@@ -251,9 +282,9 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
               <span>LIVE GRID</span>
             </div>
             <div className="flex items-center gap-3 text-[11px] font-mono text-slate-300">
-              <span className="hidden sm:inline"><strong className="text-white">18</strong> Active Audits</span>
+              <span className="hidden sm:inline"><strong className="text-white">{portalStats.activeAudits}</strong> Active Audits</span>
               <span className="hidden sm:inline text-slate-600">•</span>
-              <span className="hidden md:inline"><strong className="text-emerald-300">1,482</strong> Biometric Punches</span>
+              <span className="hidden md:inline"><strong className="text-emerald-300">{portalStats.totalAttendancePunches.toLocaleString('en-IN')}</strong> Biometric Punches</span>
               <span className="hidden md:inline text-slate-600">•</span>
               <span className="hidden lg:inline"><strong className="text-amber-300">150m</strong> Geofence Lock</span>
             </div>
@@ -276,60 +307,56 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
               </span>
               <span className="mx-6 flex items-center gap-1.5">
                 <span className="text-purple-400 font-bold">●</span>
-                <strong className="text-white">AI Face Matching:</strong> Biometric attendance verified with 68-point facial landmarks and anti-spoof liveness check.
+                <strong className="text-white">Staff Verification:</strong> Daily field staff attendance logged with live photo capture and timestamp.
               </span>
               {/* Duplicate set for seamless continuous marquee loop */}
               <span className="mx-6 flex items-center gap-1.5">
                 <span className="text-blue-400 font-bold">●</span>
-                <strong className="text-white">Circular MSJE/2026/044:</strong> Mandatory 150m Geofence Lock &amp; EXIF GPS Watermarking in effect for all Annual Welfare Grant Inspections.
+                <strong className="text-white">Audit Standard:</strong> Mandatory 150m Geofence Lock &amp; EXIF GPS Watermarking in effect for Field Inspections.
               </span>
               <span className="mx-6 flex items-center gap-1.5">
                 <span className="text-amber-400 font-bold">●</span>
-                <strong className="text-white">DARPAN Directive:</strong> Non-profit entities failing physical verification subject to immediate Show-Cause &amp; Bank Account Freeze under Section 14.
+                <strong className="text-white">DARPAN Registry:</strong> Non-profit entities failing physical verification flagged for immediate Directorate review.
               </span>
               <span className="mx-6 flex items-center gap-1.5">
                 <span className="text-emerald-400 font-bold">●</span>
-                <strong className="text-white">Public Grievance Desk:</strong> Citizens can report ghost offices or grant misappropriation anonymously with immutable tracking tokens.
+                <strong className="text-white">Public Grievance Desk:</strong> Citizens can report ghost offices or grant misappropriation anonymously.
               </span>
               <span className="mx-6 flex items-center gap-1.5">
                 <span className="text-purple-400 font-bold">●</span>
-                <strong className="text-white">AI Face Matching:</strong> Biometric attendance verified with 68-point facial landmarks and anti-spoof liveness check.
+                <strong className="text-white">Staff Verification:</strong> Daily field staff attendance logged with live photo capture and timestamp.
               </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 2. MAIN MANDATE & PORTAL OVERVIEW SECTION - OFFICIAL GOVERNMENT IDENTITY */}
+      {/* 2. MAIN MANDATE & PORTAL OVERVIEW SECTION - INSPIRA PROTOTYPE IDENTITY */}
       <section className="relative overflow-hidden bg-white border-b border-slate-200/90 py-10 sm:py-14 px-4 sm:px-6 lg:px-8">
-        {/* Subtle Watermark of the State Emblem of India */}
-        <div className="absolute right-10 top-1/2 -translate-y-1/2 opacity-[0.06] pointer-events-none -z-0">
-          <EmblemOfIndia className="w-96 h-[500px]" variant="transparent" showText={true} />
-        </div>
         <div className="absolute top-0 right-1/4 w-96 h-96 bg-amber-50/60 rounded-full blur-3xl pointer-events-none -z-10" />
         <div className="absolute -bottom-10 left-10 w-80 h-80 bg-blue-50/50 rounded-full blur-3xl pointer-events-none -z-10" />
 
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             
-            {/* Left Column: Official Mandate & Title */}
+            {/* Left Column: Mandate & Title */}
             <div className="lg:col-span-8 space-y-5">
               <div className="flex flex-wrap items-center gap-2">
                 <div className="inline-flex items-center gap-2.5 px-3.5 py-1 bg-amber-50 border border-amber-300/80 rounded-full text-amber-900 text-xs font-bold shadow-2xs">
-                  <EmblemOfIndia className="w-4 h-5 rounded overflow-hidden" variant="raw" showText={false} />
-                  <span>भारत सरकार • सामाजिक न्याय और अधिकारिता मंत्रालय | Government of India</span>
+                  <InspiraLogo className="w-4 h-4" />
+                  <span>INSPIRA Prototype • Smart India Hackathon 2026 (PS 26095)</span>
                 </div>
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 rounded-full text-emerald-800 text-xs font-bold font-mono shadow-2xs">
                   <Sparkles className="w-3.5 h-3.5 text-emerald-600 animate-spin" />
-                  <span>v2.0.0 Enterprise Edition</span>
+                  <span>Prototype v1.0 • Team InnoCoders</span>
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <div className="text-xs sm:text-sm font-black text-amber-800 tracking-wider font-serif uppercase">
-                  राष्ट्रीय सामाजिक कल्याण निगरानी एवं औचक निरीक्षण पोर्टल (INSPIRA)
+                <div className="text-xs sm:text-sm font-black text-amber-800 tracking-wider uppercase">
+                  NGO Monitoring &amp; Surprise Inspection System
                 </div>
-                <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.18] font-serif">
+                <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-slate-900 tracking-tight leading-[1.18]">
                   National Real-Time Monitoring &amp;{' '}
                   <span className="text-[#0B3B60] underline decoration-amber-500 decoration-3 underline-offset-4">
                     Surprise Inspection System
@@ -338,10 +365,9 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
               </div>
 
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl font-normal">
-                Mandated under Rule 14 of the General Financial Rules (GFR), 2017 and aligned with NITI Aayog NGO-DARPAN.
-                An authoritative national statutory oversight platform executing surprise on-site verification through
-                150-metre perimeter GPS geofence locking, 24x7 live CCTV surveillance integration, double-blind algorithmic duty assignment,
-                and Directorate General (IAS) scrutinies.
+                Prototype developed for Smart India Hackathon 2026 (Problem Statement 26095 by MoSJE).
+                Demonstrating real-time NGO monitoring, 150-metre GPS geofenced surprise inspections,
+                tamper-evident photo evidence capture, live CCTV feed integration, and transparent public grievance resolution.
               </p>
 
               {/* India.gov.in Style Quick Category Filter Pills */}
@@ -392,7 +418,7 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
                   className="px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs sm:text-sm font-bold rounded-lg shadow-sm hover:shadow-md transition-all flex items-center space-x-2 cursor-pointer border border-amber-600"
                 >
                   <Lock className="w-4 h-4 text-slate-950" />
-                  <span>Official Login (e-Pramaan SSO)</span>
+                  <span>Login</span>
                 </button>
 
                 <button
@@ -451,7 +477,7 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
                 <div className="p-3 bg-slate-50/80 rounded-xl border border-slate-100">
                   <span className="text-blue-700 text-[10px] uppercase font-bold flex items-center gap-1">
                     <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
-                    100% DARPAN Validated
+                    DARPAN Registry Search
                   </span>
                   <span className="text-xs text-slate-600 block mt-1 leading-relaxed">
                     Search authenticated non-profit organizations, registration credentials, and audited financial statements across all states.
@@ -481,10 +507,10 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
 
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
                 <span className="flex items-center gap-1.5 font-medium">
-                  <PhoneCall className="w-3.5 h-3.5 text-blue-600" />
-                  Helpline: <strong className="text-slate-800">1800-11-2026</strong>
+                  <ShieldCheck className="w-3.5 h-3.5 text-blue-600" />
+                  <span>Encrypted Grievance Docket</span>
                 </span>
-                <span className="text-emerald-700 font-medium">Toll-Free (IST)</span>
+                <span className="text-emerald-700 font-medium">Online Tracking</span>
               </div>
             </div>
 
@@ -512,7 +538,7 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-            {/* Level 5 Admin */}
+            {/* Directorate Admin */}
             <button
               type="button"
               onClick={() => onEnterDashboard('ADMIN')}
@@ -520,19 +546,19 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
             >
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase font-mono px-2 py-0.5 rounded bg-amber-400 text-slate-950">
-                  Level 5
+                  Directorate
                 </span>
                 <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-300 group-hover:translate-x-0.5 transition-all" />
               </div>
               <div className="font-bold text-xs sm:text-sm text-white mt-2 group-hover:text-amber-300 transition-colors">
-                Directorate General (IAS)
+                Directorate Admin
               </div>
               <div className="text-[10.5px] text-slate-300 mt-1 leading-snug">
-                National oversight, sanctions, CCTV grid &amp; random duty allocation
+                GIS oversight, sanctions, CCTV grid &amp; random duty allocation
               </div>
             </button>
 
-            {/* Level 3 Inspector */}
+            {/* Field Inspector */}
             <button
               type="button"
               onClick={() => onEnterDashboard('OFFICER')}
@@ -540,12 +566,12 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
             >
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase font-mono px-2 py-0.5 rounded bg-blue-400 text-slate-950">
-                  Level 3
+                  Inspector
                 </span>
                 <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-300 group-hover:translate-x-0.5 transition-all" />
               </div>
               <div className="font-bold text-xs sm:text-sm text-white mt-2 group-hover:text-blue-300 transition-colors">
-                Field Vigilance Inspector
+                Field Inspector
               </div>
               <div className="text-[10.5px] text-slate-300 mt-1 leading-snug">
                 150m GPS geofenced audit, live camera evidence &amp; radar
@@ -625,23 +651,23 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
             
             <div className="bg-white p-5 border border-slate-200/80 rounded-2xl shadow-2xs card-hover-lift animate-slide-up delay-100 transition-all">
               <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                Verified Real NGOs
+                Verified Facilities
               </div>
               <div className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-slate-900 to-blue-950 bg-clip-text text-transparent mt-1">
-                {ngos.length > 0 ? `${ngos.length}+` : '34+'}
+                {portalStats.totalNgos}
               </div>
               <div className="text-xs text-emerald-600 font-medium mt-1 flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                100% Real DARPAN Registry
+                Live DARPAN Database
               </div>
             </div>
 
             <div className="bg-white p-5 border border-slate-200/80 rounded-2xl shadow-2xs card-hover-lift animate-slide-up delay-200 transition-all">
               <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                Maharashtra Districts
+                Districts Covered
               </div>
               <div className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent mt-1">
-                36 / 36
+                {portalStats.districtsCovered} / 36
               </div>
               <div className="text-xs text-blue-600 font-medium mt-1 flex items-center gap-1">
                 <MapPin className="w-3.5 h-3.5" />
@@ -658,7 +684,7 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
               </div>
               <div className="text-xs text-amber-700 font-medium mt-1 flex items-center gap-1">
                 <ShieldCheck className="w-3.5 h-3.5" />
-                Rule 14 GFR 2017 Lock
+                GPS Perimeter Lock
               </div>
             </div>
 
@@ -667,7 +693,7 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
                 Audited Grant Capital
               </div>
               <div className="text-2xl sm:text-3xl font-black bg-gradient-to-r from-emerald-600 to-teal-700 bg-clip-text text-transparent mt-1">
-                ₹1,420+ Cr
+                ₹{(portalStats.totalBudget / 10000000).toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr
               </div>
               <div className="text-xs text-emerald-600 font-medium mt-1 flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" />
@@ -932,7 +958,7 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
                   </div>
                   <h3 className="text-sm font-bold text-slate-900">Verify NGO Compliance Certificate</h3>
                   <p className="text-xs text-slate-600 leading-relaxed">
-                    Verify statutory DARPAN credentials, on-site 150m geofence audit score, and download official Rule 14 compliance certificates.
+                    Verify NGO DARPAN credentials, on-site 150m geofence audit score, and download compliance verification records.
                   </p>
                 </div>
                 <button
@@ -1238,7 +1264,7 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
                 </p>
               </div>
               <span className="text-[11px] font-mono text-slate-600 bg-slate-50 px-2.5 py-1 rounded-full border border-slate-200 self-start">
-                Total Budget Monitored: <strong className="text-slate-900">₹1,420+ Cr</strong>
+                Total Budget Monitored: <strong className="text-slate-900">₹{(portalStats.totalBudget / 10000000).toLocaleString('en-IN', { maximumFractionDigits: 1 })} Cr</strong>
               </span>
             </div>
 
@@ -1304,7 +1330,7 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
               </div>
               <div className="pt-3 border-t border-slate-100 text-[11px] text-blue-700 font-semibold flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
-                Rule 14 GFR 2017 Compliant
+                Geofence Verified
               </div>
             </div>
 
@@ -1334,15 +1360,15 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
                   3
                 </div>
                 <h3 className="text-sm font-bold text-slate-900 group-hover:text-sky-700 transition-colors">
-                  DG (IAS) Scrutiny Station
+                  Directorate Review Station
                 </h3>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Executive oversight authority conducts line-by-line review of submitted field records, assigning compliance scores (0–100), Good/Bad verdicts, and statutory notices.
+                  Executive oversight authority conducts line-by-line review of submitted field records, assigning compliance scores (0–100), Good/Bad verdicts, and review notices.
                 </p>
               </div>
               <div className="pt-3 border-t border-slate-100 text-[11px] text-sky-700 font-semibold flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5 text-sky-600" />
-                Official Order Sealing Desk
+                Order Review Desk
               </div>
             </div>
 
@@ -1914,14 +1940,14 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
                           onClick={() => {
                             const blob = new Blob(
                               [
-                                `GOVERNMENT OF INDIA\nMinistry of Social Justice and Empowerment\nDirectorate General of NGO Vigilance\n\nOFFICIAL GAZETTE CIRCULAR\nRef No: ${c.refNo}\nDate: ${c.date}\nDepartment: ${c.department}\n\nSUBJECT: ${c.title}\n\n1. STATUTORY AUTHORITY: In accordance with Rule 14 of General Financial Rules (GFR), 2017, all non-profit entities receiving Grants-in-Aid under central schemes must undergo mandatory on-site physical inspection.\n2. GEOFENCE ENFORCEMENT: Submission of inspection verification checklists is locked until the officer's device is verified inside the registered 150-metre GPS geofenced perimeter.\n3. EVIDENCE STANDARDS: Five dedicated photographic evidence categories (Premises, Infrastructure, Beneficiaries, Ledgers, Violations) must be timestamped with SHA-256 EXIF cryptographic hashes.\n4. PENAL PROVISIONS: Failure to verify genuine operational facilities results in immediate grant forfeiture, Section 14 show-cause issuance, and DARPAN de-registration.\n\nBy Order,\nJoint Secretary & Directorate General of NGO Vigilance\nGovernment of India`
+                                `INSPIRA PROTOTYPE SYSTEM\nSmart India Hackathon 2026 (PS 26095)\nTeam InnoCoders\n\nPROTOTYPE TECHNICAL SPECIFICATION CIRCULAR\nRef No: ${c.refNo}\nDate: ${c.date}\nDepartment: ${c.department}\n\nSUBJECT: ${c.title}\n\n1. SPECIFICATION CONTEXT: Technical design for on-site physical inspection and verification of non-profit entities receiving Grants-in-Aid under central schemes.\n2. GEOFENCE ENFORCEMENT: Submission of inspection verification checklists is locked until the officer's device is verified inside the registered 150-metre GPS geofenced perimeter.\n3. EVIDENCE STANDARDS: Dedicated photographic evidence categories (Premises, Infrastructure, Beneficiaries, Ledgers, Violations) timestamped with cryptographic hashes.\n4. VERIFICATION PROVISIONS: Physical verification required before releasing compliance score.\n\nTeam InnoCoders • SIH 2026 Prototype\nProblem statement by MoSJE (PS 26095)`
                               ],
                               { type: 'text/plain;charset=utf-8' }
                             );
                             const url = URL.createObjectURL(blob);
                             const link = document.createElement('a');
                             link.href = url;
-                            link.download = `${c.refNo.replace(/[\/\\?%*:|"<>]/g, '_')}_Official_Circular.txt`;
+                            link.download = `${c.refNo.replace(/[\/\\?%*:|"<>]/g, '_')}_Specification_Circular.txt`;
                             link.click();
                             URL.revokeObjectURL(url);
                           }}
@@ -1991,9 +2017,9 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
               <div className="inline-block font-mono text-[11px] font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
                 Stage 04
               </div>
-              <h3 className="text-sm font-bold text-slate-900">Directorate (IAS) Scrutiny</h3>
+              <h3 className="text-sm font-bold text-slate-900">Directorate Review</h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Dossier is examined by the Directorate General for final compliance scoring (0–100), Good/Bad verdict, and statutory sanctions.
+                Dossier is examined by the Directorate for final compliance scoring (0–100), review verdict, and administrative follow-up.
               </p>
             </div>
 
@@ -2176,7 +2202,7 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
         </div>
       </section>
 
-      {/* 8. OFFICIAL GOVERNMENT INSTITUTIONAL FOOTER (INDIA.GOV.IN SPECIFICATION) */}
+      {/* 8. INSPIRA PROTOTYPE FOOTER */}
       <footer className="bg-slate-900 text-slate-300 text-xs border-t-4 border-[#0B3B60]">
         
         {/* Upper Footer Links */}
@@ -2184,18 +2210,17 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
           
           <div className="space-y-3">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-14 shrink-0 overflow-hidden flex items-center justify-center">
-                <EmblemOfIndia className="w-10 h-14" variant="gold" showText={true} />
+              <div className="w-10 h-10 shrink-0 overflow-hidden flex items-center justify-center">
+                <InspiraLogo className="w-10 h-10" />
               </div>
               <div className="border-l border-slate-700 pl-2.5">
-                <div className="font-black text-xs text-white font-serif">भारत सरकार</div>
-                <div className="font-bold text-xs text-amber-400">INSPIRA PORTAL</div>
-                <div className="text-[10px] text-slate-400">Government of India</div>
+                <div className="font-bold text-xs text-amber-400">INSPIRA</div>
+                <div className="text-[10px] text-slate-400">SIH 2026 Prototype</div>
               </div>
             </div>
             <p className="text-xs text-slate-400 leading-relaxed">
-              Ministry of Social Justice &amp; Empowerment, Government of India.<br />
-              Shastri Bhawan, Dr. Rajendra Prasad Road, New Delhi - 110001.
+              Prototype developed by Team InnoCoders for Smart India Hackathon 2026.<br />
+              Problem statement by MoSJE (PS 26095).
             </p>
             <div className="flex items-center gap-3 pt-2">
               <DigitalIndiaLogo className="h-6" />
@@ -2216,7 +2241,7 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
                   onClick={onOpenLogin}
                   className="text-slate-400 hover:text-amber-300 cursor-pointer transition-colors"
                 >
-                  Official e-Pramaan SSO Login
+                  Portal Login
                 </button>
               </li>
               <li>
@@ -2247,7 +2272,7 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
                   }}
                   className="text-slate-400 hover:text-amber-300 cursor-pointer transition-colors"
                 >
-                  Statutory Circulars &amp; GFR Rules
+                  Prototype Specifications &amp; Audit Rules
                 </button>
               </li>
               <li>
@@ -2324,7 +2349,7 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
                 <span>ISO 27001 Security Management</span>
               </p>
               <div className="font-mono text-[10.5px] text-slate-400 pt-1 border-t border-slate-800">
-                Release: v2.0.0-PRO (Enterprise Multi-Protocol Edition • Build 2026.09.30)
+                Release: v1.0.0-PROTOTYPE (SIH 2026 PS 26095 Edition)
               </div>
             </div>
           </div>
@@ -2334,8 +2359,8 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
         {/* Bottom Attribution & Copyright Bar */}
         <div className="max-w-7xl mx-auto py-5 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-slate-400">
           <div className="text-center md:text-left leading-relaxed">
-            Designed &amp; Developed for <strong className="text-white">Smart India Hackathon</strong> by <strong className="text-amber-300 font-bold">Team InnoCoders (Team ID: 180211)</strong> • {SIH_TEAM_DATA.collegeName}.<br />
-            Institutional Prototype for Ministry of Social Justice and Empowerment, Government of India.
+            Designed &amp; Developed for <strong className="text-white">Smart India Hackathon 2026</strong> by <strong className="text-amber-300 font-bold">Team InnoCoders (Team ID: 180211)</strong> • {SIH_TEAM_DATA.collegeName}.<br />
+            Prototype system addressing Problem Statement 26095 (Owner: MoSJE).
           </div>
           <div className="flex items-center space-x-3 shrink-0 flex-wrap justify-center text-[11px]">
             <span className="hover:text-white cursor-pointer">Website Policies</span>
@@ -2348,7 +2373,7 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
             <span>•</span>
             <span className="hover:text-white cursor-pointer">Sitemap</span>
             <span>•</span>
-            <span className="text-amber-400 font-mono">Visitors: 1,842,910</span>
+            <span className="text-amber-400 font-mono">SIH 2026 PS 26095</span>
           </div>
         </div>
 
@@ -2358,14 +2383,14 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
       {certificateModalNgo && (
         <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 overflow-y-auto animate-fade-in">
           <div className="bg-white rounded-3xl max-w-2xl w-full border-4 border-amber-600/30 shadow-2xl overflow-hidden text-slate-900 relative my-auto">
-            {/* National Tri-Color Accent Line */}
-            <div className="h-2 bg-gradient-to-r from-amber-500 via-sky-400 to-emerald-600"></div>
+            {/* Neutral Accent Line */}
+            <div className="h-2 bg-[#0B3B60]"></div>
 
             {/* Modal Header Controls */}
             <div className="p-4 sm:p-6 flex items-center justify-between border-b border-slate-100 bg-slate-50/70">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-mono font-bold uppercase tracking-wider bg-amber-100 text-amber-900 px-3 py-1 rounded-full border border-amber-300">
-                  OFFICIAL GOVERNMENT VERIFICATION CERTIFICATE
+                <span className="text-xs font-mono font-bold uppercase tracking-wider bg-blue-100 text-blue-900 px-3 py-1 rounded-full border border-blue-300">
+                  INSPIRA PROTOTYPE VERIFICATION RECORD
                 </span>
               </div>
               <button
@@ -2379,19 +2404,19 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
 
             {/* Certificate Content - Print Friendly Design */}
             <div id="statutory-certificate-printable" className="p-6 sm:p-10 space-y-6 bg-[radial-gradient(#f1f5f9_1px,transparent_1px)] [background-size:16px_16px]">
-              {/* Seal and Ministry Details */}
+              {/* Seal and System Details */}
               <div className="text-center space-y-2">
                 <div className="flex justify-center mx-auto mb-1">
-                  <EmblemOfIndia className="w-16 h-20 drop-shadow-sm" variant="gold" showText={true} />
+                  <InspiraLogo className="w-16 h-16 drop-shadow-sm" />
                 </div>
                 <h3 className="text-xs font-bold uppercase tracking-widest text-slate-700 font-serif">
-                  भारत सरकार • Government of India • Ministry of Social Justice &amp; Empowerment
+                  INSPIRA Prototype Verification System • SIH 2026 PS 26095
                 </h3>
                 <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                  Certificate of Statutory Verification &amp; DARPAN Compliance
+                  Record of On-Site Inspection &amp; DARPAN Compliance
                 </h2>
                 <div className="text-[11px] font-mono text-slate-500">
-                  Certificate Ref: <strong className="text-slate-900">GOV/MSJE/2026/CERT-{(certificateModalNgo.id || 'NGO').slice(-6).toUpperCase()}</strong> • Issued under Rule 14 GFR 2017
+                  Record Ref: <strong className="text-slate-900">INSPIRA/2026/REC-{(certificateModalNgo.id || 'NGO').slice(-6).toUpperCase()}</strong> • Sample Prototype Data
                 </div>
               </div>
 
@@ -2440,17 +2465,17 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
                   <QrCode className="w-10 h-10 text-slate-700" />
                   <div className="text-[10px] font-mono text-slate-500">
                     <div>SCAN TO VERIFY</div>
-                    <div className="text-slate-800 font-bold">NIC-SECURE-SHA256</div>
+                    <div className="text-slate-800 font-bold">INSPIRA-SHA256</div>
                   </div>
                 </div>
 
                 <div className="text-center sm:text-right">
-                  <div className="font-serif italic font-bold text-slate-900 text-sm">Dr. Rajesh Verma, IAS</div>
+                  <div className="font-bold text-slate-900 text-sm">Demo Director (role: Directorate)</div>
                   <div className="text-[10px] text-slate-500 uppercase tracking-wider font-semibold">
-                    Directorate General of NGO Vigilance
+                    Directorate Administrator (Demo)
                   </div>
                   <div className="text-[9px] text-emerald-700 font-mono">
-                    Digitally Sealed • e-Sign Active
+                    Digitally Sealed • Demo Signature
                   </div>
                 </div>
               </div>
@@ -2459,7 +2484,7 @@ export const HeroLandingPage: React.FC<HeroLandingPageProps> = ({
             {/* Modal Actions */}
             <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-3">
               <span className="text-[11px] text-slate-500 font-mono">
-                Official Ministry Document • Public Record
+                Prototype Verification Record • Sample Data
               </span>
 
               <div className="flex items-center gap-2">

@@ -25,7 +25,7 @@ import {
 import { NGO, StatutoryNotice, User, AuthSession, NgoWorkerAttendance } from '../types';
 import { dashboardApi, noticeApi, attendanceApi } from '../services/apiClient';
 import { INITIAL_WORKER_ATTENDANCE } from '../data/mockData';
-import { EmblemOfIndia } from './EmblemOfIndia';
+import { InspiraLogo } from './InspiraLogo';
 import { NgoDarpanLogo } from './GovLogos';
 
 interface NgoDashboardProps {
@@ -184,21 +184,17 @@ export const NgoDashboard: React.FC<NgoDashboardProps> = ({
     <div className="space-y-5 max-w-7xl mx-auto">
       {/* 1. INSTITUTIONAL ORGANIZATION BANNER */}
       <div className="bg-gradient-to-br from-slate-950 via-[#0B3B60] to-slate-900 text-white rounded-2xl border border-slate-800 shadow-lg overflow-hidden relative">
-        {/* Subtle top national tri-color accent strip */}
-        <div className="absolute top-0 left-0 right-0 grid grid-cols-3 h-[3.5px]">
-          <div className="bg-[#FF9933]"></div>
-          <div className="bg-[#FFFFFF] flex items-center justify-center"><div className="w-1 h-1 rounded-full bg-[#000080]"></div></div>
-          <div className="bg-[#138808]"></div>
-        </div>
+        {/* Neutral top accent strip */}
+        <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#0B3B60]"></div>
 
         <div className="p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-5">
           <div className="flex items-start space-x-4">
-            <div className="w-13 h-17 rounded-xl bg-white/10 p-1 border border-white/20 flex items-center justify-center shrink-0 mt-0.5 shadow-md">
-              <EmblemOfIndia className="w-11 h-15" variant="white" showText={false} />
+            <div className="w-12 h-12 rounded-xl bg-white/10 p-1 border border-white/20 flex items-center justify-center shrink-0 mt-0.5 shadow-md">
+              <InspiraLogo className="w-10 h-10" />
             </div>
             <div className="space-y-1.5">
-              <div className="text-[10.5px] font-bold text-amber-300 font-serif tracking-wider uppercase">
-                भारत सरकार • NITI Aayog NGO-DARPAN &amp; MoSJE Voluntary Sector Portal
+              <div className="text-[10.5px] font-bold text-sky-300 font-sans tracking-wider uppercase">
+                INSPIRA NGO Portal • Prototype System | SIH 2026 PS 26095
               </div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight font-serif">{ngoData.name}</h2>
@@ -817,10 +813,10 @@ export const NgoDashboard: React.FC<NgoDashboardProps> = ({
             className="bg-slate-950 rounded-2xl max-w-3xl w-full border border-slate-700 shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="h-1 bg-gradient-to-r from-amber-500 via-white to-emerald-500" />
+            <div className="h-1 bg-[#0B3B60]" />
             <div className="p-3 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-white">
-              <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-                GIGW 3.0 Biometric Attendance Photo Evidence
+              <span className="text-xs font-bold text-sky-400 uppercase tracking-wider">
+                Biometric Attendance Photo Record
               </span>
               <button
                 type="button"
@@ -841,10 +837,10 @@ export const NgoDashboard: React.FC<NgoDashboardProps> = ({
       {respondingNotice && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs animate-fade-in">
           <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-300 overflow-hidden space-y-3">
-            <div className="h-1 bg-gradient-to-r from-amber-500 via-slate-100 to-emerald-500" />
+            <div className="h-1 bg-[#0B3B60]" />
             <div className="p-5 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white flex items-center justify-between">
               <div>
-                <div className="text-[10px] uppercase font-bold text-amber-300">Official Statutory Submission</div>
+                <div className="text-[10px] uppercase font-bold text-sky-300">Statutory Notice Response</div>
                 <h4 className="text-sm font-bold mt-0.5">Respond to Notice {respondingNotice.notice_number}</h4>
               </div>
               <button

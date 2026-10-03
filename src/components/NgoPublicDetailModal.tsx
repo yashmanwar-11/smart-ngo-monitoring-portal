@@ -17,7 +17,7 @@ import {
   AlertOctagon
 } from 'lucide-react';
 import { NGO } from '../types';
-import { EmblemOfIndia } from './EmblemOfIndia';
+import { InspiraLogo } from './InspiraLogo';
 
 interface NgoPublicDetailModalProps {
   ngo: NGO;
@@ -40,8 +40,8 @@ export const NgoPublicDetailModal: React.FC<NgoPublicDetailModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/60 backdrop-blur-xs animate-fade-in overflow-y-auto">
       <div className="bg-white rounded-2xl max-w-2xl w-full border border-slate-200/80 shadow-2xl overflow-hidden my-6 flex flex-col">
-        {/* National Tricolor Accent Gradient */}
-        <div className="h-1.5 w-full bg-gradient-to-r from-[#FF9933] via-white to-[#138808]"></div>
+        {/* Neutral Accent Stripe */}
+        <div className="h-1.5 w-full bg-[#0B3B60]"></div>
 
         {/* Modal Header */}
         <div className="bg-[#0B3B60] text-white p-5 sm:p-6 relative border-b border-[#0B3B60] bg-gradient-to-r from-[#07253d] via-[#0B3B60] to-[#0d4672]">
@@ -55,14 +55,14 @@ export const NgoPublicDetailModal: React.FC<NgoPublicDetailModalProps> = ({
           </button>
 
           <div className="flex items-start space-x-3.5 pr-8">
-            <div className="w-12 h-16 shrink-0 flex items-center justify-center overflow-hidden mt-0.5">
-              <EmblemOfIndia variant="badge" size={46} className="shadow-md" />
+            <div className="w-10 h-10 shrink-0 flex items-center justify-center overflow-hidden mt-0.5">
+              <InspiraLogo className="w-10 h-10" />
             </div>
 
             <div className="space-y-1">
               <div className="flex flex-wrap items-center gap-1.5">
                 <span className="text-[10px] font-bold uppercase tracking-wider bg-white/15 text-blue-100 px-2 py-0.5 rounded border border-white/20">
-                  NITI Aayog • नीति आयोग NGO-DARPAN
+                  NGO Registry Record
                 </span>
                 <span className="text-[10px] font-mono font-bold bg-amber-950/80 text-amber-300 px-2.5 py-0.5 rounded-full border border-amber-500/40">
                   DARPAN: {ngo.documents?.darpanId || ngo.regNumber}
@@ -131,7 +131,7 @@ export const NgoPublicDetailModal: React.FC<NgoPublicDetailModalProps> = ({
                 <ShieldCheck className="w-4 h-4 text-blue-600" />
                 <span>{ngo.fcraStatus || 'APPROVED'}</span>
               </div>
-              <div className="text-[10px] text-slate-500 mt-0.5">Ministry of Home Affairs</div>
+              <div className="text-[10px] text-slate-500 mt-0.5">FCRA Compliance Record</div>
             </div>
 
             <div className="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-2xs">

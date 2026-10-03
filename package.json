@@ -1,8 +1,8 @@
 {
-  "name": "smart-ngo-monitoring-portal",
+  "name": "inspira",
   "private": true,
-  "version": "2.0.0",
-  "description": "National Real-Time NGO Monitoring & Inspection Portal v2.0 with Geofencing, Multi-Protocol CCTV Gateway, Edge AI Vision & SHA-256 Cryptographic Evidence",
+  "version": "1.0.0",
+  "description": "INSPIRA: Prototype NGO Monitoring & Inspection System for Smart India Hackathon 2026 (PS 26095)",
   "author": "Team InnoCoders (Team ID: 180211) - Monika Warkad, Shruti Chavan, Namrata Singare, Divya Gond, Yash Manwar, Aarti Borakhade",
   "contributors": [
     { "name": "Monika Warkad", "email": "monikawarked@gmail.com" },

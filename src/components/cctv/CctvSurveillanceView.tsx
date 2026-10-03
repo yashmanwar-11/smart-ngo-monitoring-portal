@@ -356,7 +356,7 @@ export const CctvSurveillanceView: React.FC<CctvSurveillanceViewProps> = ({
             <div className="text-lg font-bold text-white truncate">
               {currentOfficer.assignedDistrict || 'Statewide - All Districts'}
             </div>
-            <div className="text-[10px] text-indigo-300/80 mt-0.5">Clearance: Level 3 Inspector</div>
+            <div className="text-[10px] text-indigo-300/80 mt-0.5">Clearance: Field Inspector (Demo)</div>
           </div>
         </div>
       </div>

@@ -167,9 +167,9 @@ export default function App() {
               token,
               loginTime: new Date().toLocaleString('en-IN') + ' IST',
               clearance: res.user.clearance || (res.user.role === 'ADMIN' ? 'LEVEL_5_DIRECTORATE' : res.user.role === 'OFFICER' ? 'LEVEL_3_INSPECTOR' : res.user.role === 'NGO' ? 'LEVEL_2_NGO' : 'LEVEL_1_PUBLIC'),
-              ipAddress: '10.194.73.98 (NIC Gov Secure Net)',
-              deviceFingerprint: 'CERT-IN-TAMPER-PROOF-HW-9921',
-              isVerified2FA: true,
+              ipAddress: 'Client Session',
+              deviceFingerprint: 'BROWSER-CLIENT-SESSION',
+              isVerified2FA: false,
             });
             setCurrentView('DASHBOARD');
           }
@@ -754,7 +754,7 @@ export default function App() {
           </div>
         )}
 
-        {/* e-Pramaan Auth Modal */}
+        {/* INSPIRA Auth Modal */}
         <AuthModal
           isOpen={isAuthModalOpen}
           initialMode={authMode}
@@ -790,7 +790,7 @@ export default function App() {
             setDashboardTargetTab(targetTab);
           }
           if (!currentUser) {
-            showToast('🔒 Security Clearance Required: Please authenticate with e-Pramaan to access dashboards.', 'info');
+            showToast('🔒 Login Required: Please authenticate to access dashboards.', 'info');
             setIsAuthModalOpen(true);
           } else {
             setCurrentView('DASHBOARD');
@@ -909,13 +909,13 @@ export default function App() {
 
                   <div className="space-y-2">
                     <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-rose-50 text-rose-700 border border-rose-200 shadow-2xs">
-                      Security Clearance Required • Level 1/3/5 Access Only
+                      Authentication Required • Role-Based Access
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                      Official e-Pramaan SSO Required
+                      Login Required to View Dashboard
                     </h2>
                     <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed pt-1">
-                      Access to statutory inspection logs, live GPS tracking of field officers, and administrative action queues is restricted to authorized Government Officials and registered Whistleblowers.
+                      Access to monitoring dashboards, inspection dispatch, and reporting queues requires logging in with an authorized role account.
                     </p>
                   </div>
 
@@ -926,16 +926,16 @@ export default function App() {
                     </div>
                     <ul className="space-y-2 text-slate-600 text-xs">
                       <li className="flex items-start gap-2.5">
-                        <span className="font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 shrink-0 text-[10px]">Level 5</span>
-                        <span><strong>Directorate General / IAS Admin:</strong> Pan-India GIS oversight, inspection dispatch, and disciplinary sanction controls.</span>
+                        <span className="font-semibold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 shrink-0 text-[10px]">Directorate</span>
+                        <span><strong>Directorate Admin:</strong> GIS oversight, surprise inspection dispatch, and review controls.</span>
                       </li>
                       <li className="flex items-start gap-2.5">
-                        <span className="font-semibold text-blue-800 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200 shrink-0 text-[10px]">Level 3</span>
-                        <span><strong>Vigilance Field Inspector:</strong> 150m geofence audit terminal, SHA-256 EXIF camera verification, and dossier signing.</span>
+                        <span className="font-semibold text-blue-800 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200 shrink-0 text-[10px]">Inspector</span>
+                        <span><strong>Field Inspector:</strong> 150m geofence audit terminal, photo evidence verification, and submission.</span>
                       </li>
                       <li className="flex items-start gap-2.5">
-                        <span className="font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0 text-[10px]">Level 1</span>
-                        <span><strong>Citizen &amp; NGO Representative:</strong> Whistleblower grievance submission with encrypted tracking token and DARPAN onboarding.</span>
+                        <span className="font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 shrink-0 text-[10px]">Public / NGO</span>
+                        <span><strong>Citizen &amp; NGO Representative:</strong> Grievance submission and NGO portal self-reporting.</span>
                       </li>
                     </ul>
                   </div>
@@ -946,7 +946,7 @@ export default function App() {
                       className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
                     >
                       <LogIn className="w-4 h-4" />
-                      <span>e-Pramaan SSO Gateway</span>
+                      <span>Login to Portal</span>
                     </button>
 
                     <button
@@ -954,7 +954,7 @@ export default function App() {
                       className="w-full sm:w-auto px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-full text-xs font-semibold shadow-xs hover:shadow-md transition-all cursor-pointer flex items-center justify-center gap-2"
                     >
                       <ShieldAlert className="w-4 h-4 text-blue-300" />
-                      <span>Inspector Service Login</span>
+                      <span>Inspector Login</span>
                     </button>
 
                     <button
@@ -1047,6 +1047,7 @@ export default function App() {
                     complaints={complaints}
                     onSubmitComplaint={handleCitizenComplaint}
                     onSubmitApplication={handleCitizenApplication}
+                    onShowToast={showToast}
                   />
                 )}
               </>

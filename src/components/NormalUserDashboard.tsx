@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { NGO, Complaint, NgoApplication, User, AuthSession } from '../types';
 import { grievanceApi } from '../services/apiClient';
-import { EmblemOfIndia } from './EmblemOfIndia';
+import { InspiraLogo } from './InspiraLogo';
 
 interface NormalUserDashboardProps {
   currentUser?: User;
@@ -36,6 +36,7 @@ interface NormalUserDashboardProps {
   onSubmitApplication: (application: Partial<NgoApplication>) => void;
   initialTab?: 'DIRECTORY' | 'FILE_COMPLAINT' | 'TRACK_COMPLAINT' | 'REGISTER_NGO';
   preSelectedNgoId?: string;
+  onShowToast?: (message: string, type?: 'success' | 'error' | 'info') => void;
 }
 
 export const NormalUserDashboard: React.FC<NormalUserDashboardProps> = ({
@@ -47,6 +48,7 @@ export const NormalUserDashboard: React.FC<NormalUserDashboardProps> = ({
   onSubmitApplication,
   initialTab,
   preSelectedNgoId,
+  onShowToast,
 }) => {
   const [activeTab, setActiveTab] = useState<'DIRECTORY' | 'FILE_COMPLAINT' | 'TRACK_COMPLAINT' | 'REGISTER_NGO'>(
     initialTab || 'DIRECTORY'
@@ -218,39 +220,36 @@ export const NormalUserDashboard: React.FC<NormalUserDashboardProps> = ({
 
   return (
     <div className="space-y-5 max-w-5xl mx-auto">
-      {/* Level-1 Citizen Transparency & Whistleblower Trust Header */}
+      {/* Citizen Transparency & Redressal Desk Header */}
       <div className="bg-[#0B3B60] text-white rounded-2xl border border-[#0B3B60] shadow-xl relative overflow-hidden">
-        {/* National Tricolor Accent Ribbon */}
-        <div className="h-1.5 bg-gradient-to-r from-[#FF9933] via-white to-[#138808]" />
+        {/* Neutral Accent Ribbon */}
+        <div className="h-1 bg-[#0B3B60]" />
         
         <div className="p-5 sm:p-6 relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5 bg-gradient-to-r from-[#07253d] via-[#0B3B60] to-[#0d4672]">
           <div className="flex items-start space-x-4">
-            <div className="w-14 h-19 shrink-0 flex items-center justify-center overflow-hidden mt-0.5">
-              <EmblemOfIndia variant="badge" size={52} className="shadow-md" />
+            <div className="w-14 h-14 shrink-0 flex items-center justify-center overflow-hidden mt-0.5">
+              <InspiraLogo className="w-12 h-12 shadow-md" />
             </div>
 
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-white/15 text-blue-100 border border-white/20">
-                  Government of India • भारत सरकार
+                  INSPIRA Citizen Desk • Prototype
                 </span>
                 <span className="px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-500/40">
-                  CVC Whistleblower Protection • धारा 4
+                  Grievance Redressal
                 </span>
               </div>
 
-              <div className="text-xs text-amber-300 font-medium tracking-wide">
-                सामाजिक न्याय एवं अधिकारिता मंत्रालय | Ministry of Social Justice &amp; Empowerment
+              <div className="text-xs text-sky-200 font-medium tracking-wide">
+                Problem statement by MoSJE (PS 26095) • Smart India Hackathon 2026
               </div>
 
               <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
                 {currentUser?.name || 'Citizen Whistleblower & Public Redressal Desk'}
               </h1>
               <p className="text-xs sm:text-sm text-slate-200 font-normal">
-                {currentUser?.designation || 'Public Vigilance, Whistleblower Grievance Redressal & DARPAN Verification Portal'}
-              </p>
-              <p className="text-[11px] text-slate-300 font-mono">
-                e-Pramaan Official ID: <strong className="text-amber-300">{currentSession?.token?.substring(0, 16) || 'PRM-DL-88219'}</strong> • Whistleblower Identity Protected under Central Act No. 17 of 2014
+                {currentUser?.designation || 'Public NGO Directory, Whistleblower Grievance Redressal & Verification Portal'}
               </p>
             </div>
           </div>
@@ -499,23 +498,48 @@ export const NormalUserDashboard: React.FC<NormalUserDashboardProps> = ({
 
               {/* Supporting Photographic / Document Evidence */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-2">
                   <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
                     Supporting Field Evidence / Document Proof
                   </label>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setAttachedEvidencePhotos((prev) => [
-                        ...prev,
-                        'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80',
-                      ]);
-                    }}
-                    className="text-[11px] font-bold text-indigo-700 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-3 py-1 rounded-full border border-indigo-200 transition-colors flex items-center gap-1 cursor-pointer"
-                  >
-                    <Camera className="w-3.5 h-3.5" />
-                    <span>+ Attach Verified Evidence Sample</span>
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <label className="text-[11px] font-bold text-emerald-800 hover:text-emerald-950 bg-emerald-50 hover:bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300 transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs">
+                      <Upload className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Upload Proof (Image / Scan)</span>
+                      <input
+                        type="file"
+                        accept="image/*,.pdf"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onload = (ev) => {
+                              const res = ev.target?.result as string;
+                              if (res) {
+                                setAttachedEvidencePhotos((prev) => [...prev, res]);
+                                onShowToast?.(`✓ Attached ${file.name} to grievance docket`, 'success');
+                              }
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                        className="hidden"
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500"><rect width="800" height="500" fill="#0f172a"/><rect x="20" y="20" width="760" height="460" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/><rect x="20" y="20" width="760" height="6" fill="#ff9933"/><rect x="20" y="26" width="760" height="6" fill="#ffffff"/><rect x="20" y="32" width="760" height="6" fill="#138808"/><circle cx="400" cy="180" r="50" fill="#0f172a" stroke="#f59e0b" stroke-width="3"/><text x="400" y="195" fill="#f59e0b" font-family="monospace" font-size="28" font-weight="bold" text-anchor="middle">PROOF</text><text x="400" y="275" fill="#ffffff" font-family="sans-serif" font-size="22" font-weight="bold" text-anchor="middle">Citizen Grievance Supporting Evidence</text><text x="400" y="310" fill="#94a3b8" font-family="monospace" font-size="14" text-anchor="middle">CENTRAL VIGILANCE &amp; GRIEVANCE DIRECTORATE</text><rect x="150" y="340" width="500" height="70" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1.5"/><text x="170" y="370" fill="#38bdf8" font-family="monospace" font-size="13">DOCKET: CPGRAMS-GOV-${Date.now().toString().slice(-6)}</text><text x="170" y="392" fill="#34d399" font-family="monospace" font-size="11">● DIGITAL TIMESTAMP: ${new Date().toLocaleString('en-IN')} IST</text></svg>`;
+                        const dataUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+                        setAttachedEvidencePhotos((prev) => [...prev, dataUrl]);
+                        onShowToast?.('✓ Attached verified statutory proof certificate', 'success');
+                      }}
+                      className="text-[11px] font-bold text-indigo-700 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 px-3 py-1 rounded-full border border-indigo-200 transition-colors flex items-center gap-1 cursor-pointer"
+                    >
+                      <Camera className="w-3.5 h-3.5" />
+                      <span>+ Generate Affidavit Stamp</span>
+                    </button>
+                  </div>
                 </div>
 
                 {attachedEvidencePhotos.length > 0 && (

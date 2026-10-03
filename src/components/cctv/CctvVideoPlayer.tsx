@@ -457,9 +457,9 @@ export const CctvVideoPlayer: React.FC<CctvVideoPlayerProps> = ({
           // Draw active media frame
           ctx.drawImage(mediaEl, 0, 0, w, h);
 
-          // Stamp statutory government watermark
+          // Stamp prototype audit watermark
           const nowIso = new Date().toISOString();
-          const watermarkBanner = `GOVT OF MAHARASHTRA | DOSJE VIGILANCE | ${camera.name} | ${nowIso} | BADGE: IAS-VIGIL-001`;
+          const watermarkBanner = `INSPIRA PROTOTYPE | CCTV SURVEILLANCE | ${camera.name} | ${nowIso}`;
 
           ctx.fillStyle = 'rgba(15, 23, 42, 0.85)';
           ctx.fillRect(0, h - 40, w, 40);

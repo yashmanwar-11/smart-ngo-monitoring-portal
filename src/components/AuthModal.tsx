@@ -26,8 +26,9 @@ import {
 } from 'lucide-react';
 import { User, UserRole, SecurityClearance, AuthSession } from '../types';
 import { authApi } from '../services/apiClient';
-import { EmblemOfIndia } from './EmblemOfIndia';
+import { InspiraLogo } from './InspiraLogo';
 import { EPramaanLogo, NicLogo } from './GovLogos';
+import { UserAvatar } from './UserAvatar';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -142,12 +143,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     return {
       token:
         realToken ||
-        `AUTH-GOV-2026-${Math.random().toString(36).substring(2, 10).toUpperCase()}-${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
+        `AUTH-INSPIRA-${Math.random().toString(36).substring(2, 10).toUpperCase()}-${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
       loginTime: new Date().toLocaleString('en-IN') + ' IST',
       clearance,
-      ipAddress: '10.194.73.98 (NIC Gov Secure Net)',
-      deviceFingerprint: 'CERT-IN-TAMPER-PROOF-HW-9921',
-      isVerified2FA: true,
+      ipAddress: 'Client Session',
+      deviceFingerprint: 'BROWSER-CLIENT-SESSION',
+      isVerified2FA: false,
     };
   };
 
@@ -165,7 +166,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         result = await authApi.login(email, pass);
       }
       onLoginSuccess(result.user, result.session);
-      onShowToast(`✓ Authenticated as ${result.user.name} (${result.user.role}) via e-Pramaan SSO`, 'success');
+      onShowToast(`✓ Authenticated as ${result.user.name} (${result.user.role})`, 'success');
     } catch (err: any) {
       // Local safety net: authenticate from allUsers prop
       const clean = email.trim().toLowerCase();
@@ -183,7 +184,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
       if (matched) {
         const session = createSecuritySession(matched);
         onLoginSuccess(matched, session);
-        onShowToast(`✓ Authenticated as ${matched.name} (${matched.role}) via e-Pramaan SSO`, 'success');
+        onShowToast(`✓ Authenticated as ${matched.name} (${matched.role})`, 'success');
       } else {
         setLoginError(err.message || 'Authentication failed. Please verify credentials.');
       }
@@ -210,55 +211,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
     try {
       setIsSubmitting(true);
-      let result;
-      try {
-        result = await authApi.login(loginEmail.trim(), loginPassword);
-      } catch (loginErr: any) {
-        const cleanEmail = loginEmail.trim().toLowerCase();
-        try {
-          result = await authApi.switchUser({ email: cleanEmail });
-        } catch {
-          const matched = allUsers.find(
-            (u) =>
-              u.email.toLowerCase() === cleanEmail ||
-              u.name.toLowerCase().includes(cleanEmail) ||
-              u.role.toLowerCase() === cleanEmail
-          ) || (cleanEmail.includes('admin') ? allUsers.find(u => u.role === 'ADMIN') : undefined)
-            || (cleanEmail.includes('officer') || cleanEmail.includes('vikram') ? allUsers.find(u => u.role === 'OFFICER') : undefined)
-            || (cleanEmail.includes('ngo') || cleanEmail.includes('swasthya') ? allUsers.find(u => u.role === 'NGO') : undefined)
-            || (cleanEmail.includes('worker') || cleanEmail.includes('sunita') ? allUsers.find(u => u.role === 'NGO_WORKER') : undefined);
-
-          if (matched) {
-            const session = createSecuritySession(matched);
-            result = { user: matched, session };
-          } else {
-            throw loginErr;
-          }
-        }
-      }
+      const result = await authApi.login(loginEmail.trim(), loginPassword);
       onLoginSuccess(result.user, result.session);
       onShowToast(
         `✓ Welcome back, ${result.user.name}! Authenticated with ${result.user.clearance?.replace(/_/g, ' ') || result.user.role}.`,
         'success'
       );
     } catch (err: any) {
-      const cleanEmail = loginEmail.trim().toLowerCase();
-      const matched = allUsers.find(
-        (u) =>
-          u.email.toLowerCase() === cleanEmail ||
-          u.name.toLowerCase().includes(cleanEmail) ||
-          u.role.toLowerCase() === cleanEmail
-      ) || (cleanEmail.includes('admin') ? allUsers.find(u => u.role === 'ADMIN') : undefined)
-        || (cleanEmail.includes('officer') || cleanEmail.includes('vikram') ? allUsers.find(u => u.role === 'OFFICER') : undefined)
-        || (cleanEmail.includes('ngo') || cleanEmail.includes('swasthya') ? allUsers.find(u => u.role === 'NGO') : undefined)
-        || (cleanEmail.includes('worker') || cleanEmail.includes('sunita') ? allUsers.find(u => u.role === 'NGO_WORKER') : undefined);
-
-      if (matched) {
-        const session = createSecuritySession(matched);
-        onLoginSuccess(matched, session);
-        onShowToast(`✓ Welcome back, ${matched.name}! Authenticated with ${matched.clearance?.replace(/_/g, ' ') || matched.role}.`, 'success');
-        return;
-      }
       setLoginError(err.message || 'Invalid credentials or security clearance.');
     } finally {
       setIsSubmitting(false);
@@ -270,7 +229,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     setAadhaarOtpSent(true);
     setAadhaarTimer(30);
     setAadhaarOtpInput('202609');
-    onShowToast('✓ 6-Digit Aadhaar OTP dispatched to UIDAI linked mobile (+91 ••••••9821)', 'info');
+    onShowToast('✓ 6-Digit Demo OTP dispatched to linked mobile (+91 ••••••9821)', 'info');
   };
 
   const handleVerifyAadhaarOtp = async () => {
@@ -346,30 +305,30 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         className="relative w-full max-w-2xl bg-white border border-slate-200/90 rounded-3xl shadow-2xl overflow-hidden text-slate-800 flex flex-col my-6 animate-scale-up"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Official Indian Tricolor Ribbon Strip */}
-        <div className="h-1.5 w-full bg-gradient-to-r from-[#FF9933] via-[#FFFFFF] to-[#138808]"></div>
+        {/* Neutral Accent Ribbon Strip */}
+        <div className="h-1.5 w-full bg-[#0B3B60]"></div>
 
-        {/* National Institutional Header */}
+        {/* Prototype Login Header */}
         <div className="p-4 sm:p-5 bg-gradient-to-r from-slate-950 via-[#0B3B60] to-slate-900 text-white border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center space-x-3.5">
-            <div className="w-12 h-14 rounded-xl bg-white/10 p-1 flex items-center justify-center border border-white/20 shadow-inner shrink-0">
-              <EmblemOfIndia className="w-10 h-13" variant="white" showText={false} />
+            <div className="w-10 h-10 rounded-xl bg-white/10 p-1 flex items-center justify-center border border-white/20 shadow-inner shrink-0">
+              <InspiraLogo className="w-8 h-8" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-sm sm:text-base font-extrabold text-white tracking-wide leading-tight font-serif">
-                  e-Pramaan • MeriPehchaan (मेरी पहचान) SSO
+                <h3 className="text-sm sm:text-base font-extrabold text-white tracking-wide leading-tight">
+                  INSPIRA Portal Login
                 </h3>
                 <span className="px-2 py-0.5 rounded-full text-[9px] font-mono font-bold bg-amber-500/20 text-amber-300 border border-amber-400/40">
-                  NSSO GOV-ID
+                  SIH 2026
                 </span>
               </div>
               <p className="text-[11px] text-slate-200 font-normal mt-0.5">
-                Ministry of Social Justice and Empowerment • Government of India
+                Prototype NGO Monitoring &amp; Inspection System • PS 26095
               </p>
               <div className="flex items-center gap-2 text-[9px] text-emerald-400 font-mono mt-0.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span>NIC GovNet Clearance: Level 1 to Level 5 Active</span>
+                <span>Role-Based Access Control Active</span>
               </div>
             </div>
           </div>
@@ -399,7 +358,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             }`}
           >
             <Shield className="w-3.5 h-3.5" />
-            <span>Secure Official Sign In (e-Pramaan SSO)</span>
+            <span>Sign In with Credentials</span>
           </button>
           <button
             type="button"
@@ -427,15 +386,15 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-extrabold text-slate-900 flex items-center gap-1.5 text-xs">
                     <ShieldCheck className="w-4 h-4 text-[#0B3B60]" />
-                    <span>Authorized Department Directory (Jan Parichay Official Access):</span>
+                    <span>Demo Accounts (Quick Select):</span>
                   </span>
                   <span className="text-[10px] text-emerald-800 font-bold bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 font-mono">
-                    NIC VERIFIED OFFICIALS
+                    SAMPLE DEMO ROLES
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
-                  {/* 1. IAS Admin */}
+                  {/* 1. Directorate Admin */}
                   <button
                     type="button"
                     disabled={isSubmitting}
@@ -443,20 +402,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     className="p-3 rounded-xl bg-slate-50 hover:bg-amber-50/80 border border-slate-200 hover:border-amber-400 text-left transition-all group cursor-pointer disabled:opacity-50 flex flex-col justify-between card-hover-lift relative overflow-hidden"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <img
-                        src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400"
-                        alt="Dr. Rajesh Verma"
-                        className="w-8 h-8 rounded-full object-cover border border-amber-400/50 shadow-2xs shrink-0"
-                      />
+                      <UserAvatar name="Demo Director" role="ADMIN" size="sm" showBadge={false} />
                       <div className="min-w-0">
                         <div className="text-[11px] font-bold text-slate-900 group-hover:text-amber-900 truncate">
-                          Dr. Rajesh Verma
+                          Demo Director
                         </div>
-                        <div className="text-[9px] text-slate-500 font-medium truncate">IAS Joint Secy</div>
+                        <div className="text-[9px] text-slate-500 font-medium truncate">Directorate Demo</div>
                       </div>
                     </div>
                     <div className="flex items-center justify-between mt-1 pt-1.5 border-t border-slate-200/60 text-[9px] font-mono">
-                      <span className="font-bold text-amber-800 bg-amber-100/80 px-1.5 py-0.5 rounded">LEVEL 5</span>
+                      <span className="font-bold text-amber-800 bg-amber-100/80 px-1.5 py-0.5 rounded">DIRECTORATE</span>
                       <span className="text-slate-400 group-hover:text-amber-700">Enter →</span>
                     </div>
                   </button>
@@ -469,11 +424,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     className="p-3 rounded-xl bg-slate-50 hover:bg-blue-50/80 border border-slate-200 hover:border-blue-400 text-left transition-all group cursor-pointer disabled:opacity-50 flex flex-col justify-between card-hover-lift relative overflow-hidden"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <img
-                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400"
-                        alt="Inspector Vikram Singh"
-                        className="w-8 h-8 rounded-full object-cover border border-blue-400/50 shadow-2xs shrink-0"
-                      />
+                      <UserAvatar name="Vikram Singh" role="OFFICER" size="sm" showBadge={false} />
                       <div className="min-w-0">
                         <div className="text-[11px] font-bold text-slate-900 group-hover:text-blue-900 truncate">
                           Vikram Singh
@@ -482,7 +433,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       </div>
                     </div>
                     <div className="flex items-center justify-between mt-1 pt-1.5 border-t border-slate-200/60 text-[9px] font-mono">
-                      <span className="font-bold text-blue-800 bg-blue-100/80 px-1.5 py-0.5 rounded">LEVEL 3</span>
+                      <span className="font-bold text-blue-800 bg-blue-100/80 px-1.5 py-0.5 rounded">INSPECTOR</span>
                       <span className="text-slate-400 group-hover:text-blue-700">Enter →</span>
                     </div>
                   </button>
@@ -495,11 +446,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     className="p-3 rounded-xl bg-slate-50 hover:bg-emerald-50/80 border border-slate-200 hover:border-emerald-400 text-left transition-all group cursor-pointer disabled:opacity-50 flex flex-col justify-between card-hover-lift relative overflow-hidden"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <img
-                        src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400"
-                        alt="Sunita Patil"
-                        className="w-8 h-8 rounded-full object-cover border border-emerald-400/50 shadow-2xs shrink-0"
-                      />
+                      <UserAvatar name="Sunita Patil" role="NGO_WORKER" size="sm" showBadge={false} />
                       <div className="min-w-0">
                         <div className="text-[11px] font-bold text-slate-900 group-hover:text-emerald-900 truncate">
                           Sunita Patil
@@ -508,7 +455,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       </div>
                     </div>
                     <div className="flex items-center justify-between mt-1 pt-1.5 border-t border-slate-200/60 text-[9px] font-mono">
-                      <span className="font-bold text-emerald-800 bg-emerald-100/80 px-1.5 py-0.5 rounded">LEVEL 2</span>
+                      <span className="font-bold text-emerald-800 bg-emerald-100/80 px-1.5 py-0.5 rounded">WORKER</span>
                       <span className="text-slate-400 group-hover:text-emerald-700">Enter →</span>
                     </div>
                   </button>
@@ -521,11 +468,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     className="p-3 rounded-xl bg-slate-50 hover:bg-purple-50/80 border border-slate-200 hover:border-purple-400 text-left transition-all group cursor-pointer disabled:opacity-50 flex flex-col justify-between card-hover-lift relative overflow-hidden"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <img
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400"
-                        alt="Madhav Chavan"
-                        className="w-8 h-8 rounded-full object-cover border border-purple-400/50 shadow-2xs shrink-0"
-                      />
+                      <UserAvatar name="Madhav Chavan" role="NGO" size="sm" showBadge={false} />
                       <div className="min-w-0">
                         <div className="text-[11px] font-bold text-slate-900 group-hover:text-purple-900 truncate">
                           Madhav Chavan
@@ -534,7 +477,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       </div>
                     </div>
                     <div className="flex items-center justify-between mt-1 pt-1.5 border-t border-slate-200/60 text-[9px] font-mono">
-                      <span className="font-bold text-purple-800 bg-purple-100/80 px-1.5 py-0.5 rounded">LEVEL 2</span>
+                      <span className="font-bold text-purple-800 bg-purple-100/80 px-1.5 py-0.5 rounded">NGO REP</span>
                       <span className="text-slate-400 group-hover:text-purple-700">Enter →</span>
                     </div>
                   </button>
@@ -547,11 +490,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     className="p-3 rounded-xl bg-slate-50 hover:bg-sky-50/80 border border-slate-200 hover:border-sky-400 text-left transition-all group cursor-pointer disabled:opacity-50 flex flex-col justify-between card-hover-lift relative overflow-hidden"
                   >
                     <div className="flex items-center gap-2 mb-2">
-                      <img
-                        src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400"
-                        alt="Kavita Sharma"
-                        className="w-8 h-8 rounded-full object-cover border border-sky-400/50 shadow-2xs shrink-0"
-                      />
+                      <UserAvatar name="Kavita Sharma" role="USER" size="sm" showBadge={false} />
                       <div className="min-w-0">
                         <div className="text-[11px] font-bold text-slate-900 group-hover:text-sky-900 truncate">
                           Kavita Sharma
@@ -560,7 +499,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       </div>
                     </div>
                     <div className="flex items-center justify-between mt-1 pt-1.5 border-t border-slate-200/60 text-[9px] font-mono">
-                      <span className="font-bold text-sky-800 bg-sky-100/80 px-1.5 py-0.5 rounded">LEVEL 1</span>
+                      <span className="font-bold text-sky-800 bg-sky-100/80 px-1.5 py-0.5 rounded">CITIZEN</span>
                       <span className="text-slate-400 group-hover:text-sky-700">Enter →</span>
                     </div>
                   </button>
@@ -579,7 +518,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   }`}
                 >
                   <Mail className="w-3.5 h-3.5" />
-                  <span>MeriPehchaan (Username/Password)</span>
+                  <span>Standard Login (Username/Password)</span>
                 </button>
 
                 <button
@@ -592,7 +531,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   }`}
                 >
                   <Fingerprint className="w-3.5 h-3.5 text-amber-500" />
-                  <span>Aadhaar OTP (e-Pramaan)</span>
+                  <span>Demo OTP Verification</span>
                 </button>
 
                 <button
@@ -616,13 +555,13 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </div>
               )}
 
-              {/* METHOD 1: MeriPehchaan / Jan Parichay SSO */}
+              {/* METHOD 1: Standard Credentials Login */}
               {loginMethod === 'CREDENTIALS' && (
                 <form onSubmit={handleLoginSubmit} className="space-y-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center justify-between">
-                      <span>Official Email / Jan Parichay ID *</span>
-                      <span className="text-[10px] text-slate-400 font-mono">NIC GovNet Validated</span>
+                      <span>Registered Email / Username *</span>
+                      <span className="text-[10px] text-slate-400 font-mono">Demo Accounts Active</span>
                     </label>
                     <div className="relative">
                       <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -642,7 +581,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       <label className="text-xs font-bold text-slate-800 uppercase tracking-wider">Official Password *</label>
                       <button
                         type="button"
-                        onClick={() => onShowToast('For credentials reset, contact Central NIC helpdesk at 1800-11-2026', 'info')}
+                        onClick={() => onShowToast('For demo credentials, use the pre-configured accounts above.', 'info')}
                         className="text-xs text-blue-600 hover:underline cursor-pointer font-medium"
                       >
                         Forgot password?
@@ -703,7 +642,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       <div className="flex items-center justify-between">
                         <label className="text-xs font-bold text-blue-900 flex items-center gap-1.5 uppercase">
                           <Fingerprint className="w-4 h-4 text-blue-600" />
-                          e-Pramaan 2FA One-Time Passcode
+                          Two-Factor Authentication Passcode
                         </label>
                         <span className="text-[10px] text-blue-800 font-mono font-bold bg-white px-2 py-0.5 rounded-full border border-blue-200">
                           Demo OTP: 202609
@@ -743,19 +682,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     ) : (
                       <CheckCircle2 className="w-4 h-4 text-emerald-300" />
                     )}
-                    <span>AUTHENTICATE VIA MERIPEHCHAAN SSO</span>
+                    <span>SIGN IN TO INSPIRA</span>
                   </button>
                 </form>
               )}
 
-              {/* METHOD 2: Aadhaar Instant OTP */}
+              {/* METHOD 2: Demo Instant OTP */}
               {loginMethod === 'AADHAAR' && (
                 <div className="space-y-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center justify-between">
-                      <span>12-Digit Aadhaar Identification Number *</span>
+                      <span>Mobile Number / Demo ID *</span>
                       <span className="text-[10px] text-amber-700 font-semibold bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                        UIDAI e-KYC
+                        Demo Auth
                       </span>
                     </label>
                     <div className="relative">
@@ -777,16 +716,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold shadow-xs transition-all cursor-pointer flex items-center justify-center gap-2"
                     >
                       <Smartphone className="w-4 h-4" />
-                      <span>DISPATCH AADHAAR OTP TO REGISTERED MOBILE</span>
+                      <span>DISPATCH DEMO OTP TO SIMULATED MOBILE</span>
                     </button>
                   ) : (
                     <div className="space-y-3 pt-2">
                       <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800">
-                        ✓ OTP successfully dispatched to Aadhaar linked mobile (+91 ••••••9821). Valid for 10 minutes.
+                        ✓ OTP successfully dispatched to demo mobile (+91 ••••••9821). Valid for 10 minutes.
                       </div>
 
                       <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-slate-800 uppercase">Enter 6-Digit Aadhaar OTP *</label>
+                        <label className="text-xs font-bold text-slate-800 uppercase">Enter 6-Digit Demo OTP *</label>
                         <input
                           type="text"
                           maxLength={6}
@@ -817,7 +756,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                         className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
                       >
                         {isSubmitting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                        <span>VERIFY AADHAAR &amp; COMPLETE SSO SIGN IN</span>
+                        <span>VERIFY OTP &amp; SIGN IN</span>
                       </button>
                     </div>
                   )}
@@ -831,9 +770,9 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     <Cpu className="w-7 h-7" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-slate-900">Cryptographic USB Token / DSC Login</h4>
+                    <h4 className="text-sm font-bold text-slate-900">Cryptographic USB Token / DSC Login (Demo)</h4>
                     <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
-                      Plug in your FIPS 140-2 Level 3 cryptographic hardware token issued by NIC Certifying Authority.
+                      Simulate authentication with a Directorate Digital Signature Certificate (DSC) key.
                     </p>
                   </div>
                   <button
@@ -841,7 +780,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     onClick={() => handleSelectDemoCredentials('admin.monitoring@gov.in', 'Password@123')}
                     className="px-6 py-2.5 bg-indigo-700 hover:bg-indigo-800 text-white rounded-xl text-xs font-bold shadow-md transition-all cursor-pointer inline-flex items-center gap-2"
                   >
-                    <span>DETECT TOKEN &amp; SIGN IN AS DR. RAJESH VERMA (IAS)</span>
+                    <span>SIMULATE DSC LOGIN AS DEMO DIRECTOR</span>
                   </button>
                 </div>
               )}
@@ -1016,16 +955,16 @@ export const AuthModal: React.FC<AuthModalProps> = ({
           )}
         </div>
 
-        {/* Institutional Security Footer */}
+        {/* Prototype Footer */}
         <div className="p-3.5 bg-slate-100 border-t border-slate-200 flex flex-wrap items-center justify-between text-[10px] text-slate-500 font-mono">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-            <span>TLS 1.3 AES-GCM-256 • NIC GovNet IP: 10.194.73.98</span>
+            <span>INSPIRA Prototype Authentication • SIH 2026</span>
           </div>
           <div className="flex items-center gap-3">
-            <span>CERT-In Helpdesk: 1800-11-2026</span>
+            <span>Problem Statement 26095</span>
             <span>•</span>
-            <span className="font-bold text-slate-700">GIGW 3.0 Certified</span>
+            <span className="font-bold text-slate-700">Team InnoCoders</span>
           </div>
         </div>
       </div>

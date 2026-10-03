@@ -94,6 +94,10 @@ export const InstituteLiveCctvView: React.FC<InstituteLiveCctvViewProps> = ({
     return () => clearInterval(interval);
   }, []);
 
+  const generateCctvFeedSvg = (camId: string, name: string, location: string, peopleCount: number) => {
+    return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450"><rect width="800" height="450" fill="%23020617"/><line x1="0" y1="225" x2="800" y2="225" stroke="%231e293b" stroke-width="1" stroke-dasharray="4,4"/><line x1="400" y1="0" x2="400" y2="450" stroke="%231e293b" stroke-width="1" stroke-dasharray="4,4"/><rect x="260" y="110" width="130" height="230" rx="4" fill="none" stroke="%2310b981" stroke-width="2" stroke-dasharray="3,3"/><text x="265" y="102" fill="%2334d399" font-family="monospace" font-size="12" font-weight="bold">[OBJ-01: PERSON // CONF 98.4%]</text><rect x="420" y="130" width="120" height="210" rx="4" fill="none" stroke="%2338bdf8" stroke-width="2" stroke-dasharray="3,3"/><text x="425" y="122" fill="%2338bdf8" font-family="monospace" font-size="12" font-weight="bold">[OBJ-02: PERSON // CONF 96.1%]</text><rect x="20" y="20" width="760" height="40" rx="8" fill="%230f172a" opacity="0.85"/><text x="35" y="45" fill="%23ffffff" font-family="monospace" font-size="14" font-weight="bold">INSPIRA RTSP CAM: ${encodeURIComponent(name.toUpperCase())}</text><text x="765" y="45" fill="%23ef4444" font-family="monospace" font-size="12" font-weight="bold" text-anchor="end">● REC • 1080P/30FPS</text><rect x="20" y="380" width="760" height="50" rx="8" fill="%230f172a" opacity="0.85"/><text x="35" y="405" fill="%2394a3b8" font-family="monospace" font-size="12">LOC: ${encodeURIComponent(location.toUpperCase())}</text><text x="35" y="422" fill="%2310b981" font-family="monospace" font-size="11">SIMULATED FEED // OCCUPANCY: ${peopleCount} DETECTED</text><text x="765" y="412" fill="%23cbd5e1" font-family="monospace" font-size="12" text-anchor="end">CAM-ID: ${camId}</text></svg>`;
+  };
+
   // 8 Dedicated Camera Feeds matching the exact mockup
   const cctvFeeds: CctvFeed[] = [
     {
@@ -102,7 +106,7 @@ export const InstituteLiveCctvView: React.FC<InstituteLiveCctvViewProps> = ({
       location: 'Front Entrance & Outer Gate',
       resolution: '1080p',
       fps: 30,
-      imageUrl: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80&w=800',
+      imageUrl: generateCctvFeedSvg('cam_1', 'Main Gate', 'Front Entrance & Outer Gate', 2),
       status: 'LIVE',
       peopleCount: 2,
     },
@@ -112,7 +116,7 @@ export const InstituteLiveCctvView: React.FC<InstituteLiveCctvViewProps> = ({
       location: 'Admin Desk & Visitors Lobby',
       resolution: '1080p',
       fps: 30,
-      imageUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800',
+      imageUrl: generateCctvFeedSvg('cam_2', 'Reception Area', 'Admin Desk & Visitors Lobby', 3),
       status: 'LIVE',
       peopleCount: 3,
     },
@@ -122,7 +126,7 @@ export const InstituteLiveCctvView: React.FC<InstituteLiveCctvViewProps> = ({
       location: 'Primary Teaching Wing A',
       resolution: '1080p',
       fps: 30,
-      imageUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=800',
+      imageUrl: generateCctvFeedSvg('cam_3', 'Classroom 1', 'Primary Teaching Wing A', 24),
       status: 'LIVE',
       peopleCount: 24,
     },
@@ -132,7 +136,7 @@ export const InstituteLiveCctvView: React.FC<InstituteLiveCctvViewProps> = ({
       location: 'Secondary Teaching Wing B',
       resolution: '1080p',
       fps: 30,
-      imageUrl: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=800',
+      imageUrl: generateCctvFeedSvg('cam_4', 'Classroom 2', 'Secondary Teaching Wing B', 18),
       status: 'LIVE',
       peopleCount: 18,
     },
@@ -142,7 +146,7 @@ export const InstituteLiveCctvView: React.FC<InstituteLiveCctvViewProps> = ({
       location: 'IT & Digital Literacy Room',
       resolution: '1080p',
       fps: 30,
-      imageUrl: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800',
+      imageUrl: generateCctvFeedSvg('cam_5', 'Computer Lab', 'IT & Digital Literacy Room', 15),
       status: 'LIVE',
       peopleCount: 15,
     },
@@ -152,7 +156,7 @@ export const InstituteLiveCctvView: React.FC<InstituteLiveCctvViewProps> = ({
       location: 'Multipurpose Skill & Therapy Center',
       resolution: '1080p',
       fps: 30,
-      imageUrl: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&q=80&w=800',
+      imageUrl: generateCctvFeedSvg('cam_6', 'Activity Hall', 'Multipurpose Skill & Therapy Center', 8),
       status: 'LIVE',
       peopleCount: 8,
     },
@@ -162,7 +166,7 @@ export const InstituteLiveCctvView: React.FC<InstituteLiveCctvViewProps> = ({
       location: 'Managing Trustee & Records Room',
       resolution: '1080p',
       fps: 30,
-      imageUrl: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=800',
+      imageUrl: generateCctvFeedSvg('cam_7', 'Office Room', 'Managing Trustee & Records Room', 2),
       status: 'LIVE',
       peopleCount: 2,
     },
@@ -172,7 +176,7 @@ export const InstituteLiveCctvView: React.FC<InstituteLiveCctvViewProps> = ({
       location: 'Rear Courtyard & Perimeter Wall',
       resolution: '1080p',
       fps: 30,
-      imageUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=800',
+      imageUrl: generateCctvFeedSvg('cam_8', 'Back Area', 'Rear Courtyard & Perimeter Wall', 1),
       status: 'LIVE',
       peopleCount: 1,
     },

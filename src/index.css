@@ -279,13 +279,13 @@ body {
   box-shadow: 0 16px 32px -8px rgba(15, 23, 42, 0.09), 0 4px 12px -2px rgba(15, 23, 42, 0.05);
 }
 
-.tricolor-stripe {
-  height: 3.5px;
-  background: linear-gradient(90deg, #FF9933 0%, #FFFFFF 50%, #128807 100%);
+.neutral-accent-stripe {
+  height: 3px;
+  background: #0B3B60;
 }
 
 /* ==========================================================================
-   GIGW 3.0 & WCAG 2.1 AAA High Contrast Mode Styles
+   WCAG 2.1 AA High Contrast Mode Styles
    ========================================================================== */
 [data-contrast="high"],
 body.high-contrast-mode {
@@ -330,5 +330,13 @@ body.high-contrast-mode .text-slate-500 {
 body.high-contrast-mode .border-slate-200,
 body.high-contrast-mode .border-slate-100 {
   border-color: #475569 !important;
+}
+
+[data-contrast="high"] input,
+[data-contrast="high"] select,
+[data-contrast="high"] textarea {
+  background-color: #1f2937 !important;
+  color: #ffffff !important;
+  border-color: #4b5563 !important;
 }
 

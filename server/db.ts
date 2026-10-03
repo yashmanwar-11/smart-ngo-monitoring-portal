@@ -158,7 +158,7 @@ export function initSchema(): void {
       FOREIGN KEY (category_code) REFERENCES evidence_categories(code)
     );
 
-    -- 9. Directorate General (IAS) Scrutiny & Sanction Orders
+    -- 9. Directorate Scrutiny & Sanction Orders
     CREATE TABLE IF NOT EXISTS compliance_assessments (
       id TEXT PRIMARY KEY,
       inspection_id TEXT UNIQUE NOT NULL,

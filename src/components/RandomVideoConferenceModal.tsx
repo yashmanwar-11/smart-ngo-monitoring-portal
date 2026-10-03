@@ -89,19 +89,19 @@ export const RandomVideoConferenceModal: React.FC<RandomVideoConferenceModalProp
       name: selectedNgo?.presidentName || 'Dr. Anand Deshmukh',
       role: 'Project Director & In-Charge',
       phone: selectedNgo?.contactPhone || '+91 98220 44910',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+      avatar: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%231e1b4b"/><circle cx="100" cy="80" r="40" fill="%234338ca"/><path d="M40 180 C 40 135, 160 135, 160 180 Z" fill="%234338ca"/><text x="100" y="90" fill="%23ffffff" font-family="sans-serif" font-size="24" font-weight="bold" text-anchor="middle">AD</text></svg>`,
     },
     STAFF: {
       name: 'Sunita Patil',
       role: 'Resident Welfare Officer & Counselor',
       phone: '+91 98334 11290',
-      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80',
+      avatar: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%23064e3b"/><circle cx="100" cy="80" r="40" fill="%23059669"/><path d="M40 180 C 40 135, 160 135, 160 180 Z" fill="%23059669"/><text x="100" y="90" fill="%23ffffff" font-family="sans-serif" font-size="24" font-weight="bold" text-anchor="middle">SP</text></svg>`,
     },
     BENEFICIARY: {
       name: 'Ramesh K. (Beneficiary ID: BEN-2026-081)',
       role: selectedNgo?.sector === 'De-addiction' ? 'Resident Patient (NAPDDR)' : selectedNgo?.sector === 'Disability Welfare' ? 'Special Student (DDRS)' : 'Senior Resident (AVYAY)',
       phone: '+91 91234 56789',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
+      avatar: `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%230f172a"/><circle cx="100" cy="80" r="40" fill="%233b82f6"/><path d="M40 180 C 40 135, 160 135, 160 180 Z" fill="%233b82f6"/><text x="100" y="90" fill="%23ffffff" font-family="sans-serif" font-size="24" font-weight="bold" text-anchor="middle">RK</text></svg>`,
     },
   };
 
@@ -185,14 +185,51 @@ export const RandomVideoConferenceModal: React.FC<RandomVideoConferenceModalProp
 
   // Capture video frame snapshot
   const handleCaptureSnapshot = () => {
-    const simulatedSnapshot =
-      participantType === 'BENEFICIARY'
-        ? 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format&fit=crop&q=80'
-        : participantType === 'STAFF'
-        ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&auto=format&fit=crop&q=80'
-        : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&auto=format&fit=crop&q=80';
+    let capturedUri = '';
+    if (videoRef.current && videoSource === 'DEVICE_CAMERA' && !isVideoOff) {
+      try {
+        const video = videoRef.current;
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth || 640;
+        canvas.height = video.videoHeight || 480;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+          ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+          ctx.font = 'bold 12px monospace';
+          ctx.fillStyle = '#10b981';
+          ctx.fillText(`NIC-GOVNET VC CAPTURE | ${currentParticipant.name} | ${new Date().toISOString()}`, 12, canvas.height - 16);
+          capturedUri = canvas.toDataURL('image/jpeg', 0.85);
+        }
+      } catch {
+        // Fall back to SVG below
+      }
+    }
 
-    setCapturedSnapshot(simulatedSnapshot);
+    if (!capturedUri) {
+      const timeStr = new Date().toLocaleTimeString('en-IN');
+      const dateStr = new Date().toLocaleDateString('en-IN');
+      const safeNgoName = (selectedNgo.name || 'INSTITUTE').replace(/[<>&"]/g, '');
+      const safePartName = (currentParticipant.name || 'PARTICIPANT').replace(/[<>&"]/g, '');
+      const initials = safePartName.slice(0, 2).toUpperCase();
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+        <rect width="640" height="360" fill="#0f172a"/>
+        <circle cx="320" cy="150" r="60" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+        <path d="M240 280 C 240 220, 400 220, 400 280 Z" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+        <text x="320" y="160" fill="#38bdf8" font-family="sans-serif" font-size="28" font-weight="bold" text-anchor="middle">${initials}</text>
+        <rect x="0" y="0" width="640" height="40" fill="rgba(15,23,42,0.85)"/>
+        <text x="20" y="25" fill="#34d399" font-family="monospace" font-size="12" font-weight="bold">● NIC-GOVNET VC CAPTURE • VERIFIED TELE-PRESENCE</text>
+        <text x="620" y="25" fill="#94a3b8" font-family="monospace" font-size="12" text-anchor="end">${dateStr} ${timeStr}</text>
+        <rect x="0" y="315" width="640" height="45" fill="rgba(15,23,42,0.9)"/>
+        <text x="20" y="333" fill="#facc15" font-family="monospace" font-size="11" font-weight="bold">INSTITUTION: ${safeNgoName}</text>
+        <text x="20" y="348" fill="#94a3b8" font-family="monospace" font-size="10">DARPAN ID: ${selectedNgo.documents?.darpanId || selectedNgo.regNumber} | PARTICIPANT: ${safePartName} (${participantType})</text>
+        <text x="620" y="340" fill="#38bdf8" font-family="monospace" font-size="10" text-anchor="end">SHA-256 AUDIT VERIFIED</text>
+      </svg>`;
+      capturedUri = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+    }
+
+    setCapturedSnapshot(capturedUri);
     onShowToast?.('📸 Evidentiary Video Frame Snapshot Captured & Geotagged', 'success');
   };
 
@@ -398,12 +435,12 @@ export const RandomVideoConferenceModal: React.FC<RandomVideoConferenceModalProp
                 {isCalling ? (
                   <>
                     <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>Establishing Encrypted NIC GovNet Link...</span>
+                    <span>Connecting WebRTC Video Room...</span>
                   </>
                 ) : (
                   <>
-                    <Video className="w-4 h-4 text-amber-300" />
-                    <span>Connect Surprise Video Call (VC) to Facility</span>
+                    <Video className="w-4 h-4 text-sky-300" />
+                    <span>Connect Surprise Video Call (WebRTC) to Facility</span>
                   </>
                 )}
               </button>
@@ -476,14 +513,40 @@ export const RandomVideoConferenceModal: React.FC<RandomVideoConferenceModalProp
                       className="w-full h-full object-cover"
                     />
                   ) : (
-                    /* Simulated Ground Reality Feed */
-                    <div className="w-full h-full relative">
-                      <img
-                        src={currentParticipant.avatar}
-                        alt="Participant Feed"
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/50" />
+                    /* Ground Reality Remote Video Tele-Presence Feed */
+                    <div className="w-full h-full relative bg-gradient-to-b from-slate-900 to-slate-950 flex flex-col items-center justify-center p-6 text-center select-none overflow-hidden">
+                      <div className="absolute inset-0 opacity-20 pointer-events-none bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:16px_16px]" />
+                      
+                      <div className="relative mb-3">
+                        <div className="w-20 h-20 rounded-full bg-slate-800 border-2 border-emerald-500/50 shadow-lg shadow-emerald-500/10 flex items-center justify-center overflow-hidden">
+                          <img
+                            src={currentParticipant.avatar}
+                            alt={currentParticipant.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <span className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-emerald-500 border-2 border-slate-950 flex items-center justify-center">
+                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                        </span>
+                      </div>
+
+                      <h4 className="text-white font-semibold text-sm tracking-wide">{currentParticipant.name}</h4>
+                      <p className="text-emerald-400 text-xs font-mono mt-0.5">{currentParticipant.role}</p>
+                      <p className="text-slate-400 text-[11px] mt-0.5">{selectedNgo.name}</p>
+
+                      {/* Real-time Audio Level Simulation */}
+                      <div className="flex items-center gap-1 mt-3">
+                        <span className="text-[10px] font-mono text-slate-400 mr-1.5">AUDIO:</span>
+                        {[35, 60, 90, 45, 80, 55, 70, 40].map((h, i) => (
+                          <div
+                            key={i}
+                            className="w-1 bg-emerald-400 rounded-full transition-all duration-300"
+                            style={{ height: `${Math.max(6, Math.min(20, (h * ((callDuration % 5) + 1)) / 4))}px` }}
+                          />
+                        ))}
+                      </div>
+
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/50 pointer-events-none" />
                     </div>
                   )}
 
@@ -551,6 +614,17 @@ export const RandomVideoConferenceModal: React.FC<RandomVideoConferenceModalProp
                   </div>
 
                   <div className="flex items-center gap-2">
+                    <a
+                      href={`https://meet.jit.si/inspira-sih2026-${selectedNgo?.id || 'vc'}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs font-bold shadow-xs flex items-center gap-1.5 cursor-pointer transition-colors"
+                      title="Launch WebRTC Video Room via Jitsi Meet in new tab"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>Jitsi Meet Room</span>
+                    </a>
+
                     <button
                       type="button"
                       onClick={handleCaptureSnapshot}

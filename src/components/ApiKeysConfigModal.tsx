@@ -239,7 +239,7 @@ export const ApiKeysConfigModal: React.FC<ApiKeysConfigModalProps> = ({
     } else {
       setIsPlayingAudio(true);
       speakText(
-        'National NGO Monitoring Portal. GIGW 3.0 audio gateway verified. Real-time vigilance and statutory inspection systems are fully operational.',
+        'INSPIRA prototype NGO monitoring system. Audio accessibility test verified. Inspection systems operational.',
         {
           onEnd: () => setIsPlayingAudio(false),
         }
@@ -282,10 +282,10 @@ export const ApiKeysConfigModal: React.FC<ApiKeysConfigModalProps> = ({
             <div className="min-w-0">
               <div className="flex items-center gap-2">
                 <h2 className="text-base sm:text-lg font-black tracking-tight text-white font-serif truncate">
-                  Live APIs &amp; System Integration Gateway
+                  System Integrations &amp; API Settings
                 </h2>
                 <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
-                  v2.0.0 PRO
+                  Prototype Settings
                 </span>
               </div>
               <p className="text-[11px] text-blue-100 font-medium truncate mt-0.5">

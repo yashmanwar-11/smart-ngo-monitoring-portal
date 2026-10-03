@@ -240,12 +240,12 @@ export const authApi = {
         );
 
         const session = {
-          token: `AUTH-GOV-2026-${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
+          token: `AUTH-INSPIRA-${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
           loginTime: new Date().toLocaleString('en-IN') + ' IST',
           clearance,
-          ipAddress: '10.194.73.98 (NIC GovNet TLS 1.3)',
-          deviceFingerprint: 'CERT-IN-TAMPER-PROOF-HW-9921',
-          isVerified2FA: true,
+          ipAddress: 'Client Session',
+          deviceFingerprint: 'BROWSER-CLIENT-SESSION',
+          isVerified2FA: false,
         };
         setStoredToken(session.token);
         return { token: session.token, user: matched, session };
@@ -357,12 +357,12 @@ export const authApi = {
         );
 
         const session = {
-          token: `AUTH-GOV-2026-${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
+          token: `AUTH-INSPIRA-${Math.random().toString(36).substring(2, 10).toUpperCase()}`,
           loginTime: new Date().toLocaleString('en-IN') + ' IST',
           clearance,
-          ipAddress: '10.194.73.98 (NIC GovNet TLS 1.3)',
-          deviceFingerprint: 'CERT-IN-TAMPER-PROOF-HW-9921',
-          isVerified2FA: true,
+          ipAddress: 'Client Session',
+          deviceFingerprint: 'BROWSER-CLIENT-SESSION',
+          isVerified2FA: false,
         };
         setStoredToken(session.token);
         return { token: session.token, user: matched, session };
@@ -392,52 +392,35 @@ export const ngoApi = {
     riskLevel?: string;
     search?: string;
   } = {}) => {
-    try {
-      const params = new URLSearchParams();
-      if (filters.sector && filters.sector !== 'ALL') params.append('sector', filters.sector);
-      if (filters.status && filters.status !== 'ALL') params.append('status', filters.status);
-      if (filters.district && filters.district !== 'ALL') params.append('district', filters.district);
-      if (filters.state && filters.state !== 'ALL') params.append('state', filters.state);
-      if (filters.riskLevel && filters.riskLevel !== 'ALL') params.append('riskLevel', filters.riskLevel);
-      if (filters.search) params.append('search', filters.search);
+    const params = new URLSearchParams();
+    if (filters.sector && filters.sector !== 'ALL') params.append('sector', filters.sector);
+    if (filters.status && filters.status !== 'ALL') params.append('status', filters.status);
+    if (filters.district && filters.district !== 'ALL') params.append('district', filters.district);
+    if (filters.state && filters.state !== 'ALL') params.append('state', filters.state);
+    if (filters.riskLevel && filters.riskLevel !== 'ALL') params.append('riskLevel', filters.riskLevel);
+    if (filters.search) params.append('search', filters.search);
 
-      const qs = params.toString();
-      const res = await apiFetch<NGO[]>(`/api/ngos${qs ? `?${qs}` : ''}`);
-      if (Array.isArray(res) && res.length > 0) return res;
-      return INITIAL_NGOS;
-    } catch {
-      return INITIAL_NGOS;
-    }
+    const qs = params.toString();
+    const res = await apiFetch<NGO[]>(`/api/ngos${qs ? `?${qs}` : ''}`);
+    return Array.isArray(res) ? res : [];
   },
 
   getById: async (id: string) => {
-    try {
-      return await apiFetch<any>(`/api/ngos/${id}`);
-    } catch {
-      return INITIAL_NGOS.find((n) => n.id === id) || INITIAL_NGOS[0];
-    }
+    return await apiFetch<any>(`/api/ngos/${id}`);
   },
 
   create: async (payload: Partial<NGO>) => {
-    try {
-      return await apiFetch('/api/ngos', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-      });
-    } catch {
-      return { success: true, id: 'ngo_' + Date.now(), ...payload };
-    }
+    return await apiFetch('/api/ngos', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
   },
 
   update: async (id: string, payload: Partial<NGO>) => {
-    try {
-      return await apiFetch(`/api/ngos/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(payload),
-      });
-    } catch {
-      return { success: true, id, ...payload };
-    }
+    return await apiFetch(`/api/ngos/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(payload),
+    });
   },
 };
 
@@ -450,30 +433,20 @@ export const inspectionApi = {
     priority?: string;
     search?: string;
   } = {}) => {
-    try {
-      const params = new URLSearchParams();
-      if (filters.status && filters.status !== 'ALL') params.append('status', filters.status);
-      if (filters.inspectorId && filters.inspectorId !== 'ALL') params.append('inspectorId', filters.inspectorId);
-      if (filters.ngoId && filters.ngoId !== 'ALL') params.append('ngoId', filters.ngoId);
-      if (filters.priority && filters.priority !== 'ALL') params.append('priority', filters.priority);
-      if (filters.search) params.append('search', filters.search);
+    const params = new URLSearchParams();
+    if (filters.status && filters.status !== 'ALL') params.append('status', filters.status);
+    if (filters.inspectorId && filters.inspectorId !== 'ALL') params.append('inspectorId', filters.inspectorId);
+    if (filters.ngoId && filters.ngoId !== 'ALL') params.append('ngoId', filters.ngoId);
+    if (filters.priority && filters.priority !== 'ALL') params.append('priority', filters.priority);
+    if (filters.search) params.append('search', filters.search);
 
-      const qs = params.toString();
-      const res = await apiFetch<GovernmentInspectionTask[]>(`/api/inspections${qs ? `?${qs}` : ''}`);
-      if (Array.isArray(res) && res.length > 0) return res;
-      return getLocalTasks();
-    } catch {
-      return getLocalTasks();
-    }
+    const qs = params.toString();
+    const res = await apiFetch<GovernmentInspectionTask[]>(`/api/inspections${qs ? `?${qs}` : ''}`);
+    return Array.isArray(res) ? res : [];
   },
 
   getById: async (id: string) => {
-    try {
-      return await apiFetch<any>(`/api/inspections/${id}`);
-    } catch {
-      const tasks = getLocalTasks();
-      return tasks.find((t) => t.id === id) || tasks[0];
-    }
+    return await apiFetch<any>(`/api/inspections/${id}`);
   },
 
   create: async (payload: {
@@ -484,52 +457,32 @@ export const inspectionApi = {
     scheduledTime?: string;
     instructions?: string;
   }) => {
-    try {
-      return await apiFetch('/api/inspections', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-      });
-    } catch {
-      return { success: true, id: 'insp_' + Date.now(), ...payload };
-    }
+    return await apiFetch('/api/inspections', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
   },
 
   assign: async (id: string, inspectorId: string, instructions?: string, scheduledDate?: string) => {
-    try {
-      return await apiFetch(`/api/inspections/${id}/assign`, {
-        method: 'POST',
-        body: JSON.stringify({ inspectorId, instructions, scheduledDate }),
-      });
-    } catch {
-      return { success: true, id, inspectorId, instructions, scheduledDate };
-    }
+    return await apiFetch(`/api/inspections/${id}/assign`, {
+      method: 'POST',
+      body: JSON.stringify({ inspectorId, instructions, scheduledDate }),
+    });
   },
 
   checkIn: async (id: string, lat: number, lng: number) => {
-    try {
-      return await apiFetch<{
-        success: boolean;
-        message: string;
-        status: string;
-        distanceMeters: number;
-        requiredRadiusMeters: number;
-        checkInTime: string;
-        geofenceVerified: boolean;
-      }>(`/api/inspections/${id}/check-in`, {
-        method: 'POST',
-        body: JSON.stringify({ lat, lng }),
-      });
-    } catch {
-      return {
-        success: true,
-        message: 'Geofence check-in verified via real-time satellite GPS lock (Offline Secure Mode)',
-        status: 'IN_PROGRESS',
-        distanceMeters: 14.5,
-        requiredRadiusMeters: 100,
-        checkInTime: new Date().toLocaleTimeString('en-IN') + ' IST',
-        geofenceVerified: true,
-      };
-    }
+    return await apiFetch<{
+      success: boolean;
+      message: string;
+      status: string;
+      distanceMeters: number;
+      requiredRadiusMeters: number;
+      checkInTime: string;
+      geofenceVerified: boolean;
+    }>(`/api/inspections/${id}/check-in`, {
+      method: 'POST',
+      body: JSON.stringify({ lat, lng }),
+    });
   },
 
   uploadEvidence: async (id: string, payload: {
@@ -541,22 +494,13 @@ export const inspectionApi = {
     accuracyMeters?: number;
     locationAddress?: string;
   }) => {
-    try {
-      return await apiFetch<{ id: string; category: string; fileHash: string; timestamp: string }>(
-        `/api/inspections/${id}/evidence`,
-        {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        }
-      );
-    } catch {
-      return {
-        id: 'ev_' + Date.now(),
-        category: payload.category,
-        fileHash: 'SHA256:OFFLINE-EVID-' + Math.random().toString(16).substring(2, 10).toUpperCase(),
-        timestamp: new Date().toISOString(),
-      };
-    }
+    return await apiFetch<{ id: string; category: string; fileHash: string; timestamp: string }>(
+      `/api/inspections/${id}/evidence`,
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      }
+    );
   },
 
   submit: async (id: string, payload: {
@@ -566,53 +510,31 @@ export const inspectionApi = {
     inspectorRemarks: string;
     inspectionStatus?: 'Completed' | 'Failed/Issue Found';
   }) => {
-    try {
-      return await apiFetch<{
-        success: boolean;
-        message: string;
-        status: string;
-        tamperProofHash: string;
-        submittedAt: string;
-      }>(`/api/inspections/${id}/submit`, {
-        method: 'POST',
-        body: JSON.stringify(payload),
-      });
-    } catch {
-      return {
-        success: true,
-        message: 'Statutory inspection report submitted with tamper-evident digital seal.',
-        status: payload.inspectionStatus || 'Completed',
-        tamperProofHash: 'SHA256:OFFLINE-SEAL-' + Math.random().toString(16).substring(2, 10).toUpperCase(),
-        submittedAt: new Date().toISOString(),
-      };
-    }
+    return await apiFetch<{
+      success: boolean;
+      message: string;
+      status: string;
+      tamperProofHash: string;
+      submittedAt: string;
+    }>(`/api/inspections/${id}/submit`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
   },
 
   review: async (id: string, review: DirectorateScrutinyReview) => {
-    try {
-      return await apiFetch<{
-        success: boolean;
-        message: string;
-        sanctionOrderNumber: string;
-        verdict: string;
-        score: number;
-        complianceGrade: string;
-        reviewedAt: string;
-      }>(`/api/inspections/${id}/review`, {
-        method: 'POST',
-        body: JSON.stringify(review),
-      });
-    } catch {
-      return {
-        success: true,
-        message: 'Directorate Scrutiny review recorded and cryptographically sealed.',
-        sanctionOrderNumber: `DOSJE-SANCT-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
-        verdict: review.verdict,
-        score: review.score,
-        complianceGrade: review.score >= 85 ? 'Grade A - Exemplary' : review.score >= 70 ? 'Grade B - Standard' : 'Grade C - Deficient',
-        reviewedAt: new Date().toISOString(),
-      };
-    }
+    return await apiFetch<{
+      success: boolean;
+      message: string;
+      sanctionOrderNumber: string;
+      verdict: string;
+      score: number;
+      complianceGrade: string;
+      reviewedAt: string;
+    }>(`/api/inspections/${id}/review`, {
+      method: 'POST',
+      body: JSON.stringify(review),
+    });
   },
 };
 
@@ -628,98 +550,53 @@ export const grievanceApi = {
     description: string;
     evidenceUrls?: string[];
   }) => {
-    try {
-      return await apiFetch<{ success: boolean; trackingToken: string; submittedAt: string; message: string }>(
-        '/api/grievances',
-        {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        }
-      );
-    } catch {
-      const trackingToken = 'CPGRAMS-' + Math.floor(100000 + Math.random() * 900000);
-      return {
-        success: true,
-        trackingToken,
-        submittedAt: new Date().toISOString(),
-        message: `Grievance registered under National Whistleblower Protection. Tracking ID: ${trackingToken}`,
-      };
-    }
+    return await apiFetch<{ success: boolean; trackingToken: string; submittedAt: string; message: string }>(
+      '/api/grievances',
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      }
+    );
   },
 
   track: async (token: string) => {
-    try {
-      return await apiFetch<{
-        trackingToken: string;
-        ngoName: string;
-        category: string;
-        status: string;
-        submittedAt: string;
-        timeline: Array<{ step: number; label: string; completed: boolean; timestamp?: string }>;
-        publicRemarks: string;
-      }>(`/api/grievances/track/${token}`);
-    } catch {
-      return {
-        trackingToken: token,
-        ngoName: 'Swasthya Seva Trust',
-        category: 'FINANCIAL_MISAPPROPRIATION',
-        status: 'UNDER_INQUIRY',
-        submittedAt: new Date().toLocaleDateString('en-IN'),
-        timeline: [
-          { step: 1, label: 'Grievance Docketed', completed: true, timestamp: '10:30 AM' },
-          { step: 2, label: 'Prima Facie Scrutiny', completed: true, timestamp: '02:15 PM' },
-          { step: 3, label: 'Field Inquiry Assigned', completed: true, timestamp: '04:00 PM' },
-          { step: 4, label: 'Final Directorate Adjudication', completed: false },
-        ],
-        publicRemarks: 'Designated Sub-Divisional Vigilance Officer has commenced physical evidence verification.',
-      };
-    }
+    return await apiFetch<{
+      trackingToken: string;
+      ngoName: string;
+      category: string;
+      status: string;
+      submittedAt: string;
+      timeline: Array<{ step: number; label: string; completed: boolean; timestamp?: string }>;
+      publicRemarks: string;
+    }>(`/api/grievances/track/${token}`);
   },
 
   getAll: async (filters: { status?: string; category?: string } = {}) => {
-    try {
-      const params = new URLSearchParams();
-      if (filters.status && filters.status !== 'ALL') params.append('status', filters.status);
-      if (filters.category && filters.category !== 'ALL') params.append('category', filters.category);
-      const qs = params.toString();
-      const res = await apiFetch<Complaint[]>(`/api/grievances${qs ? `?${qs}` : ''}`);
-      if (Array.isArray(res) && res.length > 0) return res;
-      return INITIAL_COMPLAINTS;
-    } catch {
-      return INITIAL_COMPLAINTS;
-    }
+    const params = new URLSearchParams();
+    if (filters.status && filters.status !== 'ALL') params.append('status', filters.status);
+    if (filters.category && filters.category !== 'ALL') params.append('category', filters.category);
+    const qs = params.toString();
+    const res = await apiFetch<Complaint[]>(`/api/grievances${qs ? `?${qs}` : ''}`);
+    return Array.isArray(res) ? res : [];
   },
 
   updateStatus: async (id: string, status: string, adminRemarks?: string, investigatingOfficerId?: string) => {
-    try {
-      return await apiFetch(`/api/grievances/${id}/status`, {
-        method: 'PUT',
-        body: JSON.stringify({ status, adminRemarks, investigatingOfficerId }),
-      });
-    } catch {
-      return { success: true, id, status, adminRemarks, investigatingOfficerId };
-    }
+    return await apiFetch(`/api/grievances/${id}/status`, {
+      method: 'PUT',
+      body: JSON.stringify({ status, adminRemarks, investigatingOfficerId }),
+    });
   },
 };
 
 // 5. Statutory Notices APIs
 export const noticeApi = {
   getAll: async () => {
-    try {
-      const res = await apiFetch<StatutoryNotice[]>('/api/notices');
-      if (Array.isArray(res) && res.length > 0) return res;
-      return DEFAULT_MOCK_NOTICES;
-    } catch {
-      return DEFAULT_MOCK_NOTICES;
-    }
+    const res = await apiFetch<StatutoryNotice[]>('/api/notices');
+    return Array.isArray(res) ? res : [];
   },
 
   getById: async (id: string) => {
-    try {
-      return await apiFetch<StatutoryNotice>(`/api/notices/${id}`);
-    } catch {
-      return DEFAULT_MOCK_NOTICES.find(n => n.id === id) || DEFAULT_MOCK_NOTICES[0];
-    }
+    return await apiFetch<StatutoryNotice>(`/api/notices/${id}`);
   },
 
   create: async (payload: {
@@ -731,124 +608,75 @@ export const noticeApi = {
     details: string;
     deadline: string;
   }) => {
-    try {
-      return await apiFetch<{ success: boolean; id: string; noticeNumber: string; message: string }>(
-        '/api/notices',
-        {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        }
-      );
-    } catch {
-      const noticeNumber = `DOSJE/NOT/2026/${Math.floor(100 + Math.random() * 900)}`;
-      return {
-        success: true,
-        id: 'not_' + Date.now(),
-        noticeNumber,
-        message: `Statutory show-cause notice dispatched under Sec 14(A). Notice Ref: ${noticeNumber}`,
-      };
-    }
+    return await apiFetch<{ success: boolean; id: string; noticeNumber: string; message: string }>(
+      '/api/notices',
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      }
+    );
   },
 
   respond: async (id: string, responseText: string, attachmentUrls: string[] = []) => {
-    try {
-      return await apiFetch<{ success: boolean; message: string }>(`/api/notices/${id}/respond`, {
-        method: 'POST',
-        body: JSON.stringify({ responseText, attachmentUrls }),
-      });
-    } catch {
-      return {
-        success: true,
-        message: 'Statutory compliance reply recorded and timestamped with NIC digital receipt.',
-      };
-    }
+    return await apiFetch<{ success: boolean; message: string }>(`/api/notices/${id}/respond`, {
+      method: 'POST',
+      body: JSON.stringify({ responseText, attachmentUrls }),
+    });
   },
 };
 
 // 6. Dashboards & Analytics APIs
 export const dashboardApi = {
+  getPublicStats: async () => {
+    return await apiFetch<{
+      totalNgos: number;
+      totalBudget: number;
+      activeAudits: number;
+      completedAudits: number;
+      totalAttendancePunches: number;
+      totalGrievances: number;
+      resolvedGrievances: number;
+      districtsCovered: number;
+    }>('/api/dashboard/stats');
+  },
+
   getAdminStats: async () => {
-    try {
-      return await apiFetch<{
-        kpis: {
-          totalNgos: number;
-          activeAudits: number;
-          pendingInspections: number;
-          completedAudits: number;
-          flaggedViolations: number;
-          openGrievances: number;
-          pendingNotices: number;
-          fieldOfficersCount: number;
-        };
-        sectorDistribution: Array<{ sector: string; count: number }>;
-        recentAudits: any[];
-      }>('/api/dashboard/admin');
-    } catch {
-      return {
-        kpis: {
-          totalNgos: INITIAL_NGOS.length,
-          activeAudits: 8,
-          pendingInspections: 14,
-          completedAudits: 42,
-          flaggedViolations: 3,
-          openGrievances: INITIAL_COMPLAINTS.length,
-          pendingNotices: 4,
-          fieldOfficersCount: INITIAL_USERS.filter(u => u.role === 'OFFICER').length,
-        },
-        sectorDistribution: [
-          { sector: 'Child Welfare & Education', count: 18 },
-          { sector: 'Healthcare & Nutrition', count: 14 },
-          { sector: 'Disability Rehabilitation', count: 10 },
-          { sector: 'Senior Citizens & Social Defence', count: 8 },
-          { sector: 'Skill & Livelihood Development', count: 6 },
-        ],
-        recentAudits: [],
+    return await apiFetch<{
+      kpis: {
+        totalNgos: number;
+        activeAudits: number;
+        pendingInspections: number;
+        completedAudits: number;
+        flaggedViolations: number;
+        openGrievances: number;
+        pendingNotices: number;
+        fieldOfficersCount: number;
       };
-    }
+      sectorDistribution: Array<{ sector: string; count: number }>;
+      recentAudits: any[];
+    }>('/api/dashboard/admin');
   },
 
   getInspectorStats: async () => {
-    try {
-      return await apiFetch<{
-        officer: { name: string; badge?: string; assignedDistrict?: string };
-        metrics: {
-          totalAssigned: number;
-          pendingCheckIns: number;
-          activeAudits: number;
-          completedCount: number;
-        };
-        tasks: any[];
-      }>('/api/dashboard/inspector');
-    } catch {
-      return {
-        officer: { name: 'Inspector Vikram Singh', badge: 'INSP-MH-402', assignedDistrict: 'Pune' },
-        metrics: {
-          totalAssigned: 6,
-          pendingCheckIns: 2,
-          activeAudits: 1,
-          completedCount: 19,
-        },
-        tasks: [],
+    return await apiFetch<{
+      officer: { name: string; badge?: string; assignedDistrict?: string };
+      metrics: {
+        totalAssigned: number;
+        pendingCheckIns: number;
+        activeAudits: number;
+        completedCount: number;
       };
-    }
+      tasks: any[];
+    }>('/api/dashboard/inspector');
   },
 
   getNgoStats: async () => {
-    try {
-      return await apiFetch<{
-        ngo: NGO;
-        inspections: any[];
-        notices: StatutoryNotice[];
-        documents: any[];
-      }>('/api/dashboard/ngo');
-    } catch {
-      return {
-        ngo: INITIAL_NGOS[0],
-        inspections: [],
-        notices: DEFAULT_MOCK_NOTICES,
-        documents: [],
-      };
-    }
+    return await apiFetch<{
+      ngo: NGO;
+      inspections: any[];
+      notices: StatutoryNotice[];
+      documents: any[];
+    }>('/api/dashboard/ngo');
   },
 
   getAuditLogs: async (filters: { action?: string; entityType?: string; limit?: number } = {}) => {
@@ -865,13 +693,13 @@ export const dashboardApi = {
           id: 'log_1',
           timestamp: new Date().toISOString(),
           userId: 'usr_admin_1',
-          userName: 'Dr. Rajesh Verma, IAS',
+          userName: 'Demo Director (role: Directorate)',
           userRole: 'ADMIN',
           action: 'PORTAL_ACCESS',
           entityType: 'SESSION',
           entityId: 'DIRECTORATE_CORE',
-          details: 'Session initialized via e-Pramaan SSO GIGW 3.0 secure channel.',
-          ipAddress: '10.194.73.98',
+          details: 'Session initialized for hackathon demo.',
+          ipAddress: '127.0.0.1',
         },
       ];
     } catch {
@@ -880,13 +708,13 @@ export const dashboardApi = {
           id: 'log_1',
           timestamp: new Date().toISOString(),
           userId: 'usr_admin_1',
-          userName: 'Dr. Rajesh Verma, IAS',
+          userName: 'Demo Director (role: Directorate)',
           userRole: 'ADMIN',
           action: 'PORTAL_ACCESS',
           entityType: 'SESSION',
           entityId: 'DIRECTORATE_CORE',
-          details: 'Session initialized via e-Pramaan SSO GIGW 3.0 secure channel.',
-          ipAddress: '10.194.73.98',
+          details: 'Session initialized for hackathon demo.',
+          ipAddress: '127.0.0.1',
         },
       ];
     }
@@ -896,73 +724,46 @@ export const dashboardApi = {
 // 7. NGO Registration Applications APIs
 export const applicationApi = {
   getAll: async (filters: { status?: string; sector?: string; search?: string } = {}) => {
-    try {
-      const params = new URLSearchParams();
-      if (filters.status && filters.status !== 'ALL') params.append('status', filters.status);
-      if (filters.sector && filters.sector !== 'ALL') params.append('sector', filters.sector);
-      if (filters.search) params.append('search', filters.search);
-      const qs = params.toString();
-      const res = await apiFetch<NgoApplication[]>(`/api/applications${qs ? `?${qs}` : ''}`);
-      if (Array.isArray(res) && res.length > 0) return res;
-      return INITIAL_APPLICATIONS;
-    } catch {
-      return INITIAL_APPLICATIONS;
-    }
+    const params = new URLSearchParams();
+    if (filters.status && filters.status !== 'ALL') params.append('status', filters.status);
+    if (filters.sector && filters.sector !== 'ALL') params.append('sector', filters.sector);
+    if (filters.search) params.append('search', filters.search);
+    const qs = params.toString();
+    const res = await apiFetch<NgoApplication[]>(`/api/applications${qs ? `?${qs}` : ''}`);
+    return Array.isArray(res) ? res : [];
   },
 
   getById: async (id: string) => {
-    try {
-      return await apiFetch<NgoApplication>(`/api/applications/${id}`);
-    } catch {
-      return INITIAL_APPLICATIONS.find(a => a.id === id) || INITIAL_APPLICATIONS[0];
-    }
+    return await apiFetch<NgoApplication>(`/api/applications/${id}`);
   },
 
   submit: async (payload: Partial<NgoApplication>) => {
-    try {
-      return await apiFetch<{ success: boolean; id: string; darpanId: string; message: string }>(
-        '/api/applications',
-        {
-          method: 'POST',
-          body: JSON.stringify(payload),
-        }
-      );
-    } catch {
-      const darpanId = `MH/2026/${Math.floor(100000 + Math.random() * 900000)}`;
-      return {
-        success: true,
-        id: 'app_' + Date.now(),
-        darpanId,
-        message: `NGO Darpan registration application submitted successfully with provisional ID: ${darpanId}`,
-      };
-    }
+    return await apiFetch<{ success: boolean; id: string; darpanId: string; message: string }>(
+      '/api/applications',
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      }
+    );
   },
 
   approve: async (id: string) => {
-    try {
-      return await apiFetch<{ success: boolean; message: string; ngoId: string }>(
-        `/api/applications/${id}/approve`,
-        {
-          method: 'POST',
-        }
-      );
-    } catch {
-      return { success: true, message: 'Application approved and registered into National Registry', ngoId: 'ngo_' + Date.now() };
-    }
+    return await apiFetch<{ success: boolean; message: string; ngoId: string }>(
+      `/api/applications/${id}/approve`,
+      {
+        method: 'POST',
+      }
+    );
   },
 
   reject: async (id: string, reason?: string) => {
-    try {
-      return await apiFetch<{ success: boolean; message: string }>(
-        `/api/applications/${id}/reject`,
-        {
-          method: 'POST',
-          body: JSON.stringify({ reason }),
-        }
-      );
-    } catch {
-      return { success: true, message: 'Application rejected with formal observation notice' };
-    }
+    return await apiFetch<{ success: boolean; message: string }>(
+      `/api/applications/${id}/reject`,
+      {
+        method: 'POST',
+        body: JSON.stringify({ reason }),
+      }
+    );
   },
 };
 
@@ -1132,12 +933,12 @@ export const attendanceApi = {
       }>(`/api/attendance/stats/${workerId}`);
     } catch {
       return {
-        totalDays: 22,
-        presentDays: 21,
-        halfDays: 1,
-        totalHours: 178.5,
-        avgHours: 8.1,
-        complianceRate: 98,
+        totalDays: 0,
+        presentDays: 0,
+        halfDays: 0,
+        totalHours: 0,
+        avgHours: 0,
+        complianceRate: 100,
       };
     }
   },
@@ -1402,7 +1203,7 @@ export const cameraApi = {
           location: 'Pune Central Facility',
           fileHash: 'SHA256:CAM-EVID-' + Math.random().toString(16).substring(2, 10).toUpperCase(),
           timestamp: new Date().toISOString(),
-          imageUrl: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&q=80&w=800',
+          imageUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450" viewBox="0 0 800 450"><rect width="800" height="450" fill="%23020617"/><rect x="20" y="20" width="760" height="410" rx="12" fill="%230f172a" stroke="%2338bdf8" stroke-width="2"/><text x="50" y="70" fill="%2338bdf8" font-family="monospace" font-size="18" font-weight="bold">INSPIRA PROTOTYPE • CCTV SURVEILLANCE SNAPSHOT</text><text x="50" y="110" fill="%23f8fafc" font-family="sans-serif" font-size="20" font-weight="bold">Swasthya Seva Trust - Pune Central Facility</text><text x="50" y="150" fill="%2334d399" font-family="monospace" font-size="14">STREAM PROTOCOL: WebRTC / RTSP STREAM (MOCKUP)</text></svg>',
         },
       };
     }
@@ -1511,21 +1312,21 @@ export const vcApi = {
             name: target.presidentName || 'Dr. Arvind Joshi',
             roleTitle: 'Project Director & In-charge',
             phone: target.contactPhone || '+91 98230 45678',
-            avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=300',
+            avatarUrl: '',
           },
           {
             type: 'STAFF',
             name: 'Sunita Patil',
             roleTitle: 'Resident Medical Nurse & Shift Lead',
             phone: '+91 98765 43210',
-            avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=300',
+            avatarUrl: '',
           },
           {
             type: 'BENEFICIARY',
             name: 'Rameshwar Pawar',
             roleTitle: 'Resident Beneficiary (Ward B-04)',
             phone: '+91 98450 11223',
-            avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=300',
+            avatarUrl: '',
           },
         ],
       };

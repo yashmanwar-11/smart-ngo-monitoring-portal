@@ -34,7 +34,7 @@ import {
   CLEARANCE_OPTIONS,
   getComplianceGradeFromScore
 } from './GovernmentInspectionMaster';
-import { EmblemOfIndia } from './EmblemOfIndia';
+import { InspiraLogo } from './InspiraLogo';
 
 interface InspectionDetailModalProps {
   inspection: InspectionRecord;
@@ -194,7 +194,7 @@ export const InspectionDetailModal: React.FC<InspectionDetailModalProps> = ({
   const handleIasAction = (actionType: string) => {
     let msg = '';
     if (actionType === 'APPROVE') {
-      msg = `✓ Directorate Order Recorded: Approved Statutory Compliance Certificate for ${inspection.ngoName}. Issued by Dr. Rajesh Verma, IAS.`;
+      msg = `✓ Directorate Order Recorded: Approved Statutory Compliance Certificate for ${inspection.ngoName}. Issued by Demo Director (role: Directorate).`;
     } else if (actionType === 'SHOW_CAUSE') {
       msg = `⚠️ Directorate Notice Dispatched: Formal Show-Cause Notice under Section 14 issued to ${inspection.ngoName} with 14-day reply deadline.`;
     } else if (actionType === 'FREEZE') {
@@ -221,26 +221,26 @@ export const InspectionDetailModal: React.FC<InspectionDetailModalProps> = ({
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-xs overflow-y-auto animate-fade-in">
       <div className="bg-white rounded-2xl max-w-5xl w-full my-4 shadow-2xl border border-slate-200/90 flex flex-col max-h-[94vh] overflow-hidden animate-scale-in">
-        {/* National Tricolor Accent Line */}
-        <div className="h-1.5 w-full bg-gradient-to-r from-[#FF9933] via-white to-[#138808] shrink-0" />
+        {/* Neutral Top Accent Line */}
+        <div className="h-1 w-full bg-[#0B3B60] shrink-0" />
 
-        {/* Institutional Government Header */}
+        {/* Institutional Inspection Header */}
         <div className="flex items-center justify-between px-6 py-4 bg-[#0B3B60] text-white border-b border-[#0B3B60] bg-gradient-to-r from-[#07253d] via-[#0B3B60] to-[#0d4672]">
           <div className="flex items-center space-x-3.5">
-            <div className="w-12 h-16 shrink-0 flex items-center justify-center overflow-hidden">
-              <EmblemOfIndia variant="badge" size={46} className="shadow-md" />
+            <div className="w-12 h-12 shrink-0 flex items-center justify-center overflow-hidden">
+              <InspiraLogo className="w-10 h-10 shadow-md" />
             </div>
             <div>
               <div className="flex items-center space-x-2 flex-wrap">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-blue-100 bg-white/15 px-2 py-0.5 rounded border border-white/20">
-                  Government of India • भारत सरकार
+                  INSPIRA Prototype Dossier
                 </span>
                 <span className="text-[10px] font-mono text-amber-300 font-bold bg-amber-950/80 px-2.5 py-0.5 rounded-full border border-amber-500/40">
                   DOSSIER REF: {inspection.id}
                 </span>
               </div>
-              <div className="text-[11px] text-amber-300 font-medium mt-0.5">
-                सामाजिक न्याय एवं अधिकारिता मंत्रालय | Directorate General Vigilance Scrutiny Review
+              <div className="text-[11px] text-sky-200 font-medium mt-0.5">
+                Problem statement by MoSJE (PS 26095) • Directorate Inspection Review
               </div>
               <h2 className="text-base font-bold text-white mt-0.5 flex items-center gap-2">
                 <span>{inspection.ngoName}</span>
@@ -274,7 +274,7 @@ export const InspectionDetailModal: React.FC<InspectionDetailModalProps> = ({
 
         {/* Modal Scrollable Body */}
         <div className="p-6 overflow-y-auto space-y-6 text-slate-800 bg-[#f8fafd]">
-          {/* IAS Action Banner if triggered */}
+          {/* Directorate Action Banner if triggered */}
           {iasActionNotice && (
             <div className="p-4 rounded-xl bg-slate-900 text-white border-l-4 border-l-emerald-500 border border-slate-700 shadow-sm flex items-start gap-3">
               <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
@@ -613,7 +613,7 @@ export const InspectionDetailModal: React.FC<InspectionDetailModalProps> = ({
             </div>
           )}
 
-          {/* IAS DIRECTORATE GENERAL STATUTORY SCRUTINY & ASSESSMENT STATION */}
+          {/* DIRECTORATE STATUTORY SCRUTINY & ASSESSMENT STATION */}
           <div className="rounded-2xl border border-slate-200/90 overflow-hidden shadow-sm bg-white text-slate-900">
             {/* Station Header */}
             <div className="px-5 py-3.5 bg-gradient-to-r from-slate-950 via-slate-900 to-indigo-950 text-white border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
@@ -624,14 +624,14 @@ export const InspectionDetailModal: React.FC<InspectionDetailModalProps> = ({
                 <div>
                   <div className="flex items-center space-x-2">
                     <h4 className="text-xs font-bold tracking-wide text-amber-300 uppercase">
-                      Directorate General (IAS) Statutory Scrutiny &amp; Decision Desk
+                      Directorate Statutory Scrutiny &amp; Decision Desk
                     </h4>
                     <span className="px-2.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-950 text-amber-300 border border-amber-500/40 font-mono">
                       Sec 14/19 Regulatory Mandate
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-300">
-                    Competent Adjudicating Authority: <strong className="text-white">Dr. Rajesh Verma, IAS</strong> (Joint Secretary to Government of India)
+                    Competent Adjudicating Authority: <strong className="text-white">Demo Director (role: Directorate)</strong> (Directorate Administrator)
                   </p>
                 </div>
               </div>
@@ -779,7 +779,7 @@ export const InspectionDetailModal: React.FC<InspectionDetailModalProps> = ({
                       Sanction Order No: <strong className="text-slate-900 font-bold">{sealedOrderNo}</strong>
                     </div>
                     <div>
-                      Authorizer: <span className="text-slate-800 font-semibold">Dr. Rajesh Verma, IAS</span>
+                      Authorizer: <span className="text-slate-800 font-semibold">Demo Director (role: Directorate)</span>
                     </div>
                   </div>
                 </div>
@@ -1087,7 +1087,7 @@ export const InspectionDetailModal: React.FC<InspectionDetailModalProps> = ({
                     rows={3}
                     value={scrutinyRemarks}
                     onChange={(e) => setScrutinyRemarks(e.target.value)}
-                    placeholder="Enter IAS officer order text, legal grounds, statutory sections applied, and executive directions..."
+                    placeholder="Enter scrutiny review decision, observations, and recommendations..."
                     className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 font-sans"
                   />
                 </div>
@@ -1096,7 +1096,7 @@ export const InspectionDetailModal: React.FC<InspectionDetailModalProps> = ({
                 <div className="pt-2 flex flex-wrap items-center justify-between gap-3">
                   <div className="text-[11px] text-slate-600 flex items-center space-x-1.5">
                     <ShieldCheck className="w-4 h-4 text-emerald-700" />
-                    <span>Authority: Joint Secretary to Government of India</span>
+                    <span>Authority: Directorate Scrutiny Officer (Demo Review)</span>
                   </div>
 
                   <div className="flex items-center space-x-2">

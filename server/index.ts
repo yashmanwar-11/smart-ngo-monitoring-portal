@@ -39,7 +39,7 @@ app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
   res.setHeader('X-XSS-Protection', '1; mode=block');
-  res.setHeader('X-Portal-Agency', 'Ministry of Social Justice and Empowerment - Government of India');
+  res.setHeader('X-Portal-Agency', 'INSPIRA Prototype System - SIH 2026 PS 26095');
   next();
 });
 
@@ -62,9 +62,9 @@ app.use('/api/analytics', analyticsRouter);
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'OPERATIONAL',
-    service: 'National NGO Real-Time Monitoring & Inspection Portal API',
-    authority: 'Ministry of Social Justice & Empowerment / NIC GovNet',
-    version: 'GIGW-3.0-2026.1',
+    service: 'INSPIRA NGO Real-Time Monitoring & Inspection Prototype API',
+    authority: 'Prototype by Team InnoCoders • Problem statement by MoSJE (PS 26095)',
+    version: '1.0.0-prototype',
     timestamp: new Date().toISOString(),
   });
 });
@@ -86,7 +86,7 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   console.error('Unhandled API Exception:', err);
   res.status(err.status || 500).json({
     error: 'INTERNAL_SERVER_ERROR',
-    message: err.message || 'An unexpected administrative processing error occurred.',
+    message: err.message || 'An unexpected processing error occurred.',
     timestamp: new Date().toISOString(),
   });
 });
@@ -95,8 +95,8 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 export async function startServer() {
   await seedDatabase();
   return app.listen(PORT, () => {
-    console.log(`🏛️  Government NGO Monitoring Portal API live on port ${PORT}`);
-    console.log(`🔒 Security Clearance: GIGW 3.0 • NIC GovNet TLS 1.3 Active`);
+    console.log(`🌐 INSPIRA Prototype API live on port ${PORT}`);
+    console.log(`🔒 Standard Auth & Security Active`);
   });
 }
 

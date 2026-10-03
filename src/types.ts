@@ -1,8 +1,8 @@
 export type UserRole = 'ADMIN' | 'OFFICER' | 'NGO' | 'USER' | 'NGO_WORKER';
 
 export type SecurityClearance =
-  | 'LEVEL_5_DIRECTORATE' // Ministry Director / IAS Executive
-  | 'LEVEL_3_INSPECTOR'   // Field Vigilance & Inspection Officer
+  | 'LEVEL_5_DIRECTORATE' // Directorate Administrator
+  | 'LEVEL_3_INSPECTOR'   // Field Inspection Officer
   | 'LEVEL_2_NGO'         // Authorized Representative of Registered NGO Entity
   | 'LEVEL_2_WORKER'      // NGO Field Staff / Grassroots Mobilizer
   | 'LEVEL_1_PUBLIC';     // Citizen / Public Observer / Whistleblower
@@ -294,7 +294,7 @@ export interface GovernmentInspectionTask {
     tamperProofHash?: string;
   };
 
-  // Official Government Officer (IAS) Directorate Scrutiny
+  // Directorate Scrutiny Review
   scrutinyReview?: DirectorateScrutinyReview;
 }
 

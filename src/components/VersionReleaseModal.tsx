@@ -22,7 +22,7 @@ import {
   Clock,
   Printer
 } from 'lucide-react';
-import { EmblemOfIndia } from './EmblemOfIndia';
+import { InspiraLogo } from './InspiraLogo';
 
 interface VersionReleaseModalProps {
   isOpen: boolean;
@@ -101,23 +101,23 @@ export const VersionReleaseModal: React.FC<VersionReleaseModalProps> = ({
         {/* Modal Header */}
         <div className="relative px-6 py-5 bg-gradient-to-r from-slate-950 via-indigo-950/80 to-slate-950 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center space-x-3.5">
-            <div className="w-10 h-14 shrink-0 flex items-center justify-center">
-              <EmblemOfIndia className="w-9 h-12" variant="gold" showText={false} />
+            <div className="w-10 h-10 shrink-0 flex items-center justify-center">
+              <InspiraLogo className="w-10 h-10" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-400">
-                  Statutory Release Factsheet
+                  SIH 2026 Factsheet
                 </span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 animate-pulse">
-                  v2.0.0 PRO
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40">
+                  v1.0.0 Prototype
                 </span>
               </div>
               <h2 className="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
-                National Social Welfare Facility Vigilance Portal
+                INSPIRA Monitoring &amp; Inspection Prototype
               </h2>
               <p className="text-[11px] text-slate-400">
-                Ministry of Social Justice and Empowerment • SIH 2026 InnoCoders Enterprise Edition
+                Built by Team InnoCoders • Problem statement by MoSJE (PS 26095)
               </p>
             </div>
           </div>
@@ -201,10 +201,10 @@ export const VersionReleaseModal: React.FC<VersionReleaseModalProps> = ({
                 <Zap className="w-5 h-5 text-indigo-400 shrink-0 mt-0.5" />
                 <div>
                   <h4 className="text-xs font-bold text-indigo-200 uppercase tracking-wide">
-                    Major Architecture Milestone (v2.0.0 Enterprise)
+                    Prototype Architecture Overview (SIH 2026)
                   </h4>
                   <p className="text-xs text-slate-300 mt-1">
-                    Version 2.0.0 delivers the full statutory vigilance architecture mandated by the Ministry of Social Justice and Empowerment for Smart India Hackathon 2026. It unifies physical field inspections with genuine multi-protocol live surveillance, edge AI computer vision analytics, and cryptographic evidence chains.
+                    INSPIRA addresses the Smart India Hackathon 2026 problem statement (PS 26095, Problem statement by MoSJE). It demonstrates physical field inspections with genuine multi-protocol live surveillance, edge AI computer vision analytics, and cryptographic evidence chains.
                   </p>
                 </div>
               </div>
@@ -314,9 +314,9 @@ export const VersionReleaseModal: React.FC<VersionReleaseModalProps> = ({
                 </div>
 
                 <div className="p-3.5 rounded-2xl bg-slate-800/50 border border-slate-700">
-                  <div className="text-[10px] font-mono uppercase text-slate-400 mb-1">Statutory Compliance</div>
-                  <div className="font-bold text-white text-xs">Rule 14 GFR 2017 & IT Act</div>
-                  <p className="text-[11px] text-slate-400 mt-1">Section 65B Certified Evidence Hash, GIGW 3.0 Accessibility, DARPAN API</p>
+                  <div className="text-[10px] font-mono uppercase text-slate-400 mb-1">Architecture Alignment</div>
+                  <div className="font-bold text-white text-xs">SIH 2026 PS 26095 Standards</div>
+                  <p className="text-[11px] text-slate-400 mt-1">Evidence Verification, WCAG AA Accessibility, NGO-DARPAN Data Schema</p>
                 </div>
               </div>
 
@@ -324,7 +324,7 @@ export const VersionReleaseModal: React.FC<VersionReleaseModalProps> = ({
               <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 font-mono text-xs text-slate-300">
                 <div className="text-[11px] text-indigo-400 font-bold mb-2">Surveillance Pipeline Topology</div>
                 <div className="space-y-1 text-[11px] leading-relaxed">
-                  <div>[IP Camera / Android App / RTSP Node] ──(TCP / HTTP)──&gt; [DoSJE Gateway Proxy]</div>
+                  <div>[IP Camera / Android App / RTSP Node] ──(TCP / HTTP)──&gt; [INSPIRA Gateway Proxy]</div>
                   <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├──&gt; [FFmpeg HLS Muxer / stream.m3u8] ──&gt; &lt;video&gt; + Hls.js</div>
                   <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├──&gt; [Multipart MJPEG Relay / stream.mjpeg] ──&gt; &lt;img&gt; Live View</div>
                   <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└──&gt; [Client-side CctvVisionEngine] ──&gt; Offscreen Canvas 160x90 ──&gt; Tripwire HUD</div>

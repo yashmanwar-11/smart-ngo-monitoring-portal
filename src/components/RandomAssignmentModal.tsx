@@ -79,10 +79,6 @@ export const RandomAssignmentModal: React.FC<RandomAssignmentModalProps> = ({
     setIsAllocating(true);
     setShuffleStep(1);
 
-    // Visual sequence to showcase the AI Double-Blind randomized matching engine
-    const stepTimer1 = setTimeout(() => setShuffleStep(2), 600);
-    const stepTimer2 = setTimeout(() => setShuffleStep(3), 1200);
-
     try {
       const result = await randomAssignmentApi.execute({
         schemeFilter: selectedScheme,
@@ -91,38 +87,31 @@ export const RandomAssignmentModal: React.FC<RandomAssignmentModalProps> = ({
         antiCollusionBufferHours: bufferHours,
       });
 
-      setTimeout(() => {
-        setIsAllocating(false);
-        setShuffleStep(0);
-        if (result && result.success) {
-          const newBatch: RandomAssignmentBatch = {
-            batchId: result.batchId,
-            timestamp: new Date().toISOString(),
-            generatedBy: 'Directorate AI Duty Allocator',
-            neutralitySeed: result.neutralitySeed,
-            schemeFilter: selectedScheme,
-            stateFilter: selectedState,
-            totalAssigned: result.totalAssigned,
-            antiCollusionBufferHours: result.antiCollusionBufferHours,
-            tasks: result.tasks,
-          };
-          setCurrentBatch(newBatch);
-          setBatchHistory((prev) => [newBatch, ...prev]);
-          if (onShowToast) {
-            onShowToast(`Dispatched ${result.totalAssigned} surprise inspection tasks with cryptographic lock.`, 'success');
-          }
+      setIsAllocating(false);
+      setShuffleStep(0);
+      if (result && result.success) {
+        const newBatch: RandomAssignmentBatch = {
+          batchId: result.batchId,
+          timestamp: new Date().toISOString(),
+          generatedBy: 'Directorate AI Duty Allocator',
+          neutralitySeed: result.neutralitySeed,
+          schemeFilter: selectedScheme,
+          stateFilter: selectedState,
+          totalAssigned: result.totalAssigned,
+          antiCollusionBufferHours: result.antiCollusionBufferHours,
+          tasks: result.tasks,
+        };
+        setCurrentBatch(newBatch);
+        setBatchHistory((prev) => [newBatch, ...prev]);
+        if (onShowToast) {
+          onShowToast(`Dispatched ${result.totalAssigned} surprise inspection tasks with cryptographic lock.`, 'success');
         }
-      }, 1800);
+      }
     } catch (error: any) {
       setIsAllocating(false);
       setShuffleStep(0);
       alert('Error executing allocation: ' + (error.message || 'Server error'));
     }
-
-    return () => {
-      clearTimeout(stepTimer1);
-      clearTimeout(stepTimer2);
-    };
   };
 
   const getSchemeBadge = (scheme: string) => {

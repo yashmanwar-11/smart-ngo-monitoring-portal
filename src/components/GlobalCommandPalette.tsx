@@ -95,10 +95,10 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
     },
     {
       id: 'portal-admin',
-      title: 'Directorate General (IAS Admin Portal)',
-      subtitle: 'Executive risk matrix, regulatory scrutiny & inspection task dispatches',
+      title: 'Directorate Oversight Portal',
+      subtitle: 'Risk matrix, regulatory scrutiny & inspection task dispatches',
       category: 'PORTALS',
-      badge: 'LEVEL 5',
+      badge: 'DIRECTORATE',
       icon: <Shield className="w-4 h-4 text-purple-500" />,
       action: () => {
         onNavigateView('DASHBOARD', 'ADMIN');
@@ -107,10 +107,10 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
     },
     {
       id: 'portal-officer',
-      title: 'Vigilance Field Inspector Portal',
-      subtitle: '150m geofence radar, live inspection checklists & CCTV telemetry',
+      title: 'Field Inspector Portal',
+      subtitle: '150m geofence verification, live inspection checklists & CCTV monitoring',
       category: 'PORTALS',
-      badge: 'LEVEL 3',
+      badge: 'INSPECTOR',
       icon: <FileCheck2 className="w-4 h-4 text-amber-500" />,
       action: () => {
         onNavigateView('DASHBOARD', 'OFFICER');
@@ -167,10 +167,10 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
     },
     {
       id: 'action-v2-release',
-      title: "What's New in v2.0.0 (Enterprise National Edition)",
+      title: "INSPIRA Architecture & Features (SIH 2026 Edition)",
       subtitle: 'Multi-Protocol CCTV Gateway, Edge AI Vision, SHA-256 Evidence & Diagnostics Benchmark',
       category: 'ACTIONS',
-      badge: 'v2.0.0 PRO',
+      badge: 'PROTOTYPE',
       icon: <Sparkles className="w-4 h-4 text-emerald-400" />,
       action: () => {
         onOpenVersionModal?.();
@@ -422,9 +422,9 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
                             className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-full border ${
                               item.badge === 'FLAGGED'
                                 ? 'bg-rose-50 text-rose-700 border-rose-200'
-                                : item.badge === 'LEVEL 5'
+                                : item.badge === 'DIRECTORATE'
                                 ? 'bg-purple-50 text-purple-700 border-purple-200'
-                                : item.badge === 'LEVEL 3'
+                                : item.badge === 'INSPECTOR'
                                 ? 'bg-amber-50 text-amber-700 border-amber-200'
                                 : 'bg-blue-50 text-blue-700 border-blue-200'
                             }`}
@@ -463,7 +463,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
           </div>
 
           <div className="flex items-center gap-1 text-[10px] text-slate-400 font-mono">
-            <span>National NGO Monitoring Portal • GIGW 3.0</span>
+            <span>INSPIRA Prototype • SIH 2026 PS 26095</span>
           </div>
         </div>
       </div>

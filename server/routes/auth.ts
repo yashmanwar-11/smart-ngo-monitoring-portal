@@ -7,26 +7,11 @@ import { logAuditEvent } from '../middleware/audit';
 
 export const authRouter = Router();
 
-const DEFAULT_AVATARS: Record<string, string> = {
-  usr_admin_1: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
-  usr_officer_1: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
-  usr_officer_2: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
-  usr_officer_3: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400',
-  usr_ngo_1: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
-  usr_ngo_2: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400',
-  usr_worker_1: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400',
-  usr_citizen_1: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400',
-  usr_citizen_2: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400',
-};
-
-export const getAvatarForUser = (userId: string, role: string, avatarUrl?: string | null): string => {
-  if (avatarUrl && avatarUrl.trim()) return avatarUrl;
-  if (DEFAULT_AVATARS[userId]) return DEFAULT_AVATARS[userId];
-  if (role === 'ADMIN') return 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400';
-  if (role === 'OFFICER') return 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400';
-  if (role === 'NGO') return 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400';
-  if (role === 'NGO_WORKER') return 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=400';
-  return 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=400';
+export const getAvatarForUser = (_userId: string, _role: string, avatarUrl?: string | null): string | null => {
+  if (avatarUrl && avatarUrl.trim() && !avatarUrl.includes('images.unsplash.com')) {
+    return avatarUrl;
+  }
+  return null;
 };
 
 export const formatUserResponse = (u: AuthenticatedUser) => {

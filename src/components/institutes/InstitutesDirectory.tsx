@@ -21,7 +21,7 @@ import {
   ArrowUpDown
 } from 'lucide-react';
 import { NGO, User } from '../../types';
-import { EmblemOfIndia } from '../EmblemOfIndia';
+import { InspiraLogo } from '../InspiraLogo';
 import { AddInstituteModal } from './AddInstituteModal';
 
 interface InstitutesDirectoryProps {
@@ -207,12 +207,12 @@ export const InstitutesDirectory: React.FC<InstitutesDirectoryProps> = ({
       {/* 1. Official Government Header matching mockup */}
       <div className="bg-white px-4 py-3 sm:py-3.5 border-b border-slate-200 flex items-center justify-between shadow-2xs sticky top-0 z-30">
         <div className="flex items-center space-x-3">
-          <EmblemOfIndia className="h-10 w-auto object-contain" />
+          <InspiraLogo className="h-10 w-10 object-contain" />
           <div>
             <h1 className="text-xs sm:text-sm font-bold text-slate-900 leading-tight">
-              Department of Social Justice &amp; Empowerment
+              INSPIRA Institute Registry
             </h1>
-            <p className="text-[10px] text-slate-500 font-medium">Government of India</p>
+            <p className="text-[10px] text-slate-500 font-medium">Problem statement by MoSJE (PS 26095)</p>
           </div>
         </div>
 

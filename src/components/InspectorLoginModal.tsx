@@ -76,14 +76,14 @@ export const InspectorLoginModal: React.FC<InspectorLoginModalProps> = ({
             <div>
               <div className="flex items-center space-x-1.5">
                 <span className="text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-200 px-2 py-0.5 rounded-full border border-blue-400/30">
-                  e-Pramaan Official Cadre
+                  Field Inspector Login
                 </span>
               </div>
               <h3 className="text-base font-bold text-white mt-0.5">
                 Field Vigilance Inspector Terminal
               </h3>
               <p className="text-xs text-slate-300">
-                Central Vigilance &amp; NGO Field Audit Unit
+                INSPIRA Prototype Field Verification Module
               </p>
             </div>
           </div>

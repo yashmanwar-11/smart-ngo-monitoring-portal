@@ -47,7 +47,7 @@ import { submitTaskInspection } from '../services/governmentTasksStorage';
 import { inspectionApi } from '../services/apiClient';
 import { getRealDeviceLocation, watchRealDeviceLocation } from '../services/deviceGeolocation';
 import { CctvEvidenceModal } from './cctv/CctvEvidenceModal';
-import { EmblemOfIndia } from './EmblemOfIndia';
+import { InspiraLogo } from './InspiraLogo';
 import { fetchWeatherForCoordinates, InspectionWeatherReport } from '../services/weatherService';
 import { startVoiceDictation, stopVoiceDictation, speakText, stopSpeechSynthesis } from '../services/speechService';
 import { signInspectionEvidence, computeSha256Hex, Section65BCertificate } from '../services/cryptoSignatureService';
@@ -118,6 +118,25 @@ export const PHOTO_CATEGORIES: Array<{
   },
 ];
 
+const createFieldEvidenceSvg = (title: string, sub: string, code: string, color: string) => {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+    <rect width="1280" height="720" fill="#0f172a"/>
+    <rect x="20" y="20" width="1240" height="680" rx="12" fill="#1e293b" stroke="${color}" stroke-width="3"/>
+    <rect x="20" y="20" width="1240" height="8" fill="#ff9933"/>
+    <rect x="20" y="28" width="1240" height="8" fill="#ffffff"/>
+    <rect x="20" y="36" width="1240" height="8" fill="#138808"/>
+    <circle cx="640" cy="240" r="80" fill="#0f172a" stroke="${color}" stroke-width="4"/>
+    <text x="640" y="255" fill="${color}" font-family="sans-serif" font-size="44" font-weight="bold" text-anchor="middle">${code}</text>
+    <text x="640" y="380" fill="#ffffff" font-family="sans-serif" font-size="32" font-weight="bold" text-anchor="middle">${title}</text>
+    <text x="640" y="425" fill="#94a3b8" font-family="sans-serif" font-size="20" text-anchor="middle">${sub}</text>
+    <rect x="240" y="480" width="800" height="120" rx="8" fill="#0f172a" stroke="#334155" stroke-width="2"/>
+    <text x="270" y="525" fill="#38bdf8" font-family="monospace" font-size="18">● SECTION 65B EVIDENCE CODE: ${code}-2026-INSP</text>
+    <text x="270" y="555" fill="#facc15" font-family="monospace" font-size="16">● CRYPTOGRAPHIC STATUS: TAMPER-SEALED (SHA-256 VALIDATED)</text>
+    <text x="270" y="580" fill="#a7f3d0" font-family="monospace" font-size="14">● FIELD SURVEILLANCE &amp; INSPECTION DIRECTORATE • GOVT OF INDIA</text>
+  </svg>`;
+  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+};
+
 const SAMPLE_FIELD_PHOTOS: Array<{
   url: string;
   caption: string;
@@ -125,27 +144,52 @@ const SAMPLE_FIELD_PHOTOS: Array<{
 }> = [
   {
     category: 'PREMISE_SIGNBOARD',
-    url: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80',
+    url: createFieldEvidenceSvg(
+      'Official Premise Entrance &amp; Signboard',
+      'DARPAN Registration Plate &amp; Physical Infrastructure Verification',
+      'SIGNBOARD',
+      '#38bdf8'
+    ),
     caption: 'Official Premise Entrance & Signboard Verification with Darpan ID',
   },
   {
     category: 'ACCOUNTS_LEDGERS',
-    url: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80',
+    url: createFieldEvidenceSvg(
+      'Statutory Accounts Ledger &amp; PFMS Vouchers',
+      'Bank Passbook &amp; Grant Utilization Audit Records',
+      'ACCOUNTS',
+      '#10b981'
+    ),
     caption: 'Statutory Accounts Ledger & Bank Passbook Vouchers Audit',
   },
   {
     category: 'WELFARE_BENEFICIARIES',
-    url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=1200&q=80',
+    url: createFieldEvidenceSvg(
+      'On-Site Welfare Activity &amp; Beneficiary Verification',
+      'Biometric Liveness &amp; Physical Presence Roll Call Audit',
+      'BENEFICIARY',
+      '#818cf8'
+    ),
     caption: 'On-Site Welfare Activity & Beneficiary Attendance In Session',
   },
   {
     category: 'INFRASTRUCTURE',
-    url: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=1200&q=80',
+    url: createFieldEvidenceSvg(
+      'Physical Infrastructure &amp; Safety Compliance',
+      'Premises Fire Safety, Sanitation &amp; Accessibility Audit',
+      'INFRASTRUCTURE',
+      '#f59e0b'
+    ),
     caption: 'Infrastructure & Safety Equipment Inspection',
   },
   {
     category: 'VIOLATIONS_DEFECTS',
-    url: 'https://images.unsplash.com/photo-1590402494682-cd3fb53b1f70?auto=format&fit=crop&w=1200&q=80',
+    url: createFieldEvidenceSvg(
+      'Irregularity &amp; Premise Discrepancy Record',
+      'Physical Non-Compliance / Seal Discrepancy Vigilance Notice',
+      'DEFECT',
+      '#ef4444'
+    ),
     caption: 'Irregularity / Padlocked Unattended Premises Discrepancy',
   },
 ];
@@ -887,7 +931,7 @@ export const AssignedInspectionConductModal: React.FC<AssignedInspectionConductM
           coordinates: { ...currentGps },
           accuracyMeters: gpsAccuracy,
           locationAddress: task.location,
-          officerBadge: currentOfficer.badgeNumber || 'INSP-MH-402',
+          officerBadge: currentOfficer.badgeNumber || 'DEMO-INSP-402',
           tamperProofHash: 'SHA256:' + Math.random().toString(16).substring(2, 10) + Math.random().toString(16).substring(2, 10),
           thumbnailUrl: thumbUrl || (photos.length > 0 ? photos[photos.length - 1].url : undefined),
           fileSizeMb: Number((blob.size / (1024 * 1024)).toFixed(2)),
@@ -944,7 +988,7 @@ export const AssignedInspectionConductModal: React.FC<AssignedInspectionConductM
         coordinates: { ...currentGps },
         accuracyMeters: gpsAccuracy,
         locationAddress: task.location,
-        officerBadge: currentOfficer.badgeNumber || 'INSP-MH-402',
+        officerBadge: currentOfficer.badgeNumber || 'DEMO-INSP-402',
         tamperProofHash: 'SHA256:' + Math.random().toString(16).substring(2, 10) + Math.random().toString(16).substring(2, 10),
         thumbnailUrl: activeSample.url,
         fileSizeMb: Number((finalDuration * 0.45).toFixed(1)),
@@ -984,7 +1028,7 @@ export const AssignedInspectionConductModal: React.FC<AssignedInspectionConductM
       coordinates: { ...currentGps },
       accuracyMeters: gpsAccuracy,
       locationAddress: task.location,
-      officerBadge: currentOfficer.badgeNumber || 'INSP-MH-402',
+      officerBadge: currentOfficer.badgeNumber || 'DEMO-INSP-402',
       tamperProofHash: 'SHA256:' + Math.random().toString(16).substring(2, 10),
       fileSizeMb: Number((file.size / (1024 * 1024)).toFixed(2)),
     };
@@ -1104,7 +1148,7 @@ export const AssignedInspectionConductModal: React.FC<AssignedInspectionConductM
       });
 
       onShowToast(
-        `✓ Official statutory audit dossier for ${task.id} sealed with Section 65B ECDSA Digital Signature and submitted to Directorate General (IAS).`,
+        `✓ Inspection audit dossier for ${task.id} submitted to Directorate.`,
         'success'
       );
       onSubmitSuccess(result.updatedTask);
@@ -1122,21 +1166,21 @@ export const AssignedInspectionConductModal: React.FC<AssignedInspectionConductM
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto">
       <div className="bg-white text-slate-900 rounded-2xl max-w-5xl w-full my-4 shadow-2xl border border-slate-700/60 overflow-hidden flex flex-col max-h-[95vh] ring-1 ring-white/10">
         
-        {/* National Tricolor Accent Gradient */}
-        <div className="h-1.5 w-full bg-gradient-to-r from-[#FF9933] via-white to-[#138808] shrink-0" />
+        {/* Clean Header Accent Strip */}
+        <div className="h-1.5 w-full bg-[#0B3B60] shrink-0" />
 
-        {/* Institutional Government Header Strip */}
-        <div className="bg-[#0B3B60] text-white p-5 sm:p-6 border-b border-[#0B3B60] shrink-0 bg-gradient-to-r from-[#07253d] via-[#0B3B60] to-[#0d4672]">
+        {/* Institutional Inspection Header Strip */}
+        <div className="bg-[#0B3B60] text-white p-5 sm:p-6 border-b border-[#0B3B60] shrink-0">
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-4 min-w-0">
-              <div className="w-13 h-17 shrink-0 flex items-center justify-center overflow-hidden mt-0.5">
-                <EmblemOfIndia variant="badge" size={50} className="shadow-md" />
+              <div className="w-12 h-12 shrink-0 flex items-center justify-center overflow-hidden mt-0.5 bg-white/10 rounded-lg p-1.5 border border-white/20">
+                <InspiraLogo className="w-9 h-9" />
               </div>
 
               <div className="space-y-1.5 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 text-xs">
                   <span className="px-2.5 py-0.5 bg-white/15 text-blue-100 border border-white/20 rounded text-[10px] font-bold uppercase tracking-wider">
-                    Government of India • भारत सरकार
+                    INSPIRA Field Inspection • SIH 2026 PS 26095
                   </span>
                   <span className="px-2.5 py-0.5 bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 rounded-full font-mono font-semibold text-[10px] flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -2157,7 +2201,7 @@ export const AssignedInspectionConductModal: React.FC<AssignedInspectionConductM
                       Stage 4: Field Observations, Discrepancy Findings &amp; Severity
                     </h3>
                     <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-                      Record field audit observations, detected irregularities, and priority classification for Directorate General (IAS) scrutiny.
+                      Record field audit observations, detected irregularities, and priority classification for Directorate scrutiny.
                     </p>
                   </div>
                 </div>
@@ -2282,7 +2326,7 @@ export const AssignedInspectionConductModal: React.FC<AssignedInspectionConductM
                 {/* Recommendation for Directorate */}
                 <div className="space-y-1.5">
                   <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider">
-                    Statutory Recommendation for Directorate General (IAS):
+                    Statutory Recommendation for Directorate:
                   </label>
                   <textarea
                     rows={3}
@@ -2311,7 +2355,7 @@ export const AssignedInspectionConductModal: React.FC<AssignedInspectionConductM
                       Stage 5: Digital Signature, Pre-Submission Audit &amp; Sealing
                     </h3>
                     <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">
-                      Review statutory audit parameters and sign off cryptographically before transmission to the Directorate General (IAS).
+                      Review inspection audit parameters and sign off before transmission to the Directorate.
                     </p>
                   </div>
                 </div>
@@ -2575,7 +2619,7 @@ export const AssignedInspectionConductModal: React.FC<AssignedInspectionConductM
               >
                 <Shield className="w-4 h-4" />
                 <span>
-                  {isSubmitting ? 'Sealing Record...' : 'Seal & Submit Official Dossier to IAS Directorate'}
+                  {isSubmitting ? 'Sealing Record...' : 'Seal & Submit Dossier to Directorate'}
                 </span>
               </button>
             )}
@@ -2672,15 +2716,15 @@ export const AssignedInspectionConductModal: React.FC<AssignedInspectionConductM
       {selectedVideoForPreview && (
         <div className="fixed inset-0 z-60 flex items-center justify-center p-3 sm:p-5 bg-black/90 backdrop-blur-md">
           <div className="bg-slate-950 rounded-2xl max-w-4xl w-full border border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[95vh] ring-1 ring-white/10">
-            {/* Tricolor Accent Strip */}
-            <div className="h-1 w-full bg-gradient-to-r from-amber-500 via-white to-emerald-500 shrink-0 opacity-90" />
+            {/* Neutral Accent Strip */}
+            <div className="h-1 w-full bg-[#0B3B60] shrink-0 opacity-90" />
 
             {/* Modal Header */}
             <div className="p-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-white">
               <div className="flex items-center space-x-2.5">
-                <Film className="w-5 h-5 text-rose-500" />
+                <Film className="w-5 h-5 text-sky-400" />
                 <span className="font-bold text-xs sm:text-sm uppercase tracking-wider font-mono">
-                  🇮🇳 STATUTORY ON-SITE VIDEO AUDIT EVIDENCE • {task.id}
+                  FIELD INSPECTION VIDEO EVIDENCE • {task.id}
                 </span>
               </div>
               <button

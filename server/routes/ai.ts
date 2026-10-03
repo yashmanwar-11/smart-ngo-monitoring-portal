@@ -296,7 +296,7 @@ export async function processAgentConversation(
       if (match && match[1]) target = match[1].trim();
     }
 
-    const toolRes = toolDispatchInspector(target, undefined, `Urgent statutory inspection requested via VigilanceAI Copilot.`);
+    const toolRes = toolDispatchInspector(target, undefined, `Urgent inspection requested via INSPIRA Assistant.`);
     reasoningSteps.push('4. Generated statutory inspection order & dispatched notification to field officer mobile terminal.');
 
     return {
@@ -420,7 +420,7 @@ export async function processAgentConversation(
   reasoningSteps.push('3. Aggregated telemetry from live databases (NGOs, Audits, CCTV, Field Staff)');
 
   return {
-    reply: `🏛️ **National NGO Monitoring & Vigilance AI Copilot**\n\n${toolRes.summary}\n\n**Available Autonomous Capabilities:**\n1. 🚨 **Dispatch Field Inspector**: Ask *"Dispatch inspector Vikram Singh to Delhi NGO"*.\n2. ⚠️ **Identify Flagged NGOs**: Ask *"Show high-risk NGOs with compliance violations"*.\n3. 🔍 **DARPAN Verification**: Ask *"Verify DARPAN MH/2026/039121"*.\n4. 👤 **Biometric Attendance**: Ask *"Show field worker attendance and face match rates"*.\n5. 📹 **CCTV & Geo-Monitoring**: Ask *"Check active camera streams and geofences"*.`,
+    reply: `🏛️ **INSPIRA Assistant (SIH 2026 Prototype)**\n\n${toolRes.summary}\n\n**Available Capabilities:**\n1. 🚨 **Dispatch Field Inspector**: Ask *"Dispatch inspector Vikram Singh to Delhi NGO"*.\n2. ⚠️ **Identify Flagged NGOs**: Ask *"Show high-risk NGOs with compliance violations"*.\n3. 🔍 **DARPAN Verification**: Ask *"Verify DARPAN MH/2026/039121"*.\n4. 👤 **Staff Attendance**: Ask *"Show field worker attendance records"*.\n5. 📹 **CCTV & Geo-Monitoring**: Ask *"Check active camera streams and geofences"*.`,
     toolResult: toolRes,
     reasoningSteps,
     suggestedFollowups: [
@@ -449,12 +449,12 @@ aiRouter.post('/chat', async (req, res) => {
     // If Gemini client is active, we can also enrich or summarize the response
     if (geminiAi && currentGeminiApiKey) {
       try {
-        const prompt = `You are "VigilanceAI Copilot", an institutional AI assistant for the Ministry of Social Justice and Empowerment (Government of India).
+        const prompt = `You are "INSPIRA Assistant", an AI assistant for the INSPIRA NGO monitoring and surprise inspection prototype system (SIH 2026 PS 26095, Problem statement by MoSJE).
 User question: "${message}"
 Portal context: ${JSON.stringify(portalContext || {})}
 Database tool executed: ${agentResult.toolResult?.tool || 'none'}
 Tool summary: ${agentResult.toolResult?.summary || ''}
-Synthesize a concise, highly professional government officer response adhering to GIGW 3.0 standards.`;
+Synthesize a concise, clear, and objective professional response. Note that this is a hackathon prototype and not an official government system.`;
 
         const response = await geminiAi.models.generateContent({
           model: 'gemini-2.5-flash',

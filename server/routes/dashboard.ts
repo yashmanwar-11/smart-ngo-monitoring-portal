@@ -4,6 +4,35 @@ import { authenticateToken, requireRole, AuthRequest } from '../middleware/auth'
 
 export const dashboardRouter = Router();
 
+// GET /api/dashboard/stats - Public High-Level Aggregated KPI Statistics
+dashboardRouter.get('/stats', (_req, res): void => {
+  try {
+    const totalNgos = queryOne(`SELECT COUNT(*) as count FROM ngos`)?.count || 0;
+    const totalBudgetRow = queryOne(`SELECT SUM(annual_budget_inr) as total FROM ngos`);
+    const totalBudget = totalBudgetRow?.total || 0;
+    const activeAudits = queryOne(`SELECT COUNT(*) as count FROM inspections WHERE status IN ('ON_SITE', 'SCHEDULED', 'ASSIGNED', 'SUBMITTED')`)?.count || 0;
+    const completedAudits = queryOne(`SELECT COUNT(*) as count FROM inspections WHERE status = 'COMPLETED'`)?.count || 0;
+    const totalAttendancePunches = queryOne(`SELECT COUNT(*) as count FROM worker_attendance`)?.count || 0;
+    const totalGrievances = queryOne(`SELECT COUNT(*) as count FROM grievances`)?.count || 0;
+    const resolvedGrievances = queryOne(`SELECT COUNT(*) as count FROM grievances WHERE status = 'RESOLVED'`)?.count || 0;
+    const districtsCovered = queryOne(`SELECT COUNT(DISTINCT district) as count FROM ngos`)?.count || 0;
+
+    res.json({
+      totalNgos,
+      totalBudget,
+      activeAudits,
+      completedAudits,
+      totalAttendancePunches,
+      totalGrievances,
+      resolvedGrievances,
+      districtsCovered,
+    });
+  } catch (err: any) {
+    console.error('Error fetching public stats:', err);
+    res.status(500).json({ error: 'DB_ERROR', message: 'Failed to retrieve portal statistics.' });
+  }
+});
+
 // GET /api/dashboard/admin - Administrative Directorate Analytics & KPIs
 dashboardRouter.get('/admin', authenticateToken, requireRole(['ADMIN']), (req: AuthRequest, res: Response): void => {
   try {

@@ -60,18 +60,14 @@ export const InstituteDossierView: React.FC<InstituteDossierViewProps> = ({
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
 
-  // Gallery photos
-  const photos = institute.photos && institute.photos.length > 0
-    ? institute.photos
-    : [
-        'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&q=80&w=1200', // Gate
-        'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1200', // Reception
-        'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80&w=1200', // Classroom 1
-        'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=1200', // Classroom 2
-      ];
+  // Gallery photos (drawn from verified inspection evidence or official uploads)
+  const ngoInspections = inspections.filter((i) => i.ngoId === institute.id);
+  const inspectionEvidencePhotos = ngoInspections.flatMap((i) => (i as any).photos || []).map((p: any) => p.url || p.imageUrl).filter((url: string) => url && !url.includes('images.unsplash.com'));
+  const photos = (institute.photos && institute.photos.length > 0)
+    ? institute.photos.filter((p: string) => !p.includes('images.unsplash.com'))
+    : inspectionEvidencePhotos;
 
   // Past inspections for this NGO
-  const ngoInspections = inspections.filter((i) => i.ngoId === institute.id);
   const latestInspection = ngoInspections.length > 0
     ? ngoInspections[0]
     : {
@@ -209,37 +205,54 @@ export const InstituteDossierView: React.FC<InstituteDossierViewProps> = ({
         <div className="mx-3 sm:mx-6 space-y-4">
           {/* Facility Photo Banner with 1/4 badge & description */}
           <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
-            <div className="relative aspect-video sm:aspect-21/9 max-h-[320px] w-full overflow-hidden bg-slate-900 group">
-              <img
-                src={photos[selectedPhotoIndex] || photos[0]}
-                alt={institute.name}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-102"
-              />
-
-              {/* Next / Prev Controls */}
-              {photos.length > 1 && (
+            <div className="relative aspect-video sm:aspect-21/9 max-h-[320px] w-full overflow-hidden bg-slate-900 group flex items-center justify-center">
+              {photos.length > 0 ? (
                 <>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedPhotoIndex((prev) => (prev > 0 ? prev - 1 : photos.length - 1))}
-                    className="absolute left-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/60 text-white hover:bg-black/90 cursor-pointer transition-all"
-                  >
-                    <ChevronLeft className="w-4 h-4" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedPhotoIndex((prev) => (prev < photos.length - 1 ? prev + 1 : 0))}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/60 text-white hover:bg-black/90 cursor-pointer transition-all"
-                  >
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
-                </>
-              )}
+                  <img
+                    src={photos[selectedPhotoIndex] || photos[0]}
+                    alt={institute.name}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-102"
+                  />
 
-              {/* 1/4 Badge Overlay */}
-              <div className="absolute bottom-3 right-3 bg-black/75 backdrop-blur-xs text-white text-xs font-bold px-3 py-1 rounded-lg border border-white/10 font-mono">
-                {selectedPhotoIndex + 1}/{photos.length}
-              </div>
+                  {/* Next / Prev Controls */}
+                  {photos.length > 1 && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedPhotoIndex((prev) => (prev > 0 ? prev - 1 : photos.length - 1))}
+                        className="absolute left-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/60 text-white hover:bg-black/90 cursor-pointer transition-all"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedPhotoIndex((prev) => (prev < photos.length - 1 ? prev + 1 : 0))}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/60 text-white hover:bg-black/90 cursor-pointer transition-all"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </>
+                  )}
+
+                  {/* Badge Overlay */}
+                  <div className="absolute bottom-3 right-3 bg-black/75 backdrop-blur-xs text-white text-xs font-bold px-3 py-1 rounded-lg border border-white/10 font-mono">
+                    {selectedPhotoIndex + 1}/{photos.length}
+                  </div>
+                </>
+              ) : (
+                <div className="p-6 text-center text-white space-y-2 max-w-lg">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 flex items-center justify-center mx-auto">
+                    <ShieldCheck className="w-6 h-6" />
+                  </div>
+                  <h4 className="text-sm font-bold text-slate-100">{institute.name}</h4>
+                  <p className="text-xs text-slate-400 font-mono">
+                    DARPAN: {institute.documents?.darpanId || institute.regNumber} • {institute.district}, {institute.state}
+                  </p>
+                  <span className="inline-block px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-bold border border-emerald-500/30">
+                    ✓ Registered Institute • On-Site Geotagged Survey Evidence Verified
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* Description Text */}

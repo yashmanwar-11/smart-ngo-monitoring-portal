@@ -85,28 +85,28 @@ vcRouter.get('/random-target', (req: Request, res: Response): void => {
       return;
     }
 
-    // Generate random candidate participant options
+    // Generate candidate participant options
     const candidateParticipants = [
       {
         type: 'INCHARGE',
         name: target.president_name || 'Dr. Anand Deshmukh',
         roleTitle: 'Project Director & In-Charge',
         phone: target.contact_phone || '+91 98220 44910',
-        avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+        avatarUrl: null,
       },
       {
         type: 'STAFF',
         name: 'Sunita Patil',
         roleTitle: 'Resident Counselor & Nursing Staff',
         phone: '+91 98334 11290',
-        avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80',
+        avatarUrl: null,
       },
       {
         type: 'BENEFICIARY',
         name: 'Ramesh K. (Beneficiary ID: BEN-2026-081)',
         roleTitle: target.scheme?.includes('NAPDDR') ? 'Rehabilitation Patient' : target.scheme?.includes('AVYAY') ? 'Senior Resident' : 'Student Scholar',
         phone: '+91 91234 56789',
-        avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
+        avatarUrl: null,
       },
     ];
 
@@ -177,7 +177,7 @@ vcRouter.post('/initiate', (req: Request, res: Response): void => {
       state || 'Delhi NCR',
       scheme || 'NAPDDR',
       user?.id || 'usr_admin_1',
-      user?.name || 'Dr. Rajesh Verma, IAS',
+      user?.name || 'Demo Director (role: Directorate)',
       participantType,
       participantName,
       participantPhone || '+91 98765 43210',

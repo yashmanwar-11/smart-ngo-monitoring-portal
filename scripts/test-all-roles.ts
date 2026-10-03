@@ -23,7 +23,7 @@ async function testAllRoles() {
   }
 
   // Role 1: Admin
-  console.log('\n--- 1. Testing Admin (Dr. Rajesh Verma IAS) ---');
+  console.log('\n--- 1. Testing Admin (Demo Director [role: Directorate]) ---');
   const adminLogin = await apiCall('/api/auth/login', {
     method: 'POST',
     body: JSON.stringify({ emailOrUsername: 'admin.monitoring@gov.in', password: 'Password@123' })

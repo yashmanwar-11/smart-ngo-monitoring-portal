@@ -37,7 +37,7 @@ import { getAssignedTasksForOfficer } from '../services/governmentTasksStorage';
 import { getRealDeviceLocation, watchRealDeviceLocation } from '../services/deviceGeolocation';
 import { InstitutesDirectory } from './institutes/InstitutesDirectory';
 import { InstituteDossierView } from './institutes/InstituteDossierView';
-import { EmblemOfIndia } from './EmblemOfIndia';
+import { InspiraLogo } from './InspiraLogo';
 
 interface OfficerDashboardProps {
   currentOfficer: User;
@@ -108,6 +108,18 @@ export const OfficerDashboard: React.FC<OfficerDashboardProps> = ({
       setIsAcquiringGps(false);
     }
   };
+
+  // Real device battery API detection
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && 'getBattery' in navigator) {
+      (navigator as any).getBattery().then((battery: any) => {
+        setBatteryLevel(Math.round(battery.level * 100));
+        battery.addEventListener('levelchange', () => {
+          setBatteryLevel(Math.round(battery.level * 100));
+        });
+      }).catch(() => {});
+    }
+  }, []);
 
   // Active Inspection in progress
   const [activeInspectionId, setActiveInspectionId] = useState<string | null>(
@@ -216,8 +228,9 @@ export const OfficerDashboard: React.FC<OfficerDashboardProps> = ({
     ? calculateDistance(coords.lat, coords.lng, targetNgo.coordinates.lat, targetNgo.coordinates.lng)
     : 0;
 
-  // True if explicitly verified on-site or physically within 150m geofence
-  const isWithinGeofence = isOnSiteVerified || distanceToTargetMeters <= 150;
+  // Strict geofence: distance <= 150m AND accuracy <= 50m
+  const isAccuracyAcceptable = accuracy <= 50;
+  const isWithinGeofence = (distanceToTargetMeters <= 150 && isAccuracyAcceptable) || isOnSiteVerified;
 
   // Real device GPS acquisition & continuous watcher
   useEffect(() => {
@@ -282,10 +295,13 @@ export const OfficerDashboard: React.FC<OfficerDashboardProps> = ({
 
   const handleAttachSamplePhoto = () => {
     if (!targetNgo) return;
+    const ngoName = (targetNgo.name || 'INSTITUTE').replace(/[<>&"]/g, '');
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500"><rect width="800" height="500" fill="#0f172a"/><rect x="20" y="20" width="760" height="460" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/><rect x="20" y="20" width="760" height="6" fill="#ff9933"/><rect x="20" y="26" width="760" height="6" fill="#ffffff"/><rect x="20" y="32" width="760" height="6" fill="#138808"/><circle cx="400" cy="180" r="50" fill="#0f172a" stroke="#38bdf8" stroke-width="3"/><text x="400" y="195" fill="#38bdf8" font-family="monospace" font-size="28" font-weight="bold" text-anchor="middle">OFFICE</text><text x="400" y="270" fill="#ffffff" font-family="sans-serif" font-size="22" font-weight="bold" text-anchor="middle">Field Office &amp; Signboard Evidence</text><text x="400" y="305" fill="#94a3b8" font-family="sans-serif" font-size="14" text-anchor="middle">${ngoName}</text><rect x="150" y="340" width="500" height="70" rx="6" fill="#0f172a" stroke="#334155" stroke-width="1.5"/><text x="170" y="370" fill="#38bdf8" font-family="monospace" font-size="12">LOCATION: ${coords.lat.toFixed(5)}°N, ${coords.lng.toFixed(5)}°E (±3.5m)</text><text x="170" y="392" fill="#a7f3d0" font-family="monospace" font-size="11">OFFICER: ${currentOfficer.badgeNumber || 'INSP-DEL-402'} | STATUTORY DOSSIER SEC-65B</text></svg>`;
+    const dataUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
     const sample: InspectionPhoto = {
       id: 'photo_' + Date.now(),
       category: 'OFFICE_EXTERIOR',
-      imageUrl: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&w=800&q=80',
+      imageUrl: dataUrl,
       caption: 'Signboard & Office Entrance Inspection',
       timestamp: new Date().toLocaleString('en-IN') + ' IST',
       coordinates: { lat: coords.lat, lng: coords.lng },
@@ -294,28 +310,32 @@ export const OfficerDashboard: React.FC<OfficerDashboardProps> = ({
       tamperProofHash: 'SHA256:4f8e' + Math.random().toString(16).substring(2, 10),
     };
     setCapturedPhotos((prev) => [...prev, sample]);
+    onShowToast?.('✓ Official Field Evidence Certificate attached with SHA-256 seal', 'success');
   };
 
   const handleAttachCctvFrame = () => {
+    const ngoName = (targetNgo?.name || 'INSTITUTE PREMISES').replace(/[<>&"]/g, '');
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500"><rect width="800" height="500" fill="#020617"/><rect x="0" y="0" width="800" height="500" fill="none" stroke="#22c55e" stroke-width="2"/><line x1="30" y1="30" x2="60" y2="30" stroke="#22c55e" stroke-width="3"/><line x1="30" y1="30" x2="30" y2="60" stroke="#22c55e" stroke-width="3"/><line x1="770" y1="30" x2="740" y2="30" stroke="#22c55e" stroke-width="3"/><line x1="770" y1="30" x2="770" y2="60" stroke="#22c55e" stroke-width="3"/><line x1="30" y1="470" x2="60" y2="470" stroke="#22c55e" stroke-width="3"/><line x1="30" y1="470" x2="30" y2="440" stroke="#22c55e" stroke-width="3"/><line x1="770" y1="470" x2="740" y2="470" stroke="#22c55e" stroke-width="3"/><line x1="770" y1="470" x2="770" y2="440" stroke="#22c55e" stroke-width="3"/><circle cx="50" cy="50" r="6" fill="#ef4444"/><text x="65" y="55" fill="#ef4444" font-family="monospace" font-size="14" font-weight="bold">REC ● LIVE CAM-01 (MAIN ENTRANCE)</text><text x="750" y="55" fill="#22c55e" font-family="monospace" font-size="14" text-anchor="end">25 FPS • 1080P RTSP</text><rect x="250" y="160" width="300" height="180" rx="8" fill="rgba(15,23,42,0.8)" stroke="#38bdf8" stroke-width="2"/><text x="400" y="240" fill="#38bdf8" font-family="sans-serif" font-size="20" font-weight="bold" text-anchor="middle">IP-CAM SURVEILLANCE</text><text x="400" y="270" fill="#94a3b8" font-family="sans-serif" font-size="13" text-anchor="middle">${ngoName}</text><rect x="30" y="420" width="740" height="50" fill="rgba(0,0,0,0.85)" rx="6"/><text x="50" y="445" fill="#facc15" font-family="monospace" font-size="12">GEO: ${coords.lat.toFixed(5)}°N, ${coords.lng.toFixed(5)}°E | RTSP-SEC STREAM: ESTABLISHED</text><text x="50" y="460" fill="#94a3b8" font-family="monospace" font-size="10">AUTHENTICATED AUDITOR: ${currentOfficer.badgeNumber || 'INSP-DEL-402'} | NIC-GOVNET</text><text x="750" y="450" fill="#22c55e" font-family="monospace" font-size="11" text-anchor="end">TAMPER-SEALED</text></svg>`;
+    const dataUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
     const cctvPhoto: InspectionPhoto = {
       id: 'cctv_frame_' + Date.now(),
       category: 'INFRASTRUCTURE',
-      imageUrl: 'https://images.unsplash.com/photo-1557597774-9d273605dfa9?auto=format&fit=crop&w=800&q=80',
-      caption: `Facility CCTV Frame • IP Surveillance Stream Authenticated (${targetNgo?.name || 'Premises'})`,
+      imageUrl: dataUrl,
+      caption: `Facility CCTV Frame • IP Surveillance Stream (${targetNgo?.name || 'Premises'})`,
       timestamp: new Date().toLocaleString('en-IN') + ' IST',
       coordinates: { lat: coords.lat, lng: coords.lng },
       accuracyMeters: 2.1,
       officerBadge: currentOfficer.badgeNumber || 'INSP-DEL-402',
-      tamperProofHash: 'SHA256:CCTV' + Math.random().toString(16).substring(2, 12).toUpperCase(),
+      tamperProofHash: `EVIDENCE-${Date.now()}`,
     };
     setCapturedPhotos((prev) => [...prev, cctvPhoto]);
-    onShowToast?.('✓ High-definition CCTV surveillance frame attached with SHA-256 hash.', 'success');
+    onShowToast?.('✓ CCTV surveillance frame captured and attached to dossier.', 'success');
   };
 
   const generateStandardizedObservations = () => {
     const defects: string[] = [];
     if (!checklist.physicalOfficeExists) defects.push('Premises physically non-existent or locked at registered coordinates.');
-    if (!checklist.signboardDisplayed) defects.push('Mandatory bilingual official project signboard missing.');
+    if (!checklist.signboardDisplayed) defects.push('Bilingual project signboard missing.');
     if (!checklist.staffPresent || checklist.actualStaffCount === 0) defects.push('Zero operational project staff present during working hours.');
     if (!checklist.cashBookLedgerAvailable) defects.push('Statutory cash book, vouchers, and expenditure ledgers unavailable on site.');
     if (!checklist.beneficiaryRegisterVerified) defects.push('Beneficiary attendance register incomplete or unverified.');
@@ -324,7 +344,7 @@ export const OfficerDashboard: React.FC<OfficerDashboardProps> = ({
 
     let text = '';
     if (defects.length === 0) {
-      text = `PHYSICAL AUDIT VERDICT: FULLY COMPLIANT.\nOn-site verification conducted under 150m geofence lock. Physical premises verified with active staff (${checklist.actualStaffCount} persons), display signboard, and up-to-date statutory beneficiary records. No discrepancies noted under Rule 14 GFR 2017.`;
+      text = `PHYSICAL AUDIT VERDICT: FULLY COMPLIANT.\nOn-site verification conducted under 150m geofence lock. Physical premises verified with active staff (${checklist.actualStaffCount} persons), display signboard, and up-to-date beneficiary records. Full compliance observed.`;
       setComplianceRating('A_EXCELLENT');
       setActionRecommended('CLEAR_RENEWAL');
     } else if (defects.length <= 2) {
@@ -421,34 +441,30 @@ export const OfficerDashboard: React.FC<OfficerDashboardProps> = ({
     <div className="space-y-5 max-w-5xl mx-auto">
       {/* Level-3 Vigilance Field Enforcement Header */}
       <div className="bg-gradient-to-r from-slate-950 via-[#0B3B60] to-slate-900 text-white p-5 sm:p-6 rounded-2xl border border-slate-800 shadow-md space-y-4 relative overflow-hidden">
-        {/* Subtle top national tri-color accent strip */}
-        <div className="absolute top-0 left-0 right-0 grid grid-cols-3 h-[3.5px]">
-          <div className="bg-[#FF9933]"></div>
-          <div className="bg-[#FFFFFF] flex items-center justify-center"><div className="w-1 h-1 rounded-full bg-[#000080]"></div></div>
-          <div className="bg-[#138808]"></div>
-        </div>
+        {/* Neutral top accent strip */}
+        <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#0B3B60]"></div>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-start space-x-4">
-            <div className="w-13 h-17 rounded-xl bg-white/10 p-1 border border-white/20 flex items-center justify-center shrink-0 mt-0.5 shadow-md">
-              <EmblemOfIndia className="w-11 h-15" variant="white" showText={false} />
+            <div className="w-12 h-12 rounded-xl bg-white/10 p-1 border border-white/20 flex items-center justify-center shrink-0 mt-0.5 shadow-md">
+              <InspiraLogo className="w-10 h-10" />
             </div>
             <div className="space-y-1">
-              <div className="text-[10.5px] font-bold text-amber-300 font-serif tracking-wider uppercase">
-                भारत सरकार • Ministry of Social Justice &amp; Empowerment
+              <div className="text-[10.5px] font-bold text-sky-300 font-sans tracking-wider uppercase">
+                INSPIRA Field Inspector Terminal • SIH 2026 Prototype
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 text-blue-200 border border-blue-400/30 font-mono">
-                  Level 3 • Field Vigilance Inspector
+                  Field Inspector (Demo User)
                 </span>
                 <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-950/70 text-emerald-300 border border-emerald-500/30 font-mono">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  GEOFENCE RADAR ACTIVE
+                  GEOFENCE ACTIVE
                 </span>
               </div>
-              <h2 className="font-black text-xl sm:text-2xl text-white tracking-tight font-serif">{currentOfficer.name}</h2>
+              <h2 className="font-bold text-xl sm:text-2xl text-white tracking-tight">{currentOfficer.name}</h2>
               <p className="text-xs sm:text-sm text-slate-200 font-medium">
-                {currentOfficer.designation || 'Senior Vigilance & Geofence Field Inspector'}
+                {currentOfficer.designation || 'Field Vigilance & Geofence Inspector'}
               </p>
               <p className="text-[11px] text-slate-300 font-mono">
                 Official Badge: <strong className="text-amber-300">{currentOfficer.badgeNumber || 'INSP-DEL-402'}</strong> • Jurisdiction: {currentOfficer.assignedDistrict || 'Central & South Delhi Zone'}
@@ -727,12 +743,11 @@ export const OfficerDashboard: React.FC<OfficerDashboardProps> = ({
                     {distanceToTargetMeters} meters {isWithinGeofence ? '✓ Geofence Verified' : '⚠️ Out of bounds'}
                   </div>
                   {!isWithinGeofence && (
-                    <button
-                      onClick={() => handleTeleportToNgo(targetNgo)}
-                      className="mt-1 text-[11px] font-bold underline text-amber-200 hover:text-white"
-                    >
-                      ⚡ Simulate Arrive at Site (150m)
-                    </button>
+                    <div className="mt-1 text-[11px] text-amber-200">
+                      {accuracy > 50
+                        ? `Low GPS accuracy (±${accuracy.toFixed(0)}m). Move outdoors and retry.`
+                        : `Physical verification locked until within 150m radius.`}
+                    </div>
                   )}
                 </div>
               </div>
@@ -965,25 +980,17 @@ export const OfficerDashboard: React.FC<OfficerDashboardProps> = ({
                         <div className="flex items-center gap-1.5">
                           <AlertTriangle className="w-3.5 h-3.5 text-rose-600 shrink-0" />
                           <span>
-                            Warning: Inspector must be within 150m of registered premises ({distanceToTargetMeters}m away).
+                            {accuracy > 50
+                              ? `Low GPS accuracy (±${accuracy.toFixed(0)}m). Move outdoors and retry.`
+                              : `Warning: Inspector device must be within 150m of registered premises (${distanceToTargetMeters}m away, ±${accuracy.toFixed(1)}m accuracy).`}
                           </span>
                         </div>
-                        {targetNgo && (
-                          <button
-                            type="button"
-                            onClick={() => handleTeleportToNgo(targetNgo)}
-                            className="inline-flex items-center space-x-1.5 px-3 py-1 bg-amber-500 hover:bg-amber-600 text-slate-900 rounded-full text-xs font-bold transition-all shadow-xs"
-                          >
-                            <MapPin className="w-3 h-3" />
-                            <span>Verify GPS On-Site (150m)</span>
-                          </button>
-                        )}
                       </div>
                     ) : (
                       <div className="flex items-center gap-2 p-2.5 bg-emerald-50/80 border border-emerald-200 rounded-xl text-emerald-900 font-semibold text-xs">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                         <span>
-                          Geofence verified ({distanceToTargetMeters <= 150 ? `${distanceToTargetMeters}m` : '22m'} from premises). Report will be cryptographically sealed upon submission.
+                          Geofence verified ({distanceToTargetMeters}m from premises, ±{accuracy.toFixed(1)}m accuracy). Submission unlocked.
                         </span>
                       </div>
                     )}

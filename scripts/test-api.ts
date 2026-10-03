@@ -33,7 +33,7 @@ async function runTests() {
     console.log('   ✓ Health check PASSED: Service is OPERATIONAL');
 
     // 2. Admin Login
-    console.log('2. Testing /api/auth/login (Admin Dr. Rajesh Verma IAS)...');
+    console.log('2. Testing /api/auth/login (Demo Director [role: Directorate])...');
     const loginRes = await apiCall('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({
@@ -289,7 +289,7 @@ async function runTests() {
       body: JSON.stringify({
         category: 'PREMISE_SIGNBOARD',
         caption: 'Official Front Signboard and Entrance Verification',
-        imageUrl: 'https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&q=80&w=800',
+        imageUrl: 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600"><rect width="800" height="600" fill="%230f172a"/><text x="400" y="300" fill="%2338bdf8" font-size="24" text-anchor="middle">OFFICIAL PREMISE EVIDENCE</text></svg>',
         lat: 18.5204,
         lng: 73.8567,
         accuracyMeters: 3.2,
@@ -323,8 +323,8 @@ async function runTests() {
     }
     console.log(`   ✓ Inspection Submission PASSED: Sealed with SHA-256 ${submitInspectionRes.data.tamperProofHash.slice(0, 20)}...`);
 
-    // 17. Directorate General (IAS) Scrutiny & Sanction Order
-    console.log('17. Testing Directorate General (IAS) Scrutiny & Sanction Order (/api/inspections/:id/review)...');
+    // 17. Directorate Scrutiny & Sanction Order
+    console.log('17. Testing Directorate Scrutiny & Sanction Order (/api/inspections/:id/review)...');
     const scrutinyRes = await apiCall(`/api/inspections/${testTaskId}/review`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${adminToken}` },
@@ -340,7 +340,7 @@ async function runTests() {
     if (scrutinyRes.status !== 200 || !scrutinyRes.data.sanctionOrderNumber || !scrutinyRes.data.sanctionOrderNumber.startsWith('DIR/ORD/2026/MSJE/')) {
       throw new Error(`Directorate scrutiny failed: ${JSON.stringify(scrutinyRes)}`);
     }
-    console.log(`   ✓ Directorate Scrutiny PASSED: Sanction Order ${scrutinyRes.data.sanctionOrderNumber} issued by Dr. Rajesh Verma IAS`);
+    console.log(`   ✓ Directorate Scrutiny PASSED: Sanction Order ${scrutinyRes.data.sanctionOrderNumber} issued by Demo Director (role: Directorate)`);
 
     // 18. Worker Biometric Face & Geofenced Punch-In
     console.log('18. Testing Worker Biometric & Geofenced Punch-In (/api/attendance/punch-in)...');

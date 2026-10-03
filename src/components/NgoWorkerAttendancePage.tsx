@@ -35,7 +35,7 @@ import { User as UserType, AuthSession, NgoWorkerAttendance } from '../types';
 import { attendanceApi } from '../services/apiClient';
 import { INITIAL_WORKER_ATTENDANCE } from '../data/mockData';
 import { compareFaces, FaceMatchResult } from '../services/faceMatchingService';
-import { EmblemOfIndia } from './EmblemOfIndia';
+import { InspiraLogo } from './InspiraLogo';
 import {
   getRealDeviceLocation,
   watchRealDeviceLocation,
@@ -92,12 +92,12 @@ export const NgoWorkerAttendancePage: React.FC<NgoWorkerAttendancePageProps> = (
   const [todayRecord, setTodayRecord] = useState<NgoWorkerAttendance | null>(null);
   const [attendanceHistory, setAttendanceHistory] = useState<NgoWorkerAttendance[]>(INITIAL_WORKER_ATTENDANCE);
   const [stats, setStats] = useState({
-    totalDays: 22,
-    presentDays: 21,
-    halfDays: 1,
-    totalHours: 178.5,
-    avgHours: 8.1,
-    complianceRate: 98,
+    totalDays: 0,
+    presentDays: 0,
+    halfDays: 0,
+    totalHours: 0,
+    avgHours: 0,
+    complianceRate: 100,
   });
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -435,8 +435,9 @@ export const NgoWorkerAttendancePage: React.FC<NgoWorkerAttendancePageProps> = (
 
     try {
       const enrolledPhoto =
-        currentUser.avatarUrl ||
-        'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&auto=format&fit=crop&q=80';
+        currentUser.avatarUrl && !currentUser.avatarUrl.includes('images.unsplash.com')
+          ? currentUser.avatarUrl
+          : `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect width="400" height="400" fill="%23042f2e"/><circle cx="200" cy="160" r="80" fill="%230f766e"/><path d="M80 360 C 80 270, 320 270, 320 360 Z" fill="%230f766e"/><circle cx="200" cy="160" r="70" fill="none" stroke="%2334d399" stroke-width="2" stroke-dasharray="4,4"/><text x="200" y="175" fill="%23ffffff" font-family="sans-serif" font-size="40" font-weight="bold" text-anchor="middle">${currentUser.name ? currentUser.name.slice(0, 2).toUpperCase() : 'SP'}</text><rect x="0" y="340" width="400" height="60" fill="%23064e3b"/><text x="200" y="375" fill="%2334d399" font-family="monospace" font-size="14" font-weight="bold" text-anchor="middle">UIDAI BIO-ID VERIFIED</text></svg>`;
 
       const result = await compareFaces(
         capturedDataUrl,
@@ -502,10 +503,17 @@ export const NgoWorkerAttendancePage: React.FC<NgoWorkerAttendancePageProps> = (
       stopCamera();
       runFaceMatchVerification(dataUrl, simulateMismatch);
     };
-    img.src =
-      punchMode === 'CHECK_IN'
-        ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&auto=format&fit=crop&q=80'
-        : 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=800&auto=format&fit=crop&q=80';
+    const punchSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+      <rect width="800" height="600" fill="#042f2e"/>
+      <circle cx="400" cy="240" r="120" fill="#0f766e"/>
+      <path d="M220 540 C 220 400, 580 400, 580 540 Z" fill="#0f766e"/>
+      <text x="400" y="260" fill="#ffffff" font-family="sans-serif" font-size="56" font-weight="bold" text-anchor="middle">${currentUser.name ? currentUser.name.slice(0, 2).toUpperCase() : 'SP'}</text>
+      <rect x="0" y="0" width="800" height="40" fill="#134e4a"/>
+      <text x="20" y="26" fill="#34d399" font-family="monospace" font-size="16" font-weight="bold">● LIVE GEO-ATTENDANCE CAMERA • ${punchMode === 'CHECK_IN' ? 'ARRIVAL' : 'DEPARTURE'}</text>
+      <text x="780" y="26" fill="#99f6e4" font-family="monospace" font-size="14" text-anchor="end">${new Date().toLocaleTimeString('en-IN')}</text>
+      <circle cx="400" cy="240" r="135" fill="none" stroke="#2dd4bf" stroke-width="3" stroke-dasharray="8,6"/>
+    </svg>`;
+    img.src = `data:image/svg+xml;utf8,${encodeURIComponent(punchSvg)}`;
   };
 
   // Handle Photo File Upload
@@ -739,21 +747,21 @@ export const NgoWorkerAttendancePage: React.FC<NgoWorkerAttendancePageProps> = (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       {/* 1. INSTITUTIONAL HEADER & WORKER IDENTITY BANNER */}
       <div className="bg-[#0B3B60] text-white rounded-2xl border border-[#0B3B60] shadow-xl overflow-hidden relative">
-        {/* National 3px Indian Tricolor Strip */}
-        <div className="h-1.5 bg-gradient-to-r from-[#FF9933] via-white to-[#138808]"></div>
+        {/* Neutral 3px Accent Strip */}
+        <div className="h-1 bg-[#0B3B60]"></div>
 
         <div className="p-5 sm:p-6 bg-gradient-to-r from-[#07253d] via-[#0B3B60] to-[#0d4672] flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="flex items-start space-x-4">
-            <div className="w-14 h-19 shrink-0 flex items-center justify-center overflow-hidden mt-0.5">
-              <EmblemOfIndia variant="badge" size={52} className="shadow-md" />
+            <div className="w-14 h-14 shrink-0 flex items-center justify-center overflow-hidden mt-0.5">
+              <InspiraLogo className="w-12 h-12 shadow-md" />
             </div>
 
             <div className="relative">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-blue-700 to-indigo-900 border-2 border-amber-400/40 flex items-center justify-center text-white font-bold text-xl shadow-lg overflow-hidden shrink-0">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br from-blue-700 to-indigo-900 border-2 border-sky-400/40 flex items-center justify-center text-white font-bold text-xl shadow-lg overflow-hidden shrink-0">
                 {currentUser.avatarUrl ? (
                   <img src={currentUser.avatarUrl} alt={currentUser.name} className="w-full h-full object-cover" />
                 ) : (
-                  <User className="w-8 h-8 text-amber-300" />
+                  <User className="w-8 h-8 text-sky-300" />
                 )}
               </div>
               <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-slate-900 flex items-center justify-center text-[9px] font-bold text-white shadow-xs" title="GPS Active">
@@ -764,7 +772,7 @@ export const NgoWorkerAttendancePage: React.FC<NgoWorkerAttendancePageProps> = (
             <div className="space-y-1.5">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-white/15 text-blue-100 border border-white/20">
-                  Government of India • भारत सरकार
+                  INSPIRA Staff Attendance Terminal
                 </span>
                 <span className="text-[10px] font-bold px-2.5 py-0.5 rounded bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -772,8 +780,8 @@ export const NgoWorkerAttendancePage: React.FC<NgoWorkerAttendancePageProps> = (
                 </span>
               </div>
 
-              <div className="text-xs text-amber-300 font-medium tracking-wide">
-                सामाजिक न्याय एवं अधिकारिता मंत्रालय | Ministry of Social Justice &amp; Empowerment
+              <div className="text-xs text-sky-200 font-medium tracking-wide">
+                Problem statement by MoSJE (PS 26095) • Smart India Hackathon 2026
               </div>
 
               <div className="flex items-center gap-2 flex-wrap">
@@ -1180,7 +1188,11 @@ export const NgoWorkerAttendancePage: React.FC<NgoWorkerAttendancePageProps> = (
 
                       <div className="relative w-36 h-36 sm:w-40 sm:h-40 rounded-xl overflow-hidden border-2 border-emerald-500/60 shadow-md">
                         <img
-                          src={currentUser.avatarUrl || 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&auto=format&fit=crop&q=80'}
+                          src={
+                            currentUser.avatarUrl && !currentUser.avatarUrl.includes('images.unsplash.com')
+                              ? currentUser.avatarUrl
+                              : `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 400 400"><rect width="400" height="400" fill="%23042f2e"/><circle cx="200" cy="160" r="80" fill="%230f766e"/><path d="M80 360 C 80 270, 320 270, 320 360 Z" fill="%230f766e"/><circle cx="200" cy="160" r="70" fill="none" stroke="%2334d399" stroke-width="2" stroke-dasharray="4,4"/><text x="200" y="175" fill="%23ffffff" font-family="sans-serif" font-size="40" font-weight="bold" text-anchor="middle">${currentUser.name ? currentUser.name.slice(0, 2).toUpperCase() : 'SP'}</text><rect x="0" y="340" width="400" height="60" fill="%23064e3b"/><text x="200" y="375" fill="%2334d399" font-family="monospace" font-size="14" font-weight="bold" text-anchor="middle">UIDAI BIO-ID VERIFIED</text></svg>`
+                          }
                           alt="Official Enrolled Database Photo"
                           className="w-full h-full object-cover"
                         />

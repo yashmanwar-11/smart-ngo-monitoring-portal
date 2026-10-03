@@ -87,7 +87,7 @@ camerasRouter.get('/', authenticateToken, (req: AuthRequest, res: Response): voi
       params.push(user.ngo_id);
     } else if (user.role === 'OFFICER' && user.assigned_district) {
       // Officers can view cameras across their jurisdiction or assigned projects
-      // For general vigilance, Level 3 officers can filter by district
+      // For general vigilance, field officers can filter by district
       if (req.query.district) {
         sql += ' WHERE n.district = ?';
         params.push(req.query.district);
@@ -1142,7 +1142,7 @@ camerasRouter.post('/:id/evidence', authenticateToken, requireRole(['ADMIN', 'OF
           camera.lng || 72.8777,
           1.0, // Sub-meter fixed camera precision
           snapshot.timestamp,
-          req.user!.badge_number || 'IAS-DIR-001',
+          req.user!.badge_number || 'DEMO-DIR-001',
           `${camera.location}, ${camera.ngo_name}, ${camera.ngo_district}`,
           camera.id,
         ]
