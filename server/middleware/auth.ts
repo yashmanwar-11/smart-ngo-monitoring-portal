@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { queryOne } from '../db';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'GOV_SECRET_KEY_NIC_PORTAL_2026_JWT_TOKEN';
+const JWT_SECRET = process.env.JWT_SECRET || 'INSPIRA_PROTOTYPE_SIH2026_JWT_SECRET_KEY';
 
 export interface AuthenticatedUser {
   id: string;
